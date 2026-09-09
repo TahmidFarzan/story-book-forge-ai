@@ -3,30 +3,12 @@
 namespace App\Services;
 
 use App\Helpers\ActivityLogHelper;
-use App\Helpers\QuizHelper;
 use App\Helpers\DatatableHelper;
-use App\Helpers\EventHelper;
-use App\Helpers\GoogleAdHelper;
-use App\Helpers\MenuHelper;
-use App\Helpers\PageHelper;
 use App\Helpers\UserHelper;
-use App\Models\BreakingNews;
-use App\Models\Category;
-use App\Models\Contributor;
-use App\Models\Event;
-use App\Models\Language;
-use App\Models\Location;
-use App\Models\MenuItem;
-use App\Models\MenuType;
-use App\Models\Survey;
-use App\Models\News;
-use App\Models\NewsType;
-use App\Models\Page;
-use App\Models\Tag;
 use App\Models\User;
+use App\Models\AiBrain;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -185,6 +167,36 @@ class SearchService
             'total'        => 1,
             'current_page' => 1,
             'last_page'    => 1,
+        ];
+    }
+
+    public function aiBrains(Request $request): array
+    {
+        $query = AiBrain::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('brief', 'like', "%{$search}%");
+            });
+        }
+
+        $records = $query
+            ->orderByDesc('id')
+            ->paginate($request->input('per_page', 25));
+
+        $items = $records->map(fn($aiBrain) => [
+            'id'   => $aiBrain->id,
+            'name' => $aiBrain->name,
+            'slug' => $aiBrain->slug,
+        ]);
+
+        return [
+            'items'        => $items,
+            'total'        => $records->total(),
+            'current_page' => $records->currentPage(),
+            'last_page'    => $records->lastPage(),
         ];
     }
 

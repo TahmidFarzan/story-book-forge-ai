@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 // Backoffice
 use App\Http\Controllers\BackOffice\MediaController;
 use App\Http\Controllers\BackOffice\UserController;
+use App\Http\Controllers\BackOffice\AiBrainController;
 use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\ActivityLogController;
 
@@ -79,6 +80,7 @@ Route::prefix('search')->name('search.')->group(function () {
 
     Route::middleware(['response.cache:60,public,30,etag'])->group(function () {
         Route::get('users', [SearchController::class, 'users'])->name('users');
+        Route::get('ai-brains', [SearchController::class, 'aiBrains'])->name('ai-brains');
 
         Route::get('medias', [SearchController::class, 'medias'])->name('medias');
 
@@ -98,6 +100,20 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::post('quick-save', [MediaController::class, 'quickSave'])->name('quick-save');
         Route::patch('quick-update/{slug}', [MediaController::class, 'quickUpdate'])->name('quick-update');
     });
+
+
+    Route::prefix('ai-brains')->name('ai-brains.')->group(function () {
+        Route::get('/', [AiBrainController::class, 'index'])->name('index');
+        Route::get('details/{slug}', [AiBrainController::class, 'details'])->name('details');
+
+        Route::get('create', [AiBrainController::class, 'create'])->name('create');
+        Route::get('edit/{slug}', [AiBrainController::class, 'edit'])->name('edit');
+
+        Route::post('save', [AiBrainController::class, 'save'])->name('save');
+        Route::patch('update/{slug}', [AiBrainController::class, 'update'])->name('update');
+        Route::delete('delete/{slug}', [AiBrainController::class, 'delete'])->name('delete');
+    });
+
 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');

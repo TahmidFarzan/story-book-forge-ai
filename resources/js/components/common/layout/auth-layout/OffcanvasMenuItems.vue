@@ -12,6 +12,7 @@ import {
     faChevronUp,
     faGauge,
     faPhotoFilm,
+    faBrain,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -21,10 +22,12 @@ library.add(
     faChevronUp,
     faGauge,
     faPhotoFilm,
+    faBrain
 )
 
 import {
     canAccessUser,
+    canAccessAiBrain,
 } from '@/composables/useUserPermissions'
 
 const {
@@ -42,15 +45,21 @@ const page = usePage()
 
 const subMenus = ref({
     UserManagement: false,
+    AiManagement: false,
 })
 
 const routeMap = {
     UserManagement: ['/back-office/users/*'],
+    AiManagement: ['/back-office/ai-brains/*'],
 }
 
 const canAccessUserComputed = computed(() => {
     return canAccessUser(authUser)
 })
+
+const canAccessAiBrainComputed = computed(() => {
+    return canAccessAiBrain(authUser);
+});
 
 const toggleShowSubMenu = (key) => {
     subMenus.value[key] = !subMenus.value[key]
@@ -103,14 +112,36 @@ const isSubMenuVisible = (key) => {
             Media
         </a>
 
-        <button type="button" class="sbfa-nav-item" @click="toggleShowSubMenu('UserManagement')"
-            :aria-expanded="isSubMenuVisible('UserManagement')">
+        <button @click="toggleShowSubMenu('AiAttributes')" class="sbfa-nav-item">
+            <span class="flex items-center gap-2">
+                <FontAwesomeIcon icon="brain" />
+                Ai Attributes
+            </span>
+
+            <FontAwesomeIcon :icon="isSubMenuVisible('AiAttributes') ? 'chevron-up' : 'chevron-down'" />
+        </button>
+
+        <Transition
+            enter-active-class="transition-all duration-300 ease-out" enter-from-class="opacity-0 max-h-0"
+            enter-to-class="opacity-100 max-h-40" leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="opacity-100 max-h-40" leave-to-class="opacity-0 max-h-0">
+            <div v-if="isSubMenuVisible('AiAttributes')" class="ml-4 flex flex-col space-y-1 overflow-hidden">
+
+                <a :href="route('back-office.ai-brains.index')" class="sbfa-nav-item"
+                    :class="isAnyCurrentPage(routeMap.AiManagement) ? 'is-active' : ''" @click="handleNavigate">
+                    <FontAwesomeIcon icon="brain" />
+                    Ai Brain
+                </a>
+
+            </div>
+        </Transition>
+
+        <button type="button" class="sbfa-nav-item" @click="toggleShowSubMenu('UserManagement')" :aria-expanded="isSubMenuVisible('UserManagement')">
             <span class="flex items-center gap-2">
                 <FontAwesomeIcon icon="users" />
                 User Management
             </span>
-            <FontAwesomeIcon :icon="isSubMenuVisible('UserManagement') ? 'chevron-up' : 'chevron-down'"
-                class="ml-auto" />
+            <FontAwesomeIcon :icon="isSubMenuVisible('UserManagement') ? 'chevron-up' : 'chevron-down'" class="ml-auto" />
         </button>
 
         <Transition enter-active-class="transition-all duration-300 ease-out" enter-from-class="opacity-0 max-h-0"
