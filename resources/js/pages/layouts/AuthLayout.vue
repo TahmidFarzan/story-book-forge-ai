@@ -7,8 +7,13 @@ import FlashMessageToaster from '@/components/common/layout/FlashMessageToaster.
 import { usePage } from '@inertiajs/vue3'
 import { computed, provide } from 'vue'
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faBookOpen)
+
 const appName = import.meta.env.VITE_APP_NAME
-const appLogo = import.meta.env.VITE_APP_LOGO
 
 const page = usePage()
 
@@ -19,35 +24,32 @@ provide('authUser', authUser)
 </script>
 
 <template>
-    <div class="auth-layout flex flex-col min-h-screen">
-        <header class="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
-            <div class="px-4 py-2 flex items-center justify-between">
-                <a :href="route('home')" class="flex items-center gap-2 min-w-0">
-                    <img v-if="appLogo" :src="appLogo" :alt="appName" class="h-8 flex-shrink-0">
-
-                    <span class="font-semibold truncate">
-                        {{ appName }}
+    <div class="sbfa-dashboard-layout flex min-h-screen flex-col">
+        <header class="sbfa-dashboard-header">
+            <div class="mx-auto flex h-16 w-full max-w-[100rem] items-center justify-between gap-4 px-4 sm:px-6">
+                <a :href="route('home')" class="sbfa-dashboard-brand" :aria-label="appName">
+                    <span class="sbfa-dashboard-brand-mark" aria-hidden="true">
+                        <FontAwesomeIcon :icon="['fas', 'book-open']" />
                     </span>
+
+                    <span v-if="appName" class="sbfa-dashboard-brand-name">{{ appName }}</span>
                 </a>
 
                 <div class="flex items-center gap-3">
-                    <!-- OFFCANVAS (trigger) -->
                     <OffCanvasMenu mode="trigger" :auth-user="authUser" />
 
-                    <!-- USER MENU -->
                     <AuthTopbarDropdownMenu :auth-user="authUser" />
                 </div>
             </div>
         </header>
 
-        <main class="main flex-1 flex pt-16">
+        <main class="flex flex-1 pt-16">
             <OffCanvasMenu mode="sidebar" :auth-user="authUser" />
 
-            <div class="flex-1 p-4 min-w-0">
+            <div class="flex-1 min-w-0 p-4 sm:p-6">
                 <Breadcrumbs />
 
-                <div v-if="authUser && !authUser.email_verified_at"
-                    class="mb-4 p-3 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded">
+                <div v-if="authUser && !authUser.email_verified_at" class="sbfa-verify-banner" role="note">
                     Please verify your email address.
                 </div>
 
@@ -55,16 +57,20 @@ provide('authUser', authUser)
             </div>
         </main>
 
-        <footer class="bg-white border-t border-gray-200 py-3 text-gray-500 text-sm">
-            <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-2">
-                <span class="text-center md:text-left w-full md:w-auto">
+        <footer class="sbfa-dashboard-footer">
+            <div class="mx-auto flex w-full max-w-[100rem] flex-col items-center justify-between gap-2 px-4 py-5 text-sm sm:flex-row sm:px-6">
+                <span class="sbfa-dashboard-footer-text">
                     &copy; {{ new Date().getFullYear() }} {{ appName }}. All rights reserved.
                 </span>
 
-                <span class="text-center md:text-right w-full md:w-auto">
+                <span class="sbfa-dashboard-footer-text">
                     Developed by
-                    <a href="https://www.linkedin.com/in/sk-md-tahmid-farzan/" target="_blank" rel="noopener noreferrer"
-                        class="text-blue-600 hover:underline font-medium">
+                    <a
+                        href="https://www.linkedin.com/in/sk-md-tahmid-farzan/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="sbfa-dashboard-footer-link"
+                    >
                         Seikh Md Tahmid Farzan
                     </a>
                 </span>
@@ -76,31 +82,95 @@ provide('authUser', authUser)
 </template>
 
 <style scoped>
-.auth-layout {
-    background: var(--news-soft);
-    color: var(--news-ink);
-    font-family: var(--font-en);
+.sbfa-dashboard-layout {
+    background: var(--story-book-forge-ai-background);
+    color: var(--story-book-forge-ai-text);
+    font-family: var(--story-book-forge-ai-font);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
 }
 
-.auth-layout :deep(a:focus-visible),
-.auth-layout :deep(button:focus-visible),
-.auth-layout :deep(input:focus-visible),
-.auth-layout :deep(select:focus-visible),
-.auth-layout :deep(textarea:focus-visible) {
+.sbfa-dashboard-layout :deep(a:focus-visible),
+.sbfa-dashboard-layout :deep(button:focus-visible),
+.sbfa-dashboard-layout :deep(input:focus-visible),
+.sbfa-dashboard-layout :deep(select:focus-visible),
+.sbfa-dashboard-layout :deep(textarea:focus-visible) {
     outline: 0;
-    box-shadow: var(--news-focus-ring);
+    box-shadow: var(--story-book-forge-ai-focus-ring);
+    border-radius: var(--story-book-forge-ai-radius-sm);
 }
 
-.auth-layout header {
-    border-bottom: var(--news-border-default);
-    box-shadow: var(--news-shadow-soft);
+.sbfa-dashboard-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    background: var(--story-book-forge-ai-header-bg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 24px rgb(43 38 51 / 18%);
 }
 
-.auth-layout main > div:last-child {
-    background: var(--news-soft);
+.sbfa-dashboard-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    text-decoration: none;
 }
 
-.auth-layout footer {
-    color: var(--news-muted);
+.sbfa-dashboard-brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border-radius: 10px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--story-book-forge-ai-accent) 0%, var(--story-book-forge-ai-violet) 100%);
+    box-shadow: 0 6px 16px rgb(79 70 229 / 35%);
+    font-size: 1rem;
+}
+
+.sbfa-dashboard-brand-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--story-book-forge-ai-header-text);
+}
+
+.sbfa-verify-banner {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgb(199 154 59 / 40%);
+    border-radius: var(--story-book-forge-ai-radius-sm);
+    background: var(--story-book-forge-ai-gold-soft);
+    color: var(--story-book-forge-ai-heading);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.sbfa-dashboard-footer {
+    background: var(--story-book-forge-ai-surface-muted);
+    border-top: 1px solid var(--story-book-forge-ai-border);
+}
+
+.sbfa-dashboard-footer-text {
+    color: var(--story-book-forge-ai-text-muted);
+}
+
+.sbfa-dashboard-footer-link {
+    color: var(--story-book-forge-ai-accent);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--story-book-forge-ai-transition);
+}
+
+.sbfa-dashboard-footer-link:hover {
+    color: var(--story-book-forge-ai-accent-hover);
 }
 </style>
