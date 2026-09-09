@@ -46,14 +46,24 @@ provide('authUser', authUser)
         <main class="flex flex-1 pt-16">
             <OffCanvasMenu mode="sidebar" :auth-user="authUser" />
 
-            <div class="flex-1 min-w-0 p-4 sm:p-6">
-                <Breadcrumbs />
+            <div class="flex-1 min-w-0">
+                <Transition mode="out-in"
+                        enter-active-class="transition duration-200 ease-out motion-reduce:transition-none"
+                        enter-from-class="opacity-0 translate-y-1.5 motion-reduce:opacity-100 motion-reduce:translate-y-0"
+                        enter-to-class="opacity-100 translate-y-0 motion-reduce:opacity-100 motion-reduce:translate-y-0"
+                        leave-active-class="transition duration-150 ease-in motion-reduce:transition-none"
+                        leave-from-class="opacity-100 translate-y-0 motion-reduce:opacity-100 motion-reduce:translate-y-0"
+                        leave-to-class="opacity-0 -translate-y-1.5 motion-reduce:opacity-100 motion-reduce:translate-y-0">
+                    <div :key="page.component" class="p-4 sm:p-6">
+                        <Breadcrumbs />
 
-                <div v-if="authUser && !authUser.email_verified_at" class="sbfa-verify-banner" role="note">
-                    Please verify your email address.
-                </div>
+                        <div v-if="authUser && !authUser.email_verified_at" class="sbfa-verify-banner" role="note">
+                            Please verify your email address.
+                        </div>
 
-                <slot />
+                        <slot />
+                    </div>
+                </Transition>
             </div>
         </main>
 
