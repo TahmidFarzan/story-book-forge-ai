@@ -35,6 +35,12 @@ const drawerId = computed(() => (isMobile.value ? 'auth-offcanvas-drawer' : 'aut
 
 const toggleBtnRef = ref(null)
 
+const handleNavigate = () => {
+    if (isMobile.value) {
+        closeOffcanvasMenu()
+    }
+}
+
 const syncBodyLock = () => {
     document.body.style.overflow = isOffcanvasOpen.value && isMobile.value ? 'hidden' : ''
 }
@@ -123,7 +129,7 @@ onBeforeUnmount(() => {
                     </div>
 
                     <div class="sbfa-offcanvas-nav">
-                        <OffCanvasMenuItems :auth-user="authUser" @navigate="closeOffcanvasMenu" />
+<OffCanvasMenuItems :auth-user="authUser" @navigate="handleNavigate" />
                     </div>
 
                     <div class="sbfa-offcanvas-foot">{{ appName }}</div>
@@ -159,7 +165,7 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="sbfa-offcanvas-nav">
-            <OffCanvasMenuItems :auth-user="authUser" @navigate="closeOffcanvasMenu" />
+            <OffCanvasMenuItems :auth-user="authUser" @navigate="handleNavigate" />
         </div>
 
         <div class="sbfa-offcanvas-foot">{{ appName }}</div>
