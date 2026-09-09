@@ -100,7 +100,7 @@ function handleRegister() {
                 />
 
                 <h1 class="auth-title">Create Account</h1>
-                <p class="auth-subtitle">Join Daily Play and start competing</p>
+                <p class="auth-subtitle">Join Story Book Forge Ai and start competing</p>
             </div>
 
             <form @submit.prevent="handleRegister" class="auth-form">
