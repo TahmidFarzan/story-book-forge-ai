@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 // Backoffice
 use App\Http\Controllers\BackOffice\MediaController;
 use App\Http\Controllers\BackOffice\UserController;
+use App\Http\Controllers\BackOffice\GenreController;
 use App\Http\Controllers\BackOffice\AiBrainController;
 use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\ActivityLogController;
@@ -80,11 +81,15 @@ Route::prefix('search')->name('search.')->group(function () {
 
     Route::middleware(['response.cache:60,public,30,etag'])->group(function () {
         Route::get('users', [SearchController::class, 'users'])->name('users');
+        Route::get('genres', [SearchController::class, 'genres'])->name('genres');
         Route::get('ai-brains', [SearchController::class, 'aiBrains'])->name('ai-brains');
 
         Route::get('medias', [SearchController::class, 'medias'])->name('medias');
 
         Route::get('user-permission/{slugOrId}', [SearchController::class, 'userPermission'])->name('user-permission');
+
+        Route::get('genre/{slugOrId}', [SearchController::class, 'genre'])->name('genre');
+        Route::get('ai-brain/{slugOrId}', [SearchController::class, 'aiBrain'])->name('ai-brain');
     });
 
     Route::middleware(['response.cache:60,private,300,etag'])->get('user/{slugOrId}', [SearchController::class, 'user'])->name('user');
@@ -101,6 +106,16 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::patch('quick-update/{slug}', [MediaController::class, 'quickUpdate'])->name('quick-update');
     });
 
+    Route::prefix('genres')->name('genres.')->group(function () {
+        Route::get('/', [GenreController::class, 'index'])->name('index');
+        Route::get('create', [GenreController::class, 'create'])->name('create');
+        Route::get('edit/{slug}', [GenreController::class, 'edit'])->name('edit');
+        Route::get('details/{slug}', [GenreController::class, 'details'])->name('details');
+
+        Route::post('save', [GenreController::class, 'save'])->name('save');
+        Route::patch('update/{slug}', [GenreController::class, 'update'])->name('update');
+        Route::delete('delete/{slug}', [GenreController::class, 'delete'])->name('delete');
+    });
 
     Route::prefix('ai-brains')->name('ai-brains.')->group(function () {
         Route::get('/', [AiBrainController::class, 'index'])->name('index');

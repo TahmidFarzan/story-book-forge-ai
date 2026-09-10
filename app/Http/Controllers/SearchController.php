@@ -57,17 +57,24 @@ class SearchController extends Controller
         );
     }
 
-    public function aiBrains(Request $request): JsonResponse
-    {
-        return response()->json(
-            $this->searchService->aiBrains($request)
-        );
-    }
-
     public function users(Request $request): JsonResponse
     {
         return response()->json(
             $this->searchService->users($request)
+        );
+    }
+
+    public function genres(Request $request): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->genres($request)
+        );
+    }
+
+    public function aiBrains(Request $request): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->aiBrains($request)
         );
     }
 
@@ -96,6 +103,20 @@ class SearchController extends Controller
     {
         return response()->json(
             $this->searchService->userPermission($slugOrId)
+        );
+    }
+
+    public function genre(string | int $slugOrId): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->genre($slugOrId)
+        );
+    }
+
+    public function aiBrain(string | int $slugOrId): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->aiBrain($slugOrId)
         );
     }
 }

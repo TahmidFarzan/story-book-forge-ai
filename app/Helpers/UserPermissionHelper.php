@@ -16,6 +16,7 @@ class UserPermissionHelper
     public const ACCESS_FORCE_DELETE = 'Force delete';
 
     public const MODULE_USER  = 'User';
+    public const MODULE_GENRE  = 'Genre';
     public const MODULE_AI_BRAIN = 'Ai Brain';
 
     public static function modules(): Collection

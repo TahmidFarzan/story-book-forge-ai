@@ -6,6 +6,7 @@ use App\Helpers\ActivityLogHelper;
 use App\Helpers\DatatableHelper;
 use App\Helpers\UserHelper;
 use App\Models\User;
+use App\Models\Genre;
 use App\Models\AiBrain;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
@@ -170,37 +171,7 @@ class SearchService
         ];
     }
 
-    public function aiBrains(Request $request): array
-    {
-        $query = AiBrain::query();
-
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('brief', 'like', "%{$search}%");
-            });
-        }
-
-        $records = $query
-            ->orderByDesc('id')
-            ->paginate($request->input('per_page', 25));
-
-        $items = $records->map(fn($aiBrain) => [
-            'id'   => $aiBrain->id,
-            'name' => $aiBrain->name,
-            'slug' => $aiBrain->slug,
-        ]);
-
-        return [
-            'items'        => $items,
-            'total'        => $records->total(),
-            'current_page' => $records->currentPage(),
-            'last_page'    => $records->lastPage(),
-        ];
-    }
-
-    public function users(Request $request): array
+        public function users(Request $request): array
     {
         $query = User::query()
             ->whereNull('deleted_at');
@@ -226,6 +197,71 @@ class SearchService
             'name' => $user->name,
             'slug' => $user->slug,
 
+        ]);
+
+        return [
+            'items'        => $items,
+            'total'        => $records->total(),
+            'current_page' => $records->currentPage(),
+            'last_page'    => $records->lastPage(),
+        ];
+    }
+
+    public function genres(Request $request): array
+    {
+        $query = Genre::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('except_id')) {
+            $query->whereNot("id", $request->input('except_id'));
+        }
+
+        $records = $query
+            ->orderByDesc('id')
+            ->paginate($request->input('per_page', 25));
+
+        $items = $records->map(fn($user) => [
+            'id'   => $user->id,
+            'name' => $user->name,
+            'slug' => $user->slug,
+
+        ]);
+
+        return [
+            'items'        => $items,
+            'total'        => $records->total(),
+            'current_page' => $records->currentPage(),
+            'last_page'    => $records->lastPage(),
+        ];
+    }
+
+    public function aiBrains(Request $request): array
+    {
+        $query = AiBrain::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('brief', 'like', "%{$search}%");
+            });
+        }
+
+        $records = $query
+            ->orderByDesc('id')
+            ->paginate($request->input('per_page', 25));
+
+        $items = $records->map(fn($aiBrain) => [
+            'id'   => $aiBrain->id,
+            'name' => $aiBrain->name,
+            'slug' => $aiBrain->slug,
         ]);
 
         return [
@@ -348,5 +384,15 @@ class SearchService
     public function userPermission(int | string $slugOrId): UserPermission
     {
         return UserPermission::where('id', $slugOrId)->firstOrFail();
+    }
+
+    public function genre(int | string $slugOrId): Genre
+    {
+        return Genre::where('id', $slugOrId)->firstOrFail();
+    }
+
+    public function aiBrain(int | string $slugOrId): AiBrain
+    {
+        return AiBrain::where('id', $slugOrId)->firstOrFail();
     }
 }

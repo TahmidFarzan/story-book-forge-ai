@@ -46,11 +46,13 @@ const page = usePage()
 const subMenus = ref({
     UserManagement: false,
     AiManagement: false,
+    StoryBookManagement: false,
 })
 
 const routeMap = {
     UserManagement: ['/back-office/users/*'],
     AiManagement: ['/back-office/ai-brains/*'],
+    StoryBookManagement: ['/back-office/genres/*'],
 }
 
 const canAccessUserComputed = computed(() => {
@@ -59,6 +61,10 @@ const canAccessUserComputed = computed(() => {
 
 const canAccessAiBrainComputed = computed(() => {
     return canAccessAiBrain(authUser);
+});
+
+const canAccessStoryBookComputed = computed(() => {
+    return canAccessStoryBook(authUser);
 });
 
 const toggleShowSubMenu = (key) => {
@@ -112,6 +118,30 @@ const isSubMenuVisible = (key) => {
             Media
         </a>
 
+        <button @click="toggleShowSubMenu('StoryBookManagement')" class="sbfa-nav-item">
+            <span class="flex items-center gap-2">
+                <FontAwesomeIcon icon="book" />
+                Story Book
+            </span>
+
+            <FontAwesomeIcon :icon="isSubMenuVisible('StoryBookManagement') ? 'chevron-up' : 'chevron-down'" />
+        </button>
+
+        <Transition
+            enter-active-class="transition-all duration-300 ease-out" enter-from-class="opacity-0 max-h-0"
+            enter-to-class="opacity-100 max-h-40" leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="opacity-100 max-h-40" leave-to-class="opacity-0 max-h-0">
+            <div v-if="isSubMenuVisible('StoryBookManagement')" class="ml-4 flex flex-col space-y-1 overflow-hidden">
+
+                <a v-if="canAccessStoryBookComputed" :href="route('back-office.ai-brains.index')" class="sbfa-nav-item"
+                    :class="isAnyCurrentPage(routeMap.StoryBookManagement) ? 'is-active' : ''" @click="handleNavigate">
+                    <FontAwesomeIcon icon="brain" />
+                    Genres
+                </a>
+
+            </div>
+        </Transition>
+
         <button @click="toggleShowSubMenu('AiAttributes')" class="sbfa-nav-item">
             <span class="flex items-center gap-2">
                 <FontAwesomeIcon icon="brain" />
@@ -125,9 +155,9 @@ const isSubMenuVisible = (key) => {
             enter-active-class="transition-all duration-300 ease-out" enter-from-class="opacity-0 max-h-0"
             enter-to-class="opacity-100 max-h-40" leave-active-class="transition-all duration-200 ease-in"
             leave-from-class="opacity-100 max-h-40" leave-to-class="opacity-0 max-h-0">
-            <div v-if="isSubMenuVisible('AiAttributes')" class="ml-4 flex flex-col space-y-1 overflow-hidden">
+            <div v-if="isSubMenuVisible('AiManagement')" class="ml-4 flex flex-col space-y-1 overflow-hidden">
 
-                <a :href="route('back-office.ai-brains.index')" class="sbfa-nav-item"
+                <a v-if="canAccessAiBrainComputed" :href="route('back-office.ai-brains.index')" class="sbfa-nav-item"
                     :class="isAnyCurrentPage(routeMap.AiManagement) ? 'is-active' : ''" @click="handleNavigate">
                     <FontAwesomeIcon icon="brain" />
                     Ai Brain
