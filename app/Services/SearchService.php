@@ -7,6 +7,7 @@ use App\Helpers\DatatableHelper;
 use App\Helpers\UserHelper;
 use App\Models\User;
 use App\Models\Genre;
+use App\Models\Audience;
 use App\Models\AiBrain;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
@@ -242,6 +243,41 @@ class SearchService
         ];
     }
 
+    public function audiences(Request $request): array
+    {
+        $query = Audience::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('brief', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('except_id')) {
+            $query->whereNot("id", $request->input('except_id'));
+        }
+
+        $records = $query
+            ->orderByDesc('id')
+            ->paginate($request->input('per_page', 25));
+
+        $items = $records->map(fn($audience) => [
+            'id'   => $audience->id,
+            'name' => $audience->name,
+            'slug' => $audience->slug,
+
+        ]);
+
+        return [
+            'items'        => $items,
+            'total'        => $records->total(),
+            'current_page' => $records->currentPage(),
+            'last_page'    => $records->lastPage(),
+        ];
+    }
+
     public function aiBrains(Request $request): array
     {
         $query = AiBrain::query();
@@ -389,6 +425,11 @@ class SearchService
     public function genre(int | string $slugOrId): Genre
     {
         return Genre::where('id', $slugOrId)->firstOrFail();
+    }
+
+    public function audience(int | string $slugOrId): Audience
+    {
+        return Audience::where('id', $slugOrId)->firstOrFail();
     }
 
     public function aiBrain(int | string $slugOrId): AiBrain

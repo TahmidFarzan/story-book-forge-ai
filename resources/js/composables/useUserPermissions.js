@@ -7,6 +7,7 @@ const { clearByPrefix } = useApiCache()
 export const groups = {
     User: 'User',
     Genre: 'Genre',
+    Audience: 'Audience',
     AiBrain: 'Ai Brain',
 }
 
@@ -111,6 +112,12 @@ export const canViewGenre = async (authUser, genre) => hasPermission(authUser, g
 export const canCreateGenre = async (authUser, genre) => hasPermission(authUser, groups.Genre, access.Create)
 export const canUpdateGenre = async (authUser, genre) => hasPermission(authUser, groups.Genre, access.Update)
 export const canDeleteGenre = async (authUser, genre) => hasPermission(authUser, groups.Genre, access.Delete)
+
+export const canAccessAudience = async (authUser) => hasPermission(authUser, groups.Audience, access.View)
+export const canViewAudience = async (authUser, audience) => hasPermission(authUser, groups.Audience, access.ViewAny)
+export const canCreateAudience = async (authUser, audience) => hasPermission(authUser, groups.Audience, access.Create)
+export const canUpdateAudience = async (authUser, audience) => hasPermission(authUser, groups.Audience, access.Update)
+export const canDeleteAudience = async (authUser, audience) => hasPermission(authUser, groups.Audience, access.Delete)
 
 export const canAccessAiBrain = async (authUser) => hasPermission(authUser, groups.AiBrain, access.View)
 export const canViewAiBrain = async (authUser, aiBrain) => hasPermission(authUser, groups.AiBrain, access.ViewAny)

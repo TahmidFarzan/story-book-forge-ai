@@ -13,6 +13,8 @@ import {
     faGauge,
     faPhotoFilm,
     faBrain,
+    faBookOpen,
+    faStar,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -22,11 +24,15 @@ library.add(
     faChevronUp,
     faGauge,
     faPhotoFilm,
-    faBrain
+    faBrain,
+    faBookOpen,
+    faStar
 )
 
 import {
     canAccessUser,
+    canAccessGenre,
+    canAccessAudience,
     canAccessAiBrain,
 } from '@/composables/useUserPermissions'
 
@@ -52,19 +58,23 @@ const subMenus = ref({
 const routeMap = {
     UserManagement: ['/back-office/users/*'],
     AiManagement: ['/back-office/ai-brains/*'],
-    StoryBookManagement: ['/back-office/genres/*'],
+    StoryBookManagement: ['/back-office/genres/*', '/back-office/audiences/*'],
 }
 
 const canAccessUserComputed = computed(() => {
     return canAccessUser(authUser)
 })
 
-const canAccessAiBrainComputed = computed(() => {
-    return canAccessAiBrain(authUser);
+const canAccessGenreComputed = computed(() => {
+    return canAccessGenre(authUser);
 });
 
-const canAccessStoryBookComputed = computed(() => {
-    return canAccessStoryBook(authUser);
+const canAccessAudienceComputed = computed(() => {
+    return canAccessAudience(authUser);
+});
+
+const canAccessAiBrainComputed = computed(() => {
+    return canAccessAiBrain(authUser);
 });
 
 const toggleShowSubMenu = (key) => {
@@ -133,10 +143,16 @@ const isSubMenuVisible = (key) => {
             leave-from-class="opacity-100 max-h-40" leave-to-class="opacity-0 max-h-0">
             <div v-if="isSubMenuVisible('StoryBookManagement')" class="ml-4 flex flex-col space-y-1 overflow-hidden">
 
-                <a v-if="canAccessStoryBookComputed" :href="route('back-office.ai-brains.index')" class="sbfa-nav-item"
-                    :class="isAnyCurrentPage(routeMap.StoryBookManagement) ? 'is-active' : ''" @click="handleNavigate">
-                    <FontAwesomeIcon icon="brain" />
+                <a v-if="canAccessGenreComputed" :href="route('back-office.genres.index')" class="sbfa-nav-item"
+                    :class="isCurrentPage('/back-office/genres/*') ? 'is-active' : ''" @click="handleNavigate">
+                    <FontAwesomeIcon icon="star" />
                     Genres
+                </a>
+
+                <a v-if="canAccessAudienceComputed" :href="route('back-office.audiences.index')" class="sbfa-nav-item"
+                    :class="isCurrentPage('/back-office/audiences/*') ? 'is-active' : ''" @click="handleNavigate">
+                    <FontAwesomeIcon icon="users" />
+                    Audiences
                 </a>
 
             </div>

@@ -71,6 +71,13 @@ class SearchController extends Controller
         );
     }
 
+    public function audiences(Request $request): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->audiences($request)
+        );
+    }
+
     public function aiBrains(Request $request): JsonResponse
     {
         return response()->json(
@@ -110,6 +117,13 @@ class SearchController extends Controller
     {
         return response()->json(
             $this->searchService->genre($slugOrId)
+        );
+    }
+
+    public function audience(string | int $slugOrId): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->audience($slugOrId)
         );
     }
 

@@ -151,6 +151,29 @@ class SeederHelper
         ]);
     }
 
+    public static function audiences()
+    {
+        return collect([
+            (object) [
+                'name'               => 'Children',
+                'brief'              => 'Represents story books primarily intended for children.',
+                'prompt_instruction' => 'Focus on creating age-appropriate stories for young readers with clear, simple language, engaging characters, imagination, and meaningful emotional experiences. Planning should consider the target age group, reading ability, suitable themes, simple conflicts, curiosity, learning opportunities, and emotional understanding. Character planning should consider memorable child-friendly characters, relatable experiences, imagination, friendships, and positive growth. Story structure should maintain an engaging pace, understandable challenges, creative situations, and a satisfying resolution that provides emotional value without becoming overly complex. When combined with genres, integrate these child-focused and age-appropriate elements with the requirements of the selected genres while avoiding duplicate planning elements.',
+            ],
+
+            (object) [
+                'name'               => 'Young Adult',
+                'brief'              => 'Represents story books primarily intended for young adult readers.',
+                'prompt_instruction' => 'Focus on exploring identity, personal growth, relationships, independence, and challenges connected to adolescence or early adulthood. Planning should consider the characters’ stage of life, personal struggles, social pressures, friendships, family relationships, and questions of belonging and self-discovery. Character planning should create relatable protagonists with authentic emotions, weaknesses, dreams, and evolving understanding of themselves and the world. Story structure should consider meaningful challenges, emotional growth, consequences of choices, and a resolution that reflects earned maturity and personal development. When combined with genres, integrate these coming-of-age and identity-development elements with the requirements of the selected genres while avoiding duplicate planning elements.',
+            ],
+
+            (object) [
+                'name'               => 'Adult',
+                'brief'              => 'Represents story books intended for adult readers.',
+                'prompt_instruction' => 'Focus on creating nuanced narratives with sophisticated language, complex themes, and deeper emotional and intellectual engagement suitable for adult readers. Planning should consider mature subject matter, socially and personally complex conflicts, layered morality, realistic relationships, and themes that assume adult life experience. Character planning should create fully developed protagonists and antagonists with believable motivations, contradictions, personal histories, and complicated relationships. Story structure should support complex pacing, subplots, moral ambiguity, meaningful ambiguity, and resolutions that respect the intelligence of the reader. When combined with genres, integrate these mature narrative and thematic elements with the requirements of the selected genres while avoiding duplicate planning elements.',
+            ],
+        ]);
+    }
+
     public static function aiBrains()
     {
         return collect([
