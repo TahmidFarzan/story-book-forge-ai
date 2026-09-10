@@ -41,6 +41,7 @@ const paginationOnly = computed(() => {
 const filterForm = useForm({
     per_page: null,
     created_by_id: null,
+    genre_id: '',
     date: '',
     search: '',
 })
@@ -90,6 +91,7 @@ onMounted(async () => {
 
     filterForm.per_page = urlParams.get('per_page') || ''
     filterForm.date = urlParams.get('date') || ''
+    filterForm.genre_id = urlParams.get('genre_id') || ''
     filterForm.search = urlParams.get('search') || ''
 
     await nextTick()
@@ -131,6 +133,10 @@ onMounted(async () => {
                 <InfiniteScrollApiSelect :form="filterForm" fieldName="created_by_id"
                     :selectedItem="filterForm.created_by_id" :apiUrl="route('search.users')" :multiple="false"
                     placeholder="Created By" />
+
+                <InfiniteScrollApiSelect :form="filterForm" fieldName="genre_id"
+                    :selectedItem="filterForm.genre_id" :apiUrl="route('search.genres')" :multiple="false"
+                    placeholder="Genre" />
 
                 <input type="date" v-model="filterForm.date"
                     class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />

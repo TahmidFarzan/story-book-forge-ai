@@ -18,6 +18,8 @@ class AudienceRequest extends FormRequest
             'name' => ['required', 'string', 'max:200', Rule::unique('audiences')->ignore($this->route('slug'), 'slug')],
             'brief' => ['nullable'],
             'prompt_instruction' => ['nullable', 'string'],
+            'genre_ids' => ['nullable', 'array'],
+            'genre_ids.*' => ['integer', 'distinct', Rule::exists('genres', 'id')],
         ];
     }
 

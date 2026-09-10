@@ -19,6 +19,8 @@ class GenreService
     public function find(string $slug): Genre
     {
         return Genre::with([
+            'audiences',
+
             'createdBy',
 
             'activityLogs' => fn($query) => $query->latest()->limit(10),
@@ -59,6 +61,13 @@ class GenreService
             $query->whereDate('created_at', '<=', $date);
         }
 
+        if ($request->filled('audience_id')) {
+            $query->whereHas(
+                'audiences',
+                fn($query) => $query->where('audiences.id', $request->input('audience_id'))
+            );
+        }
+
         if ($request->filled('search')) {
             $search     = $request->input('search');
             $likeSearch = "%{$search}%";
@@ -88,6 +97,10 @@ class GenreService
                 $genre->created_by_id      = $isNew ? Auth::id() : $genre->created_by_id;
 
                 $genre->save();
+
+                if ($request->has('audience_ids')) {
+                    $genre->audiences()->sync((array) $request->input('audience_ids', []));
+                }
             });
 
             return [

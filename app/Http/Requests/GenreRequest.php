@@ -18,6 +18,8 @@ class GenreRequest extends FormRequest
             'name' => ['required', 'string', 'max:200', Rule::unique('genres')->ignore($this->route('slug'), 'slug')],
             'brief' => ['nullable'],
             'prompt_instruction' => ['nullable', 'string'],
+            'audience_ids' => ['nullable', 'array'],
+            'audience_ids.*' => ['integer', 'distinct', Rule::exists('audiences', 'id')],
         ];
     }
 

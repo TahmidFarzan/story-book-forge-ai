@@ -224,6 +224,13 @@ class SearchService
             $query->whereNot("id", $request->input('except_id'));
         }
 
+        if ($request->filled('audience_id')) {
+            $query->whereHas(
+                'audiences',
+                fn($query) => $query->where('audiences.id', $request->input('audience_id'))
+            );
+        }
+
         $records = $query
             ->orderByDesc('id')
             ->paginate($request->input('per_page', 25));
@@ -253,6 +260,13 @@ class SearchService
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('brief', 'like', "%{$search}%");
             });
+        }
+
+        if ($request->filled('genre_id')) {
+            $query->whereHas(
+                'genres',
+                fn($query) => $query->where('genres.id', $request->input('genre_id'))
+            );
         }
 
         if ($request->filled('except_id')) {

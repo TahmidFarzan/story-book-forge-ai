@@ -1,7 +1,8 @@
 <script setup>
 import Layout from '@/pages/layouts/AuthLayout.vue'
+import InfiniteScrollApiSelect from '@/components/common/multi-select/InfiniteScrollApiSelect.vue'
 
-import { computed, onMounted, nextTick } from 'vue'
+import { computed, ref, onMounted, nextTick } from 'vue'
 import { Head, useForm, router as intertiaJsRoute } from '@inertiajs/vue3'
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
@@ -28,7 +29,15 @@ const saveForm = useForm({
     name: audience?.name || null,
     brief: audience?.brief || null,
     prompt_instruction: audience?.prompt_instruction || null,
+    genre_ids: [],
 })
+
+const selectedGenres = ref(
+    (audience?.genres || []).map((genre) => ({
+        id: genre.id,
+        name: genre.name,
+    }))
+)
 
 function validateForm() {
     saveForm.clearErrors()
@@ -53,7 +62,6 @@ function handleSave() {
     const requestConfig = {
         preserveScroll: true,
         preserveState: true,
-        forceFormData: true,
         onSuccess: () => {
             saveForm.reset()
             saveForm.clearErrors()
@@ -135,6 +143,30 @@ onMounted(async () => {
                             </p>
                         </div>
 
+                    </div>
+                </div>
+
+                <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                    <h3 class="text-base font-semibold">
+                        Genres
+                    </h3>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">
+                            Genre
+                        </label>
+
+                        <InfiniteScrollApiSelect
+                            :form="saveForm"
+                            fieldName="genre_ids"
+                            :selectedItem="selectedGenres"
+                            :apiUrl="route('search.genres')"
+                            :multiple="true"
+                            placeholder="Select Genres" />
+
+                        <p v-if="saveForm.errors.genre_ids" class="text-red-500 text-sm mt-1">
+                            {{ saveForm.errors.genre_ids }}
+                        </p>
                     </div>
                 </div>
 

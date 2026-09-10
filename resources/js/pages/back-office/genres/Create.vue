@@ -1,8 +1,9 @@
 
 <script setup>
 import Layout from '@/pages/layouts/AuthLayout.vue'
+import InfiniteScrollApiSelect from '@/components/common/multi-select/InfiniteScrollApiSelect.vue'
 
-import { computed, onMounted, nextTick } from 'vue'
+import { computed, ref, onMounted, nextTick } from 'vue'
 import { Head, useForm, router as intertiaJsRoute } from '@inertiajs/vue3'
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
@@ -29,7 +30,15 @@ const saveForm = useForm({
     name: genre?.name || null,
     brief: genre?.brief || null,
     prompt_instruction: genre?.prompt_instruction || null,
+    audience_ids: [],
 })
+
+const selectedAudiences = ref(
+    (genre?.audiences || []).map((audience) => ({
+        id: audience.id,
+        name: audience.name,
+    }))
+)
 
 function validateForm() {
     saveForm.clearErrors()
@@ -54,7 +63,6 @@ function handleSave() {
     const requestConfig = {
         preserveScroll: true,
         preserveState: true,
-        forceFormData: true,
         onSuccess: () => {
             saveForm.reset()
             saveForm.clearErrors()
@@ -136,6 +144,30 @@ onMounted(async () => {
                             </p>
                         </div>
 
+                    </div>
+                </div>
+
+                <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                    <h3 class="text-base font-semibold">
+                        Audiences
+                    </h3>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">
+                            Audience
+                        </label>
+
+                        <InfiniteScrollApiSelect
+                            :form="saveForm"
+                            fieldName="audience_ids"
+                            :selectedItem="selectedAudiences"
+                            :apiUrl="route('search.audiences')"
+                            :multiple="true"
+                            placeholder="Select Audiences" />
+
+                        <p v-if="saveForm.errors.audience_ids" class="text-red-500 text-sm mt-1">
+                            {{ saveForm.errors.audience_ids }}
+                        </p>
                     </div>
                 </div>
 

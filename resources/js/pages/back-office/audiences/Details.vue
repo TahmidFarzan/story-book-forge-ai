@@ -123,6 +123,25 @@ onMounted(async () => {
 
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4">
             <h3 class="text-base font-semibold border-b pb-2">
+                Genres
+            </h3>
+
+            <div class="space-y-2">
+                <div v-if="audience?.genres?.length" class="flex flex-wrap gap-2">
+                    <span v-for="genre in audience.genres" :key="genre.id"
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                        {{ genre.name }}
+                    </span>
+                </div>
+
+                <div v-else class="border border-gray-200 rounded-lg p-4 text-sm text-gray-500">
+                    No genres assigned.
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4">
+            <h3 class="text-base font-semibold border-b pb-2">
                 System Information
             </h3>
 

@@ -43,13 +43,17 @@ class DeleteAudienceRelationsJob implements ShouldQueue, ShouldBeUnique
     {
         $audience = Audience::find($this->audienceId);
 
-        if ($audience && ($audience->activityLogs()->exists())) {
+        if ($audience && ($audience->activityLogs()->exists() || $audience->genres()->exists())) {
 
             try {
 
                 DB::transaction(function () use ($audience) {
                     if ($audience->activityLogs()->exists()) {
                         $audience->activityLogs()->delete();
+                    }
+
+                    if ($audience->genres()->exists()) {
+                        $audience->genres()->detach();
                     }
                 });
 

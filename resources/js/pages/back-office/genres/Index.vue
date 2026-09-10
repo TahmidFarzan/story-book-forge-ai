@@ -43,6 +43,7 @@ const filterForm = useForm({
     created_by_id: null,
     parent_id: '',
     language_id: '',
+    audience_id: '',
     date: '',
     search: '',
 })
@@ -92,6 +93,7 @@ onMounted(async () => {
 
     filterForm.per_page = urlParams.get('per_page') || ''
     filterForm.date = urlParams.get('date') || ''
+    filterForm.audience_id = urlParams.get('audience_id') || ''
     filterForm.search = urlParams.get('search') || ''
 
     await nextTick()
@@ -133,6 +135,10 @@ onMounted(async () => {
                 <InfiniteScrollApiSelect :form="filterForm" fieldName="created_by_id"
                     :selectedItem="filterForm.created_by_id" :apiUrl="route('search.users')" :multiple="false"
                     placeholder="Created By" />
+
+                <InfiniteScrollApiSelect :form="filterForm" fieldName="audience_id"
+                    :selectedItem="filterForm.audience_id" :apiUrl="route('search.audiences')" :multiple="false"
+                    placeholder="Audience" />
 
                 <input type="date" v-model="filterForm.date"
                     class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
