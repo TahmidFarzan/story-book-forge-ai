@@ -16,6 +16,7 @@ import {
     faBookOpen,
     faStar,
     faLanguage,
+    faLayerGroup,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -28,7 +29,8 @@ library.add(
     faBrain,
     faBookOpen,
     faStar,
-    faLanguage
+    faLanguage,
+    faLayerGroup
 )
 
 import {
@@ -36,6 +38,7 @@ import {
     canAccessGenre,
     canAccessAudience,
     canAccessLanguage,
+    canAccessStoryType,
     canAccessAiBrain,
 } from '@/composables/useUserPermissions'
 
@@ -61,7 +64,7 @@ const subMenus = ref({
 const routeMap = {
     UserManagement: ['/back-office/users/*'],
     AiManagement: ['/back-office/ai-brains/*'],
-    StoryBookManagement: ['/back-office/genres/*', '/back-office/audiences/*', '/back-office/languages/*'],
+    StoryBookManagement: ['/back-office/genres/*', '/back-office/audiences/*', '/back-office/languages/*', '/back-office/story-types/*'],
 }
 
 const canAccessUserComputed = computed(() => {
@@ -78,6 +81,10 @@ const canAccessAudienceComputed = computed(() => {
 
 const canAccessLanguageComputed = computed(() => {
     return canAccessLanguage(authUser);
+});
+
+const canAccessStoryTypeComputed = computed(() => {
+    return canAccessStoryType(authUser);
 });
 
 const canAccessAiBrainComputed = computed(() => {
@@ -166,6 +173,12 @@ const isSubMenuVisible = (key) => {
                     :class="isCurrentPage('/back-office/languages/*') ? 'is-active' : ''" @click="handleNavigate">
                     <FontAwesomeIcon icon="language" />
                     Languages
+                </a>
+
+                <a v-if="canAccessStoryTypeComputed" :href="route('back-office.story-types.index')" class="sbfa-nav-item"
+                    :class="isCurrentPage('/back-office/story-types/*') ? 'is-active' : ''" @click="handleNavigate">
+                    <FontAwesomeIcon icon="layer-group" />
+                    Story Types
                 </a>
 
             </div>

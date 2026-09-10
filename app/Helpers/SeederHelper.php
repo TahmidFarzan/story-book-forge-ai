@@ -294,6 +294,30 @@ class SeederHelper
         ]);
     }
 
+    public static function storyTypes()
+    {
+        return collect([
+
+            (object) [
+                'name'               => 'Short',
+                'brief'              => 'Short-length stories with a compact and focused narrative structure',
+                'prompt_instruction' => 'Focus on creating a short story with a compact, tightly structured narrative that remains complete and satisfying within a shorter length. The story must contain at least 32 pages and must never be shorter than this minimum. Structure the opening to establish the protagonist, the central goal, and the main conflict quickly. Develop the middle with focused and efficient progression where every page advances the narrative. Provide a clear and satisfying resolution at the end. Keep the plot tight, avoid unnecessary subplots, and do not use filler or repetition to reach the required length. The minimum requirement of 32 pages applies regardless of the genre, audience, or any other instruction combined with this one.',
+            ],
+
+            (object) [
+                'name'               => 'Medium',
+                'brief'              => 'Medium-length stories with a balanced structure and deeper character development',
+                'prompt_instruction' => 'Focus on creating a medium-length story with a balanced narrative structure that supports deeper character development and a more layered plot. The story must contain at least 64 pages and must never be shorter than this minimum. Begin with a clear opening that establishes the central characters, goals, world, and conflict. Develop the middle across multiple stages with subplots, relationships, discoveries, and escalating challenges. End with a resolution that addresses the main conflict and provides a satisfying conclusion. Ensure pacing supports the extended length on every page without filler or repetition. The minimum requirement of 64 pages applies regardless of the genre, audience, or any other instruction combined with this one.',
+            ],
+
+            (object) [
+                'name'               => 'Long',
+                'brief'              => 'Long-length stories with expansive plots and extensive character arcs',
+                'prompt_instruction' => 'Focus on creating a long story with an expansive narrative that supports extensive character arcs, complex relationships, multiple subplots, and a richly developed world. The story must contain at least 128 pages and must never be shorter than this minimum. Structure the story across clearly defined acts or major sections. Establish the setting, characters, and central conflict in the opening. Develop layered character growth and interconnected subplots with significant turning points in the middle. Build sustained rising tension toward a comprehensive climax. Conclude with a thorough resolution that addresses every major narrative thread. Each page must contribute meaningful content without filler or repetition. The minimum requirement of 128 pages applies regardless of the genre, audience, or any other instruction combined with this one.',
+            ],
+        ]);
+    }
+
     public static function aiBrains()
     {
         return collect([

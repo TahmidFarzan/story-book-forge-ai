@@ -1,0 +1,179 @@
+<script setup>
+import Layout from '@/pages/layouts/AuthLayout.vue'
+
+import { computed, onMounted, nextTick } from 'vue'
+import { Head, useForm, router as intertiaJsRoute } from '@inertiajs/vue3'
+
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
+import { library as FontAwesomeLibrary } from '@fortawesome/fontawesome-svg-core'
+import { faSave, faEye, faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons'
+
+FontAwesomeLibrary.add(faSave, faEye, faEyeSlash, faSpinner)
+
+defineOptions({ layout: Layout })
+
+const { storyType } = defineProps({
+    storyType: Object,
+})
+
+const isUpdate = computed(() => !!storyType?.slug)
+
+const pageTitle = computed(() => {
+    return isUpdate.value
+        ? `Edit ${storyType?.name}`
+        : 'Create Story Type'
+})
+
+const saveForm = useForm({
+    name: storyType?.name || null,
+    brief: storyType?.brief || null,
+    prompt_instruction: storyType?.prompt_instruction || null,
+})
+
+function validateForm() {
+    saveForm.clearErrors()
+
+    let valid = true
+
+    if (!saveForm.name) {
+        saveForm.setError('name', 'Name is required')
+        valid = false
+    }
+
+    if (!saveForm.prompt_instruction) {
+        saveForm.setError('prompt_instruction', 'Prompt instruction is required')
+        valid = false
+    }
+
+    return valid
+}
+
+function handleSave() {
+    if (saveForm.processing) return
+
+    if (!validateForm()) return
+
+    saveForm.processing = true
+
+    const requestConfig = {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => {
+            saveForm.reset()
+            saveForm.clearErrors()
+        },
+        onError: (errors) => {
+            saveForm.clearErrors()
+            saveForm.setError(errors)
+        },
+        onFinish: () => {
+            saveForm.processing = false
+        }
+    }
+
+    if (isUpdate.value) {
+        intertiaJsRoute.post(
+            route('back-office.story-types.update', { slug: storyType?.slug }),
+            { ...saveForm.data(), _method: 'patch' },
+            requestConfig
+        )
+    } else {
+        saveForm.post(route('back-office.story-types.save'), requestConfig)
+    }
+}
+
+onMounted(async () => {
+    await nextTick()
+
+    window.dispatchEvent(
+        new CustomEvent('set-breadcrumb', {
+            detail: [
+                { text: 'Story Types', href: route('back-office.story-types.index') },
+                { text: pageTitle.value, active: true }
+            ],
+        })
+    )
+})
+</script>
+
+<template>
+    <Head :title="pageTitle" />
+
+    <div class="w-full">
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6">
+
+            <form @submit.prevent="handleSave" class="space-y-6">
+
+                <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                    <h3 class="text-base font-semibold">
+                        Basic Information
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        <div>
+                            <label class="block text-sm font-medium mb-1">
+                                Name <span class="text-red-500">*</span>
+                            </label>
+
+                            <input v-model="saveForm.name" placeholder="Enter story type name"
+                                class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                :class="saveForm.errors.name ? 'border-red-500' : 'border-gray-300'" />
+
+                            <p v-if="saveForm.errors.name" class="text-red-500 text-sm mt-1">
+                                {{ saveForm.errors.name }}
+                            </p>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium mb-1">
+                                Brief
+                            </label>
+
+                            <textarea v-model="saveForm.brief" rows="4" placeholder="Enter brief description"
+                                class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                :class="saveForm.errors.brief ? 'border-red-500' : 'border-gray-300'"></textarea>
+
+                            <p v-if="saveForm.errors.brief" class="text-red-500 text-sm mt-1">
+                                {{ saveForm.errors.brief }}
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                    <h3 class="text-base font-semibold">
+                        Prompt Instruction
+                    </h3>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">
+                            Master AI Configuration Instruction <span class="text-red-500">*</span>
+                        </label>
+
+                        <textarea v-model="saveForm.prompt_instruction" rows="8"
+                            placeholder="Enter the master instruction for AI story generation for this story type. This controls the required story length in pages and the story-length specific generation rules."
+                            class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            :class="saveForm.errors.prompt_instruction ? 'border-red-500' : 'border-gray-300'"></textarea>
+
+                        <p v-if="saveForm.errors.prompt_instruction" class="text-red-500 text-sm mt-1">
+                            {{ saveForm.errors.prompt_instruction }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button type="submit" :disabled="saveForm.processing"
+                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed">
+                        <FontAwesomeIcon v-if="saveForm.processing" icon="spinner" spin />
+                        <FontAwesomeIcon v-else icon="save" />
+                        {{ saveForm.processing ? 'Saving...' : 'Save' }}
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</template>

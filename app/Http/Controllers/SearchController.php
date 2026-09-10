@@ -92,6 +92,13 @@ class SearchController extends Controller
         );
     }
 
+    public function storyTypes(Request $request): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->storyTypes($request)
+        );
+    }
+
     public function userPermissions(Request $request): JsonResponse
     {
         return response()->json(
@@ -145,6 +152,13 @@ class SearchController extends Controller
     {
         return response()->json(
             $this->searchService->language($slugOrId)
+        );
+    }
+
+    public function storyType(string | int $slugOrId): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->storyType($slugOrId)
         );
     }
 }
