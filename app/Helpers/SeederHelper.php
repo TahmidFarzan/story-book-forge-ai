@@ -218,6 +218,66 @@ class SeederHelper
         ]);
     }
 
+    public static function storyTypes()
+    {
+        return collect([
+
+            (object) [
+                'name'               => 'Short',
+                'brief'              => 'Short-length stories with a compact and focused narrative structure',
+                'prompt_instruction' => 'Develop the story with a compact but sufficiently complete narrative scope to produce at least 32 pages. The story must have enough meaningful plot development, character development, events, dialogue, descriptions, conflict progression, discoveries, and resolution to naturally support a minimum of 32 pages. Maintain a focused narrative with a clear beginning, developed middle, climax, and resolution. Do not make the story artificially short or compress important narrative development merely to keep it concise. At the same time, do not use repetition, filler, artificial padding, or meaningless content solely to increase the page count. The minimum 32-page requirement applies to the completed story regardless of the selected audience, genre, or other story instructions.',
+            ],
+
+            (object) [
+                'name'               => 'Medium',
+                'brief'              => 'Medium-length stories with a balanced structure and deeper character development',
+                'prompt_instruction' => 'Develop the story with a sufficiently broad and balanced narrative scope to produce at least 64 pages. The story must have enough meaningful plot development, character arcs, relationships, events, dialogue, descriptions, discoveries, complications, turning points, escalating conflict, climax, and resolution to naturally support a minimum of 64 pages. Allow important characters, relationships, conflicts, and story events enough room to develop rather than compressing the narrative. Use meaningful subplots and additional story development when they strengthen the main narrative. Do not use repetition, filler, artificial padding, or meaningless content solely to increase the page count. The minimum 64-page requirement applies to the completed story regardless of the selected audience, genre, or other story instructions.',
+            ],
+
+            (object) [
+                'name'               => 'Long',
+                'brief'              => 'Long-length stories with expansive plots and extensive character arcs',
+                'prompt_instruction' => 'Develop the story with an expansive narrative scope sufficient to produce at least 128 pages. The story must have enough meaningful plot development, extensive character arcs, complex relationships, interconnected conflicts, major discoveries, world-building, meaningful subplots, escalating challenges, turning points, climax, and resolution to naturally support a minimum of 128 pages. Give the major characters, relationships, conflicts, settings, subplots, and narrative events sufficient development throughout the story. Structure the narrative across multiple meaningful stages or major sections so the story can develop progressively from its opening through its conclusion. Do not use repetition, filler, artificial padding, or meaningless content solely to increase the page count. The minimum 128-page requirement applies to the completed story regardless of the selected audience, genre, or other story instructions.',
+            ],
+        ]);
+    }
+
+    public static function illustrationTypes()
+    {
+        return collect([
+
+            (object) [
+                'name'               => 'Anime',
+                'brief'              => 'Premium modern 2.5D anime digital art applied across the entire image',
+                'prompt_instruction' => 'Focus on a premium modern 2.5D anime digital art style applied consistently across the entire image. Characters should have polished anime-inspired design with expressive eyes, refined line work, and dimensional depth rather than flat 2D styling. Environments, backgrounds, architecture, objects, and props must follow the same 2.5D treatment with layered depth and detailed rendering. Lighting should be cinematic and atmospheric, with polished highlights, natural shadows, and refined color grading. Materials and textures should feel high-quality and cohesive across the character and the surroundings. Composition should emphasize visual appeal and a high-end cinematic finish, ensuring every element of the image maintains the same premium anime look. This premium 2.5D anime style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
+            ],
+
+            (object) [
+                'name'               => '3D',
+                'brief'              => 'Premium modern high-end 3D rendered artwork applied across the entire image',
+                'prompt_instruction' => 'Focus on a premium modern high-end 3D digital rendering style applied consistently across the entire image. Portray characters, faces, clothing, environments, architecture, objects, and props with detailed three-dimensional forms and physically based materials. The rendering should demonstrate realistic depth, refined textures, polished surfaces, and natural lighting with cinematic highlights and shadows. Add volumetric atmosphere and believable environmental detail to enhance depth and realism. The style should read as professional quality 3D rendered artwork, not as a photograph and not as flat illustration, with sophisticated lighting, natural shadow falloff, and a polished production rendering finish across the whole image. This high-end 3D rendering style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
+            ],
+
+            (object) [
+                'name'               => 'Cartoon',
+                'brief'              => 'Premium modern stylized cartoon digital illustration applied across the entire image',
+                'prompt_instruction' => 'Focus on a premium modern cartoon digital illustration style applied consistently across the entire image. Use clean stylized shapes, expressive forms, and appealing character and environment design with strong visual readability. Characters, faces, clothing, backgrounds, props, and architectural details should share the same polished cartoon treatment. Use refined composition, expressive lighting, and cohesive color design to give the scene depth while keeping the graphic cartoon aesthetic. Ensure every element of the image is drawn with polished, high quality line work and clean rendering rather than a rough or unfinished cartoon look. This premium modern cartoon style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
+            ],
+
+            (object) [
+                'name'               => 'Photo Realistic',
+                'brief'              => 'Professional photorealistic photographic appearance applied across the entire image',
+                'prompt_instruction' => 'Focus on a premium modern photo realistic photographic style applied consistently across the entire image. The image should resemble a professionally captured photograph rather than a digital painting or stylized artwork. Characters and people should have natural human proportions, authentic skin tones, hair, and material textures. Environments, architecture, clothing, objects, and props must be believable and physically accurate. Use physically accurate lighting, realistic shadows, natural depth of field, lifelike details, and realistic lens characteristics such as focal length, focus, and subtle optical effects. Composition should follow photographic principles and the overall result must be a high fidelity, lifelike photographic image. This photo realistic photographic style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
+            ],
+
+            (object) [
+                'name'               => 'Animation',
+                'brief'              => 'Premium modern animated-film digital art applied across the entire image',
+                'prompt_instruction' => 'Focus on a premium modern animated film digital art style applied consistently across the entire image. Characters should have polished stylization, expressive forms, and appealing animated film design. Environments, backgrounds, architecture, props, and lighting should be rendered with sophisticated cinematic treatment and rich visual depth. Use refined lighting, cinematic composition, and a cohesive contemporary animation aesthetic that reads as professional animated film work. The style must remain visually distinct from a flat cartoon by emphasizing cinematic visual storytelling, dimensional staging, atmospheric depth, and polished animated rendering across every element of the image. This premium modern animated film style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
+            ],
+        ]);
+    }
+
     public static function languages()
     {
         return collect([
@@ -290,66 +350,6 @@ class SeederHelper
             (object) [
                 'name'  => 'Korean',
                 'brief' => 'Language with a growing tradition of illustrated children\'s story books',
-            ],
-        ]);
-    }
-
-    public static function storyTypes()
-    {
-        return collect([
-
-            (object) [
-                'name'               => 'Short',
-                'brief'              => 'Short-length stories with a compact and focused narrative structure',
-                'prompt_instruction' => 'Develop the story with a compact but sufficiently complete narrative scope to produce at least 32 pages. The story must have enough meaningful plot development, character development, events, dialogue, descriptions, conflict progression, discoveries, and resolution to naturally support a minimum of 32 pages. Maintain a focused narrative with a clear beginning, developed middle, climax, and resolution. Do not make the story artificially short or compress important narrative development merely to keep it concise. At the same time, do not use repetition, filler, artificial padding, or meaningless content solely to increase the page count. The minimum 32-page requirement applies to the completed story regardless of the selected audience, genre, or other story instructions.',
-            ],
-
-            (object) [
-                'name'               => 'Medium',
-                'brief'              => 'Medium-length stories with a balanced structure and deeper character development',
-                'prompt_instruction' => 'Develop the story with a sufficiently broad and balanced narrative scope to produce at least 64 pages. The story must have enough meaningful plot development, character arcs, relationships, events, dialogue, descriptions, discoveries, complications, turning points, escalating conflict, climax, and resolution to naturally support a minimum of 64 pages. Allow important characters, relationships, conflicts, and story events enough room to develop rather than compressing the narrative. Use meaningful subplots and additional story development when they strengthen the main narrative. Do not use repetition, filler, artificial padding, or meaningless content solely to increase the page count. The minimum 64-page requirement applies to the completed story regardless of the selected audience, genre, or other story instructions.',
-            ],
-
-            (object) [
-                'name'               => 'Long',
-                'brief'              => 'Long-length stories with expansive plots and extensive character arcs',
-                'prompt_instruction' => 'Develop the story with an expansive narrative scope sufficient to produce at least 128 pages. The story must have enough meaningful plot development, extensive character arcs, complex relationships, interconnected conflicts, major discoveries, world-building, meaningful subplots, escalating challenges, turning points, climax, and resolution to naturally support a minimum of 128 pages. Give the major characters, relationships, conflicts, settings, subplots, and narrative events sufficient development throughout the story. Structure the narrative across multiple meaningful stages or major sections so the story can develop progressively from its opening through its conclusion. Do not use repetition, filler, artificial padding, or meaningless content solely to increase the page count. The minimum 128-page requirement applies to the completed story regardless of the selected audience, genre, or other story instructions.',
-            ],
-        ]);
-    }
-
-    public static function illustrationTypes()
-    {
-        return collect([
-
-            (object) [
-                'name'               => 'Anime',
-                'brief'              => 'Premium modern 2.5D anime digital art applied across the entire image',
-                'prompt_instruction' => 'Focus on a premium modern 2.5D anime digital art style applied consistently across the entire image. Characters should have polished anime-inspired design with expressive eyes, refined line work, and dimensional depth rather than flat 2D styling. Environments, backgrounds, architecture, objects, and props must follow the same 2.5D treatment with layered depth and detailed rendering. Lighting should be cinematic and atmospheric, with polished highlights, natural shadows, and refined color grading. Materials and textures should feel high-quality and cohesive across the character and the surroundings. Composition should emphasize visual appeal and a high-end cinematic finish, ensuring every element of the image maintains the same premium anime look. This premium 2.5D anime style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
-            ],
-
-            (object) [
-                'name'               => '3D',
-                'brief'              => 'Premium modern high-end 3D rendered artwork applied across the entire image',
-                'prompt_instruction' => 'Focus on a premium modern high-end 3D digital rendering style applied consistently across the entire image. Portray characters, faces, clothing, environments, architecture, objects, and props with detailed three-dimensional forms and physically based materials. The rendering should demonstrate realistic depth, refined textures, polished surfaces, and natural lighting with cinematic highlights and shadows. Add volumetric atmosphere and believable environmental detail to enhance depth and realism. The style should read as professional quality 3D rendered artwork, not as a photograph and not as flat illustration, with sophisticated lighting, natural shadow falloff, and a polished production rendering finish across the whole image. This high-end 3D rendering style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
-            ],
-
-            (object) [
-                'name'               => 'Cartoon',
-                'brief'              => 'Premium modern stylized cartoon digital illustration applied across the entire image',
-                'prompt_instruction' => 'Focus on a premium modern cartoon digital illustration style applied consistently across the entire image. Use clean stylized shapes, expressive forms, and appealing character and environment design with strong visual readability. Characters, faces, clothing, backgrounds, props, and architectural details should share the same polished cartoon treatment. Use refined composition, expressive lighting, and cohesive color design to give the scene depth while keeping the graphic cartoon aesthetic. Ensure every element of the image is drawn with polished, high quality line work and clean rendering rather than a rough or unfinished cartoon look. This premium modern cartoon style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
-            ],
-
-            (object) [
-                'name'               => 'Photo Realistic',
-                'brief'              => 'Professional photorealistic photographic appearance applied across the entire image',
-                'prompt_instruction' => 'Focus on a premium modern photo realistic photographic style applied consistently across the entire image. The image should resemble a professionally captured photograph rather than a digital painting or stylized artwork. Characters and people should have natural human proportions, authentic skin tones, hair, and material textures. Environments, architecture, clothing, objects, and props must be believable and physically accurate. Use physically accurate lighting, realistic shadows, natural depth of field, lifelike details, and realistic lens characteristics such as focal length, focus, and subtle optical effects. Composition should follow photographic principles and the overall result must be a high fidelity, lifelike photographic image. This photo realistic photographic style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
-            ],
-
-            (object) [
-                'name'               => 'Animation',
-                'brief'              => 'Premium modern animated-film digital art applied across the entire image',
-                'prompt_instruction' => 'Focus on a premium modern animated film digital art style applied consistently across the entire image. Characters should have polished stylization, expressive forms, and appealing animated film design. Environments, backgrounds, architecture, props, and lighting should be rendered with sophisticated cinematic treatment and rich visual depth. Use refined lighting, cinematic composition, and a cohesive contemporary animation aesthetic that reads as professional animated film work. The style must remain visually distinct from a flat cartoon by emphasizing cinematic visual storytelling, dimensional staging, atmospheric depth, and polished animated rendering across every element of the image. This premium modern animated film style applies to the completed illustration regardless of the selected audience, genre, or other story instructions.',
             ],
         ]);
     }
