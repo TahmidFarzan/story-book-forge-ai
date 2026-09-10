@@ -8,6 +8,7 @@ export const groups = {
     User: 'User',
     Genre: 'Genre',
     Audience: 'Audience',
+    Language: 'Language',
     AiBrain: 'Ai Brain',
 }
 
@@ -118,6 +119,12 @@ export const canViewAudience = async (authUser, audience) => hasPermission(authU
 export const canCreateAudience = async (authUser, audience) => hasPermission(authUser, groups.Audience, access.Create)
 export const canUpdateAudience = async (authUser, audience) => hasPermission(authUser, groups.Audience, access.Update)
 export const canDeleteAudience = async (authUser, audience) => hasPermission(authUser, groups.Audience, access.Delete)
+
+export const canAccessLanguage = async (authUser) => hasPermission(authUser, groups.Language, access.View)
+export const canViewLanguage = async (authUser, language) => hasPermission(authUser, groups.Language, access.ViewAny)
+export const canCreateLanguage = async (authUser, language) => hasPermission(authUser, groups.Language, access.Create)
+export const canUpdateLanguage = async (authUser, language) => hasPermission(authUser, groups.Language, access.Update)
+export const canDeleteLanguage = async (authUser, language) => hasPermission(authUser, groups.Language, access.Delete)
 
 export const canAccessAiBrain = async (authUser) => hasPermission(authUser, groups.AiBrain, access.View)
 export const canViewAiBrain = async (authUser, aiBrain) => hasPermission(authUser, groups.AiBrain, access.ViewAny)

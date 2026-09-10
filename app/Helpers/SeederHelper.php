@@ -218,6 +218,82 @@ class SeederHelper
         ]);
     }
 
+    public static function languages()
+    {
+        return collect([
+
+            (object) [
+                'name'  => 'English',
+                'brief' => 'Global language widely used for original and translated story books',
+            ],
+
+            (object) [
+                'name'  => 'Spanish',
+                'brief' => 'Major world language with a rich tradition of storytelling and children\'s literature',
+            ],
+
+            (object) [
+                'name'  => 'French',
+                'brief' => 'Widely spoken language known for classic fairy tales and illustrated story books',
+            ],
+
+            (object) [
+                'name'  => 'German',
+                'brief' => 'Language with a strong heritage of folk tales, fables, and story collections',
+            ],
+
+            (object) [
+                'name'  => 'Italian',
+                'brief' => 'Language celebrated for classic fables, fairy tales, and picture books',
+            ],
+
+            (object) [
+                'name'  => 'Portuguese',
+                'brief' => 'Language spoken across continents with a vibrant tradition of oral storytelling',
+            ],
+
+            (object) [
+                'name'  => 'Dutch',
+                'brief' => 'Language with a beloved tradition of children\'s story books and illustrated tales',
+            ],
+
+            (object) [
+                'name'  => 'Russian',
+                'brief' => 'Language known for rich folk tales, fables, and classic story traditions',
+            ],
+
+            (object) [
+                'name'  => 'Arabic',
+                'brief' => 'Language with a deep heritage of storytelling, folk tales, and fables',
+            ],
+
+            (object) [
+                'name'  => 'Hindi',
+                'brief' => 'Language with a vibrant storytelling tradition spanning folk tales and modern stories',
+            ],
+
+            (object) [
+                'name'  => 'Bengali',
+                'brief' => 'Language with a celebrated children\'s literature and folk story tradition',
+            ],
+
+            (object) [
+                'name'  => 'Chinese (Simplified)',
+                'brief' => 'Language read by millions of readers across contemporary and traditional stories',
+            ],
+
+            (object) [
+                'name'  => 'Japanese',
+                'brief' => 'Language with a rich culture of illustrated story books and imaginative tales',
+            ],
+
+            (object) [
+                'name'  => 'Korean',
+                'brief' => 'Language with a growing tradition of illustrated children\'s story books',
+            ],
+        ]);
+    }
+
     public static function aiBrains()
     {
         return collect([

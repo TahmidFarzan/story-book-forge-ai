@@ -85,6 +85,13 @@ class SearchController extends Controller
         );
     }
 
+    public function languages(Request $request): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->languages($request)
+        );
+    }
+
     public function userPermissions(Request $request): JsonResponse
     {
         return response()->json(
@@ -131,6 +138,13 @@ class SearchController extends Controller
     {
         return response()->json(
             $this->searchService->aiBrain($slugOrId)
+        );
+    }
+
+    public function language(string | int $slugOrId): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->language($slugOrId)
         );
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\BackOffice\MediaController;
 use App\Http\Controllers\BackOffice\UserController;
 use App\Http\Controllers\BackOffice\GenreController;
 use App\Http\Controllers\BackOffice\AudienceController;
+use App\Http\Controllers\BackOffice\LanguageController;
 use App\Http\Controllers\BackOffice\AiBrainController;
 use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\ActivityLogController;
@@ -84,6 +85,7 @@ Route::prefix('search')->name('search.')->group(function () {
         Route::get('users', [SearchController::class, 'users'])->name('users');
         Route::get('genres', [SearchController::class, 'genres'])->name('genres');
         Route::get('audiences', [SearchController::class, 'audiences'])->name('audiences');
+        Route::get('languages', [SearchController::class, 'languages'])->name('languages');
         Route::get('ai-brains', [SearchController::class, 'aiBrains'])->name('ai-brains');
 
         Route::get('medias', [SearchController::class, 'medias'])->name('medias');
@@ -92,6 +94,7 @@ Route::prefix('search')->name('search.')->group(function () {
 
         Route::get('genre/{slugOrId}', [SearchController::class, 'genre'])->name('genre');
         Route::get('audience/{slugOrId}', [SearchController::class, 'audience'])->name('audience');
+        Route::get('language/{slugOrId}', [SearchController::class, 'language'])->name('language');
         Route::get('ai-brain/{slugOrId}', [SearchController::class, 'aiBrain'])->name('ai-brain');
     });
 
@@ -129,6 +132,17 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::post('save', [AudienceController::class, 'save'])->name('save');
         Route::patch('update/{slug}', [AudienceController::class, 'update'])->name('update');
         Route::delete('delete/{slug}', [AudienceController::class, 'delete'])->name('delete');
+    });
+
+    Route::prefix('languages')->name('languages.')->group(function () {
+        Route::get('/', [LanguageController::class, 'index'])->name('index');
+        Route::get('create', [LanguageController::class, 'create'])->name('create');
+        Route::get('edit/{slug}', [LanguageController::class, 'edit'])->name('edit');
+        Route::get('details/{slug}', [LanguageController::class, 'details'])->name('details');
+
+        Route::post('save', [LanguageController::class, 'save'])->name('save');
+        Route::patch('update/{slug}', [LanguageController::class, 'update'])->name('update');
+        Route::delete('delete/{slug}', [LanguageController::class, 'delete'])->name('delete');
     });
 
     Route::prefix('ai-brains')->name('ai-brains.')->group(function () {

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Genre;
 use App\Models\Audience;
 use App\Models\AiBrain;
+use App\Models\Language;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -322,6 +323,40 @@ class SearchService
         ];
     }
 
+    public function languages(Request $request): array
+    {
+        $query = Language::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('brief', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('except_id')) {
+            $query->whereNot("id", $request->input('except_id'));
+        }
+
+        $records = $query
+            ->orderByDesc('id')
+            ->paginate($request->input('per_page', 25));
+
+        $items = $records->map(fn($language) => [
+            'id'   => $language->id,
+            'name' => $language->name,
+            'slug' => $language->slug,
+        ]);
+
+        return [
+            'items'        => $items,
+            'total'        => $records->total(),
+            'current_page' => $records->currentPage(),
+            'last_page'    => $records->lastPage(),
+        ];
+    }
+
     public function userPermissions(Request $request): array
     {
         $query = UserPermission::query();
@@ -449,5 +484,10 @@ class SearchService
     public function aiBrain(int | string $slugOrId): AiBrain
     {
         return AiBrain::where('id', $slugOrId)->firstOrFail();
+    }
+
+    public function language(int | string $slugOrId): Language
+    {
+        return Language::where('id', $slugOrId)->firstOrFail();
     }
 }
