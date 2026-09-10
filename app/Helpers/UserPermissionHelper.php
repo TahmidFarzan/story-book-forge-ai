@@ -20,6 +20,7 @@ class UserPermissionHelper
     public const MODULE_AUDIENCE = 'Audience';
     public const MODULE_LANGUAGE = 'Language';
     public const MODULE_STORY_TYPE = 'Story Type';
+    public const MODULE_ILLUSTRATION_TYPE = 'Illustration Type';
     public const MODULE_AI_BRAIN = 'Ai Brain';
 
     public static function modules(): Collection

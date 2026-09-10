@@ -17,6 +17,7 @@ import {
     faStar,
     faLanguage,
     faLayerGroup,
+    faPalette,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -30,7 +31,8 @@ library.add(
     faBookOpen,
     faStar,
     faLanguage,
-    faLayerGroup
+    faLayerGroup,
+    faPalette,
 )
 
 import {
@@ -39,6 +41,7 @@ import {
     canAccessAudience,
     canAccessLanguage,
     canAccessStoryType,
+    canAccessIllustrationType,
     canAccessAiBrain,
 } from '@/composables/useUserPermissions'
 
@@ -64,7 +67,7 @@ const subMenus = ref({
 const routeMap = {
     UserManagement: ['/back-office/users/*'],
     AiManagement: ['/back-office/ai-brains/*'],
-    StoryBookManagement: ['/back-office/genres/*', '/back-office/audiences/*', '/back-office/languages/*', '/back-office/story-types/*'],
+    StoryBookManagement: ['/back-office/genres/*', '/back-office/audiences/*', '/back-office/languages/*', '/back-office/story-types/*', '/back-office/illustration-types/*'],
 }
 
 const canAccessUserComputed = computed(() => {
@@ -85,6 +88,10 @@ const canAccessLanguageComputed = computed(() => {
 
 const canAccessStoryTypeComputed = computed(() => {
     return canAccessStoryType(authUser);
+});
+
+const canAccessIllustrationTypeComputed = computed(() => {
+    return canAccessIllustrationType(authUser);
 });
 
 const canAccessAiBrainComputed = computed(() => {
@@ -179,6 +186,12 @@ const isSubMenuVisible = (key) => {
                     :class="isCurrentPage('/back-office/story-types/*') ? 'is-active' : ''" @click="handleNavigate">
                     <FontAwesomeIcon icon="layer-group" />
                     Story Types
+                </a>
+
+                <a v-if="canAccessIllustrationTypeComputed" :href="route('back-office.illustration-types.index')" class="sbfa-nav-item"
+                    :class="isCurrentPage('/back-office/illustration-types/*') ? 'is-active' : ''" @click="handleNavigate">
+                    <FontAwesomeIcon icon="palette" />
+                    Illustration Types
                 </a>
 
             </div>

@@ -11,6 +11,7 @@ use App\Models\Audience;
 use App\Models\AiBrain;
 use App\Models\Language;
 use App\Models\StoryType;
+use App\Models\IllustrationType;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -392,6 +393,40 @@ class SearchService
         ];
     }
 
+    public function illustrationTypes(Request $request): array
+    {
+        $query = IllustrationType::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('brief', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('except_id')) {
+            $query->whereNot("id", $request->input('except_id'));
+        }
+
+        $records = $query
+            ->orderByDesc('id')
+            ->paginate($request->input('per_page', 25));
+
+        $items = $records->map(fn($illustrationType) => [
+            'id'   => $illustrationType->id,
+            'name' => $illustrationType->name,
+            'slug' => $illustrationType->slug,
+        ]);
+
+        return [
+            'items'        => $items,
+            'total'        => $records->total(),
+            'current_page' => $records->currentPage(),
+            'last_page'    => $records->lastPage(),
+        ];
+    }
+
     public function userPermissions(Request $request): array
     {
         $query = UserPermission::query();
@@ -530,4 +565,10 @@ class SearchService
     {
         return StoryType::where('id', $slugOrId)->firstOrFail();
     }
+
+    public function illustrationType(int | string $slugOrId): IllustrationType
+    {
+        return IllustrationType::where('id', $slugOrId)->firstOrFail();
+    }
+
 }

@@ -10,6 +10,7 @@ export const groups = {
     Audience: 'Audience',
     Language: 'Language',
     StoryType: 'Story Type',
+    IllustrationType: 'Illustration Type',
     AiBrain: 'Ai Brain',
 }
 
@@ -132,6 +133,12 @@ export const canViewStoryType = async (authUser, storyType) => hasPermission(aut
 export const canCreateStoryType = async (authUser, storyType) => hasPermission(authUser, groups.StoryType, access.Create)
 export const canUpdateStoryType = async (authUser, storyType) => hasPermission(authUser, groups.StoryType, access.Update)
 export const canDeleteStoryType = async (authUser, storyType) => hasPermission(authUser, groups.StoryType, access.Delete)
+
+export const canAccessIllustrationType = async (authUser) => hasPermission(authUser, groups.IllustrationType, access.View)
+export const canViewIllustrationType = async (authUser, illustrationType) => hasPermission(authUser, groups.IllustrationType, access.ViewAny)
+export const canCreateIllustrationType = async (authUser, illustrationType) => hasPermission(authUser, groups.IllustrationType, access.Create)
+export const canUpdateIllustrationType = async (authUser, illustrationType) => hasPermission(authUser, groups.IllustrationType, access.Update)
+export const canDeleteIllustrationType = async (authUser, illustrationType) => hasPermission(authUser, groups.IllustrationType, access.Delete)
 
 export const canAccessAiBrain = async (authUser) => hasPermission(authUser, groups.AiBrain, access.View)
 export const canViewAiBrain = async (authUser, aiBrain) => hasPermission(authUser, groups.AiBrain, access.ViewAny)

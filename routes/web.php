@@ -9,6 +9,7 @@ use App\Http\Controllers\BackOffice\GenreController;
 use App\Http\Controllers\BackOffice\AudienceController;
 use App\Http\Controllers\BackOffice\LanguageController;
 use App\Http\Controllers\BackOffice\StoryTypeController;
+use App\Http\Controllers\BackOffice\IllustrationTypeController;
 use App\Http\Controllers\BackOffice\AiBrainController;
 use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\ActivityLogController;
@@ -88,6 +89,7 @@ Route::prefix('search')->name('search.')->group(function () {
         Route::get('audiences', [SearchController::class, 'audiences'])->name('audiences');
         Route::get('languages', [SearchController::class, 'languages'])->name('languages');
         Route::get('story-types', [SearchController::class, 'storyTypes'])->name('story-types');
+        Route::get('illustration-types', [SearchController::class, 'illustrationTypes'])->name('illustration-types');
         Route::get('ai-brains', [SearchController::class, 'aiBrains'])->name('ai-brains');
 
         Route::get('medias', [SearchController::class, 'medias'])->name('medias');
@@ -98,6 +100,7 @@ Route::prefix('search')->name('search.')->group(function () {
         Route::get('audience/{slugOrId}', [SearchController::class, 'audience'])->name('audience');
         Route::get('language/{slugOrId}', [SearchController::class, 'language'])->name('language');
         Route::get('story-type/{slugOrId}', [SearchController::class, 'storyType'])->name('story-type');
+        Route::get('illustration-type/{slugOrId}', [SearchController::class, 'illustrationType'])->name('illustration-type');
         Route::get('ai-brain/{slugOrId}', [SearchController::class, 'aiBrain'])->name('ai-brain');
     });
 
@@ -157,6 +160,17 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::post('save', [StoryTypeController::class, 'save'])->name('save');
         Route::patch('update/{slug}', [StoryTypeController::class, 'update'])->name('update');
         Route::delete('delete/{slug}', [StoryTypeController::class, 'delete'])->name('delete');
+    });
+
+    Route::prefix('illustration-types')->name('illustration-types.')->group(function () {
+        Route::get('/', [IllustrationTypeController::class, 'index'])->name('index');
+        Route::get('create', [IllustrationTypeController::class, 'create'])->name('create');
+        Route::get('edit/{slug}', [IllustrationTypeController::class, 'edit'])->name('edit');
+        Route::get('details/{slug}', [IllustrationTypeController::class, 'details'])->name('details');
+
+        Route::post('save', [IllustrationTypeController::class, 'save'])->name('save');
+        Route::patch('update/{slug}', [IllustrationTypeController::class, 'update'])->name('update');
+        Route::delete('delete/{slug}', [IllustrationTypeController::class, 'delete'])->name('delete');
     });
 
     Route::prefix('ai-brains')->name('ai-brains.')->group(function () {
