@@ -11,6 +11,7 @@ use App\Http\Controllers\BackOffice\LanguageController;
 use App\Http\Controllers\BackOffice\StoryTypeController;
 use App\Http\Controllers\BackOffice\IllustrationTypeController;
 use App\Http\Controllers\BackOffice\AiBrainController;
+use App\Http\Controllers\BackOffice\AiPromptController;
 use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\ActivityLogController;
 
@@ -94,6 +95,7 @@ Route::prefix('search')->name('search.')->group(function () {
         Route::get('story-types', [SearchController::class, 'storyTypes'])->name('story-types');
         Route::get('illustration-types', [SearchController::class, 'illustrationTypes'])->name('illustration-types');
         Route::get('ai-brains', [SearchController::class, 'aiBrains'])->name('ai-brains');
+        Route::get('ai-prompts', [SearchController::class, 'aiPrompts'])->name('ai-prompts');
 
         Route::get('medias', [SearchController::class, 'medias'])->name('medias');
 
@@ -105,6 +107,7 @@ Route::prefix('search')->name('search.')->group(function () {
         Route::get('story-type/{slugOrId}', [SearchController::class, 'storyType'])->name('story-type');
         Route::get('illustration-type/{slugOrId}', [SearchController::class, 'illustrationType'])->name('illustration-type');
         Route::get('ai-brain/{slugOrId}', [SearchController::class, 'aiBrain'])->name('ai-brain');
+         Route::get('ai-prompt/{slugOrId}', [SearchController::class, 'aiPrompt'])->name('ai-prompt');
     });
 
     Route::middleware(['response.cache:60,private,300,etag'])->get('user/{slugOrId}', [SearchController::class, 'user'])->name('user');
@@ -175,6 +178,16 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::patch('update/{slug}', [IllustrationTypeController::class, 'update'])->name('update');
         Route::delete('delete/{slug}', [IllustrationTypeController::class, 'delete'])->name('delete');
     });
+
+    Route::prefix('ai-prompts')->name('ai-prompts.')->group(function () {
+        Route::get('/', [AiPromptController::class, 'index'])->name('index');
+        Route::get('edit/{slug}', [AiPromptController::class, 'edit'])->name('edit');
+        Route::get('details/{slug}', [AiPromptController::class, 'details'])->name('details');
+
+        Route::post('save', [AiPromptController::class, 'save'])->name('save');
+        Route::patch('update/{slug}', [AiPromptController::class, 'update'])->name('update');
+    });
+
 
     Route::prefix('ai-brains')->name('ai-brains.')->group(function () {
         Route::get('/', [AiBrainController::class, 'index'])->name('index');

@@ -12,6 +12,7 @@ export const groups = {
     StoryType: 'Story Type',
     IllustrationType: 'Illustration Type',
     AiBrain: 'Ai Brain',
+    AiPrompt: 'Ai Prompt',
 }
 
 export const access = {
@@ -145,6 +146,12 @@ export const canViewAiBrain = async (authUser, aiBrain) => hasPermission(authUse
 export const canCreateAiBrain = async (authUser, aiBrain) => hasPermission(authUser, groups.AiBrain, access.Create)
 export const canUpdateAiBrain = async (authUser, aiBrain) => hasPermission(authUser, groups.AiBrain, access.Update)
 export const canDeleteAiBrain = async (authUser, aiBrain) => hasPermission(authUser, groups.AiBrain, access.Delete)
+
+export const canAccessAiPrompt = async (authUser) => hasPermission(authUser, groups.AiPrompt, access.View)
+export const canViewAiPrompt = async (authUser, aiPrompt) => hasPermission(authUser, groups.AiPrompt, access.ViewAny)
+export const canCreateAiPrompt = async (authUser, aiPrompt) => hasPermission(authUser, groups.AiPrompt, access.Create)
+export const canUpdateAiPrompt = async (authUser, aiPrompt) => hasPermission(authUser, groups.AiPrompt, access.Update)
+export const canDeleteAiPrompt = async (authUser, aiPrompt) => hasPermission(authUser, groups.AiPrompt, access.Delete)
 
 export const canAccessActivityLog = async (authUser) => authUser?.is_super_admin
 export const canDeleteActivityLog = async (authUser) => authUser?.is_super_admin

@@ -18,6 +18,7 @@ import {
     faLanguage,
     faLayerGroup,
     faPalette,
+    faClipboardList,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -33,6 +34,7 @@ library.add(
     faLanguage,
     faLayerGroup,
     faPalette,
+    faClipboardList
 )
 
 import {
@@ -43,6 +45,7 @@ import {
     canAccessStoryType,
     canAccessIllustrationType,
     canAccessAiBrain,
+    canAccessAiPrompt,
 } from '@/composables/useUserPermissions'
 
 const {
@@ -66,7 +69,7 @@ const subMenus = ref({
 
 const routeMap = {
     UserManagement: ['/back-office/users/*'],
-    AiManagement: ['/back-office/ai-brains/*'],
+    AiManagement: ['/back-office/ai-brains/*', '/back-office/ai-prompts/*'],
     StoryBookManagement: ['/back-office/genres/*', '/back-office/audiences/*', '/back-office/languages/*', '/back-office/story-types/*', '/back-office/illustration-types/*'],
 }
 
@@ -96,6 +99,10 @@ const canAccessIllustrationTypeComputed = computed(() => {
 
 const canAccessAiBrainComputed = computed(() => {
     return canAccessAiBrain(authUser);
+});
+
+const canAccessAiPromptComputed = computed(() => {
+    return canAccessAiPrompt(authUser);
 });
 
 const toggleShowSubMenu = (key) => {
@@ -215,7 +222,13 @@ const isSubMenuVisible = (key) => {
                 <a v-if="canAccessAiBrainComputed" :href="route('back-office.ai-brains.index')" class="sbfa-nav-item"
                     :class="isAnyCurrentPage(routeMap.AiManagement) ? 'is-active' : ''" @click="handleNavigate">
                     <FontAwesomeIcon icon="brain" />
-                    Ai Brain
+                    Ai Brains
+                </a>
+
+                <a v-if="canAccessAiPromptComputed" :href="route('back-office.ai-prompts.index')" class="sbfa-nav-item"
+                    :class="isAnyCurrentPage(routeMap.AiManagement) ? 'is-active' : ''" @click="handleNavigate">
+                    <FontAwesomeIcon icon="clipboard-list" class="w-4" />
+                    Ai Prompts
                 </a>
 
             </div>

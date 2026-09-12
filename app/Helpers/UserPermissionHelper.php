@@ -22,12 +22,19 @@ class UserPermissionHelper
     public const MODULE_STORY_TYPE = 'Story Type';
     public const MODULE_ILLUSTRATION_TYPE = 'Illustration Type';
     public const MODULE_AI_BRAIN = 'Ai Brain';
+    public const MODULE_AI_PROMPT = 'Ai Prompt';
 
     public static function modules(): Collection
     {
         return SystemHelper::toOptions([
             self::MODULE_USER,
+            self::MODULE_GENRE,
+            self::MODULE_AUDIENCE,
+            self::MODULE_LANGUAGE,
+            self::MODULE_STORY_TYPE,
+            self::MODULE_ILLUSTRATION_TYPE,
             self::MODULE_AI_BRAIN,
+            self::MODULE_AI_PROMPT,
         ]);
     }
 

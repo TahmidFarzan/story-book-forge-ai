@@ -99,6 +99,13 @@ class SearchController extends Controller
         );
     }
 
+    public function aiPrompts(Request $request): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->aiPrompts($request)
+        );
+    }
+
     public function languages(Request $request): JsonResponse
     {
         return response()->json(
@@ -166,6 +173,13 @@ class SearchController extends Controller
     {
         return response()->json(
             $this->searchService->aiBrain($slugOrId)
+        );
+    }
+
+    public function aiPrompt(string | int $slugOrId): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->aiPrompt($slugOrId)
         );
     }
 
