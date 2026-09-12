@@ -2,15 +2,15 @@
 
 namespace App\Services\BackOffice;
 
-use App\Helpers\StoryHelper;
-use App\Http\Requests\StoryRequest;
-use App\Models\Story;
+use App\Helpers\StoryBookHelper;
+use App\Http\Requests\StoryBookRequest;
+use App\Models\StoryBook;
 use App\Services\BackOffice\AiBrainService;
 use App\Services\BackOffice\AiPromptService;
 use App\Services\BackOffice\AudienceService;
 use App\Services\BackOffice\GenreService;
 use App\Services\BackOffice\LanguageService;
-use App\Services\BackOffice\StoryTypeService;
+use App\Services\BackOffice\StoryBookTypeService;
 use App\Services\BackOffice\HuggingFaceApiService;
 use Exception;
 use Illuminate\Http\Request;
@@ -18,35 +18,35 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class StoryService
+class StoryBookService
 {
     protected AiBrainService $aiBrainService;
     protected AiPromptService $aiPromptService;
     protected AudienceService $audienceService;
     protected GenreService $genreService;
-    protected StoryTypeService $storyTypeService;
+    protected StoryBookTypeService $storyBookTypeService;
     protected HuggingFaceApiService $huggingFaceApiService;
     protected LanguageService $languageService;
 
-    public function __construct(AiBrainService $aiBrainService, AiPromptService $aiPromptService, AudienceService $audienceService, GenreService $genreService, StoryTypeService $storyTypeService, HuggingFaceApiService $huggingFaceApiService, LanguageService $languageService)
+    public function __construct(AiBrainService $aiBrainService, AiPromptService $aiPromptService, AudienceService $audienceService, GenreService $genreService, StoryBookTypeService $storyBookTypeService, HuggingFaceApiService $huggingFaceApiService, LanguageService $languageService)
     {
         $this->aiBrainService   = $aiBrainService;
         $this->aiPromptService  = $aiPromptService;
         $this->audienceService  = $audienceService;
         $this->genreService     = $genreService;
-        $this->storyTypeService = $storyTypeService;
+        $this->storyBookTypeService = $storyBookTypeService;
         $this->huggingFaceApiService = $huggingFaceApiService;
         $this->languageService  = $languageService;
     }
 
-    public function new(): Story
+    public function new(): StoryBook
     {
-        return new Story();
+        return new StoryBook();
     }
 
-    public function find(string $slug): Story
+    public function find(string $slug): StoryBook
     {
-        return Story::with([
+        return StoryBook::with([
             'createdBy',
 
             'activityLogs' => fn($query) => $query->latest()->limit(10),
@@ -61,7 +61,7 @@ class StoryService
     {
         $perPage = $request->input('per_page', 10);
 
-        $query = Story::query();
+        $query = StoryBook::query();
 
         if ($request->filled('created_by_id')) {
             $query->where('created_by_id', $request->input('created_by_id'));
@@ -97,9 +97,9 @@ class StoryService
             ->appends($request->all());
     }
 
-    public function save(StoryRequest $request, Story $story): array
+    public function save(StoryBookRequest $request, StoryBook $storyBook): array
     {
-        $isNew       = empty($story->id);
+        $isNew       = empty($storyBook->id);
         $statusEvent = $isNew ? "save" : "update";
 
         try {
@@ -108,7 +108,7 @@ class StoryService
 
             $language  = $this->languageService->findByIdsOrEnglish($request->input("language_id"));
             $audience  = $this->audienceService->findById($request->input("audience_id"));
-            $storyType = $this->audienceService->findById($request->input("story_type_id"));
+            $storyBookType = $this->audienceService->findById($request->input("story_book_type_id"));
             $genres    = $this->genreService->findByIdsOrRandom($request->input("genre_ids"));
 
             $genrePromptInstruction = '';
@@ -116,7 +116,7 @@ class StoryService
             $enableMatureContent    = $request->boolean("enable_mature_content", false) ? "True" : "False";
 
             $additionalInformation = $request->input("additional_information", "Auto");
-            $storyContinuity       = $request->input("story_continuity", StoryHelper::CONTINUITY_STANDALONE);
+            $storyContinuity       = $request->input("story_continuity", StoryBookHelper::CONTINUITY_STANDALONE);
 
             foreach ($genres as $genre) {
 
@@ -141,7 +141,7 @@ class StoryService
                 "additional_information" => $additionalInformation,
                 "genre_prompt_instruction" => $genrePromptInstruction,
                 "audience_instruction" => $audience->prompt_instruction,
-                "story_type_instruction" => $storyType->prompt_instruction,
+                "story_book_type_instruction" => $storyBookType->prompt_instruction,
             ];
 
             $prompt = str_replace(
@@ -153,7 +153,7 @@ class StoryService
                     '{{additional_information}}',
                     '{{genre_instructions}}',
                     '{{audience_instruction}}',
-                    '{{story_type_instruction}}',
+                    '{{story_book_type_instruction}}',
                 ],
                 [
                     $is18Plus,
@@ -163,7 +163,7 @@ class StoryService
                     $additionalInformation,
                     $genrePromptInstruction,
                     $audience->prompt_instruction,
-                    $storyType->prompt_instruction,
+                    $storyBookType->prompt_instruction,
                 ],
                 $aiPrompt->prompt
             );
@@ -172,33 +172,33 @@ class StoryService
 
             Log::info("Story AI Response", ["apiResponse" => $apiResponse]);
 
-            $story = DB::transaction(function () use ($request, $apiResponse, $receivedInputs, $prompt, $story, $isNew) {
+            $storyBook = DB::transaction(function () use ($request, $apiResponse, $receivedInputs, $prompt, $storyBook, $isNew) {
                 $apiResponseFormated = $this->extractStoryResponse($apiResponse);
 
-                $story->title     = $apiResponseFormated['title'];
-                $story->sub_title = $apiResponseFormated['subtitle'];
-                $story->plot      = $apiResponseFormated['plot'];
+                $storyBook->title     = $apiResponseFormated['title'];
+                $storyBook->sub_title = $apiResponseFormated['subtitle'];
+                $storyBook->plot      = $apiResponseFormated['plot'];
 
-                $story->received_inputs      = $receivedInputs;
-                $story->ai_prompt      = $prompt;
+                $storyBook->received_inputs      = $receivedInputs;
+                $storyBook->ai_prompt      = $prompt;
 
-                $story->audience_id   = $request->input("audience_id");
-                $story->story_type_id = $request->input("story_type_id");
-                $story->language_id   = $request->input("language_id");
-                $story->status        = StoryHelper::STATUS_ONGOING;
+                $storyBook->audience_id   = $request->input("audience_id");
+                $storyBook->story_book_type_id = $request->input("story_book_type_id");
+                $storyBook->language_id   = $request->input("language_id");
+                $storyBook->status        = StoryBookHelper::STATUS_ONGOING;
 
                 if ($isNew) {
-                    $story->datetime      = now();
-                    $story->created_by_id = Auth::id();
+                    $storyBook->datetime      = now();
+                    $storyBook->created_by_id = Auth::id();
                 }
 
-                $story->save();
+                $storyBook->save();
 
                 if ($request->has('genre_ids')) {
-                    $story->genres()->sync((array) $request->input('genre_ids', []));
+                    $storyBook->genres()->sync((array) $request->input('genre_ids', []));
                 }
 
-                return $story;
+                return $storyBook;
             });
 
             return [
@@ -220,13 +220,13 @@ class StoryService
         }
     }
 
-    public function delete(Story $story): array
+    public function delete(StoryBook $storyBook): array
     {
 
         try {
 
-            DB::transaction(function () use ($story) {
-                $story->delete();
+            DB::transaction(function () use ($storyBook) {
+                $storyBook->delete();
             });
 
             return [

@@ -3,37 +3,37 @@
 namespace Database\Seeders;
 
 use App\Helpers\SeederHelper;
-use App\Models\StoryType;
+use App\Models\StoryBookType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class StoryTypeSeeder extends Seeder
+class StoryBookTypeSeeder extends Seeder
 {
     public function run(): void
     {
         if (config('database.default') === 'sqlite') {
             DB::statement('PRAGMA foreign_keys = OFF;');
-            StoryType::query()->delete();
-            DB::statement("DELETE FROM sqlite_sequence WHERE name='story_types'");
+            StoryBookType::query()->delete();
+            DB::statement("DELETE FROM sqlite_sequence WHERE name='story_book_types'");
             DB::statement('PRAGMA foreign_keys = ON;');
         }
 
         if (config('database.default') === 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-            StoryType::truncate();
+            StoryBookType::truncate();
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
 
         if (in_array(config('database.default'), ['pgsql', 'sqlsrv'])) {
-            StoryType::truncate();
+            StoryBookType::truncate();
         }
 
-        foreach (SeederHelper::storyTypes() as $storyType) {
+        foreach (SeederHelper::storyBookTypes() as $storyBookType) {
 
-            StoryType::factory()->state([
-                'name' => $storyType->name,
-                'brief' => $storyType->brief ?? null,
-                'prompt_instruction' => $storyType->prompt_instruction,
+            StoryBookType::factory()->state([
+                'name' => $storyBookType->name,
+                'brief' => $storyBookType->brief ?? null,
+                'prompt_instruction' => $storyBookType->prompt_instruction,
             ])->create();
 
         }

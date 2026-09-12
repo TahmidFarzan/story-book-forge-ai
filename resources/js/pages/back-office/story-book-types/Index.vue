@@ -16,7 +16,7 @@ import {
 import { formatDateTime } from '@/composables/useDateTime'
 import { itemListFilterParameters } from '@/composables/useDataTable'
 
-import { canCreateStoryType, canUpdateStoryType, canDeleteStoryType } from '@/composables/useUserPermissions'
+import { canCreateStoryBookType, canUpdateStoryBookType, canDeleteStoryBookType } from '@/composables/useUserPermissions'
 
 FontAwesomeLibrary.add(faTrash, faFilter, faInfo, faPlus, faPen, faEye, faEyeSlash, faSpinner)
 
@@ -28,13 +28,13 @@ const deletingRow = ref(null)
 const showDeleteModal = ref(false)
 const deleteProcessing = ref(false)
 
-const { storyTypes } = defineProps({
-    storyTypes: Object,
+const { storyBookTypes } = defineProps({
+    storyBookTypes: Object,
 })
 
 const paginationOnly = computed(() => {
-    if (!storyTypes) return {}
-    const { data, ...rest } = storyTypes
+    if (!storyBookTypes) return {}
+    const { data, ...rest } = storyBookTypes
     return rest
 })
 
@@ -50,7 +50,7 @@ const applyFilter = () => {
 
     const cleanParams = itemListFilterParameters(filterForm.data())
 
-    intertiaJsRoute.get(route('back-office.story-types.index'), cleanParams, {
+    intertiaJsRoute.get(route('back-office.story-book-types.index'), cleanParams, {
         replace: true,
         preserveScroll: true,
         preserveState: true,
@@ -58,8 +58,8 @@ const applyFilter = () => {
     })
 }
 
-const confirmDelete = (storyType) => {
-    deletingRow.value = storyType
+const confirmDelete = (storyBookType) => {
+    deletingRow.value = storyBookType
     showDeleteModal.value = true
 }
 
@@ -68,16 +68,16 @@ const closeDeleteModal = () => {
     deletingRow.value = null
 }
 
-const canCreate = () => canCreateStoryType(authUser?.value)
-const canUpdate = (storyType) => canUpdateStoryType(authUser?.value, storyType)
-const canDelete = (storyType) => canDeleteStoryType(authUser?.value, storyType)
+const canCreate = () => canCreateStoryBookType(authUser?.value)
+const canUpdate = (storyBookType) => canUpdateStoryBookType(authUser?.value, storyBookType)
+const canDelete = (storyBookType) => canDeleteStoryBookType(authUser?.value, storyBookType)
 
-const handleDelete = (storyType) => {
-    if (!storyType || deleteProcessing.value) return
+const handleDelete = (storyBookType) => {
+    if (!storyBookType || deleteProcessing.value) return
 
     deleteProcessing.value = true
 
-    intertiaJsRoute.delete(route('back-office.story-types.delete', { slug: storyType?.slug }), {
+    intertiaJsRoute.delete(route('back-office.story-book-types.delete', { slug: storyBookType?.slug }), {
         onFinish: () => {
             closeDeleteModal()
             deleteProcessing.value = false
@@ -97,7 +97,7 @@ onMounted(async () => {
     window.dispatchEvent(
         new CustomEvent('set-breadcrumb', {
             detail: [
-                { text: 'Story Types', active: true },
+                { text: 'Story Book Types', active: true },
             ],
         })
     )
@@ -105,16 +105,16 @@ onMounted(async () => {
 </script>
 
 <template>
-    <Head :title="'Story Types'" />
+    <Head :title="'Story Book Types'" />
 
     <div class="w-full space-y-6">
 
         <div class="flex justify-between items-center">
             <h2 class="text-lg font-semibold">
-                Story Types
+                Story Book Types
             </h2>
 
-            <a v-if="canCreate()" :href="route('back-office.story-types.create')"
+            <a v-if="canCreate()" :href="route('back-office.story-book-types.create')"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition">
                 <FontAwesomeIcon icon="plus" />
                 Create
@@ -165,7 +165,7 @@ onMounted(async () => {
                     </thead>
 
                     <tbody class="divide-y">
-                        <tr v-for="(item, index) in storyTypes?.data" :key="item.id" class="hover:bg-gray-50 transition">
+                        <tr v-for="(item, index) in storyBookTypes?.data" :key="item.id" class="hover:bg-gray-50 transition">
                             <td class="px-4 py-3">{{ index + 1 }}</td>
 
                             <td class="px-4 py-3 font-medium">
@@ -179,13 +179,13 @@ onMounted(async () => {
                             <td class="px-4 py-3 text-right">
                                 <div class="flex justify-end gap-2">
 
-                                    <a :href="route('back-office.story-types.details', { slug: item.slug })"
+                                    <a :href="route('back-office.story-book-types.details', { slug: item.slug })"
                                         class="p-2 rounded-md text-blue-600 hover:bg-blue-50 border"
                                         title="View Details">
                                         <FontAwesomeIcon icon="info" />
                                     </a>
 
-                                    <a v-if="canUpdate(item)" :href="route('back-office.story-types.edit', { slug: item.slug })"
+                                    <a v-if="canUpdate(item)" :href="route('back-office.story-book-types.edit', { slug: item.slug })"
                                         class="p-2 rounded-md text-yellow-600 hover:bg-yellow-50 border"
                                         title="Edit">
                                         <FontAwesomeIcon icon="pen" />
@@ -201,9 +201,9 @@ onMounted(async () => {
                             </td>
                         </tr>
 
-                        <tr v-if="!storyTypes?.data?.length">
+                        <tr v-if="!storyBookTypes?.data?.length">
                             <td colspan="5" class="px-4 py-8 text-center text-gray-500">
-                                No story types found
+                                No story book types found
                             </td>
                         </tr>
                     </tbody>
@@ -229,7 +229,7 @@ onMounted(async () => {
                         leave-to-class="opacity-0 scale-95 translate-y-4">
                         <div v-if="showDeleteModal" class="bg-white rounded-xl shadow-lg w-[380px] p-6 space-y-4">
                             <h3 class="text-lg font-semibold text-red-600">
-                                Delete Story Type
+                                Delete Story Book Type
                             </h3>
 
                             <p class="text-sm font-medium">

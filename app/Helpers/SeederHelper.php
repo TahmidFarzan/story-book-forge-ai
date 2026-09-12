@@ -218,7 +218,7 @@ class SeederHelper
         ]);
     }
 
-    public static function storyTypes()
+    public static function storyBookTypes()
     {
         return collect([
 

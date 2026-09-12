@@ -90,9 +90,9 @@ class Genre extends Model
         return $this->belongsToMany(Audience::class, 'genre_audience');
     }
 
-    public function stories(): BelongsToMany
+    public function storyBooks(): BelongsToMany
     {
-        return $this->belongsToMany(Story::class, 'genre_audience');
+        return $this->belongsToMany(StoryBook::class, 'genre_story_books');
     }
 
     public function latestActivityLog(): MorphOne

@@ -9,11 +9,11 @@ export const groups = {
     Genre: 'Genre',
     Audience: 'Audience',
     Language: 'Language',
-    StoryType: 'Story Type',
+    StoryBookType: 'Story Type',
     IllustrationType: 'Illustration Type',
     AiBrain: 'Ai Brain',
     AiPrompt: 'Ai Prompt',
-    Story: 'Story',
+    StoryBook: 'Story',
 }
 
 export const access = {
@@ -130,11 +130,11 @@ export const canCreateLanguage = async (authUser, language) => hasPermission(aut
 export const canUpdateLanguage = async (authUser, language) => hasPermission(authUser, groups.Language, access.Update)
 export const canDeleteLanguage = async (authUser, language) => hasPermission(authUser, groups.Language, access.Delete)
 
-export const canAccessStoryType = async (authUser) => hasPermission(authUser, groups.StoryType, access.View)
-export const canViewStoryType = async (authUser, storyType) => hasPermission(authUser, groups.StoryType, access.ViewAny)
-export const canCreateStoryType = async (authUser, storyType) => hasPermission(authUser, groups.StoryType, access.Create)
-export const canUpdateStoryType = async (authUser, storyType) => hasPermission(authUser, groups.StoryType, access.Update)
-export const canDeleteStoryType = async (authUser, storyType) => hasPermission(authUser, groups.StoryType, access.Delete)
+export const canAccessStoryBookType = async (authUser) => hasPermission(authUser, groups.StoryBookType, access.View)
+export const canViewStoryBookType = async (authUser, storyBookType) => hasPermission(authUser, groups.StoryBookType, access.ViewAny)
+export const canCreateStoryBookType = async (authUser, storyBookType) => hasPermission(authUser, groups.StoryBookType, access.Create)
+export const canUpdateStoryBookType = async (authUser, storyBookType) => hasPermission(authUser, groups.StoryBookType, access.Update)
+export const canDeleteStoryBookType = async (authUser, storyBookType) => hasPermission(authUser, groups.StoryBookType, access.Delete)
 
 export const canAccessIllustrationType = async (authUser) => hasPermission(authUser, groups.IllustrationType, access.View)
 export const canViewIllustrationType = async (authUser, illustrationType) => hasPermission(authUser, groups.IllustrationType, access.ViewAny)
@@ -154,11 +154,11 @@ export const canCreateAiPrompt = async (authUser, aiPrompt) => hasPermission(aut
 export const canUpdateAiPrompt = async (authUser, aiPrompt) => hasPermission(authUser, groups.AiPrompt, access.Update)
 export const canDeleteAiPrompt = async (authUser, aiPrompt) => hasPermission(authUser, groups.AiPrompt, access.Delete)
 
-export const canAccessStory = async (authUser) => hasPermission(authUser, groups.Story, access.View)
-export const canViewStory = async (authUser, story) => hasPermission(authUser, groups.Story, access.ViewAny)
-export const canCreateStory = async (authUser, story) => hasPermission(authUser, groups.Story, access.Create)
-export const canUpdateStory = async (authUser, story) => hasPermission(authUser, groups.Story, access.Update)
-export const canDeleteStory = async (authUser, story) => hasPermission(authUser, groups.Story, access.Delete)
+export const canAccessStoryBook = async (authUser) => hasPermission(authUser, groups.StoryBook, access.View)
+export const canViewStoryBook = async (authUser, storyBook) => hasPermission(authUser, groups.StoryBook, access.ViewAny)
+export const canCreateStoryBook = async (authUser, storyBook) => hasPermission(authUser, groups.StoryBook, access.Create)
+export const canUpdateStoryBook = async (authUser, storyBook) => hasPermission(authUser, groups.StoryBook, access.Update)
+export const canDeleteStoryBook = async (authUser, storyBook) => hasPermission(authUser, groups.StoryBook, access.Delete)
 
 export const canAccessActivityLog = async (authUser) => authUser?.is_super_admin
 export const canDeleteActivityLog = async (authUser) => authUser?.is_super_admin

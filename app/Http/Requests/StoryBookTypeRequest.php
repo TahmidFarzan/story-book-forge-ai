@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoryTypeRequest extends FormRequest
+class StoryBookTypeRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,7 +15,7 @@ class StoryTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'max:200', Rule::unique('story_types')->ignore($this->route('slug'), 'slug')],
+            'name' => ['required', 'string', 'max:200', Rule::unique('story_book_types')->ignore($this->route('slug'), 'slug')],
             'brief' => ['nullable'],
             'prompt_instruction' => ['required', 'string'],
         ];

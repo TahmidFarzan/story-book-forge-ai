@@ -113,10 +113,10 @@ class SearchController extends Controller
         );
     }
 
-    public function storyTypes(Request $request): JsonResponse
+    public function storyBookTypes(Request $request): JsonResponse
     {
         return response()->json(
-            $this->searchService->storyTypes($request)
+            $this->searchService->storyBookTypes($request)
         );
     }
 
@@ -190,10 +190,10 @@ class SearchController extends Controller
         );
     }
 
-    public function storyType(string | int $slugOrId): JsonResponse
+    public function storyBookType(string | int $slugOrId): JsonResponse
     {
         return response()->json(
-            $this->searchService->storyType($slugOrId)
+            $this->searchService->storyBookType($slugOrId)
         );
     }
 

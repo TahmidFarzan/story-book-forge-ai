@@ -44,7 +44,7 @@ import {
     canAccessGenre,
     canAccessAudience,
     canAccessLanguage,
-    canAccessStoryType,
+    canAccessStoryBookType,
     canAccessIllustrationType,
     canAccessAiBrain,
     canAccessAiPrompt,
@@ -74,7 +74,7 @@ const routeMap = {
         "/back-office/genres/*",
         "/back-office/audiences/*",
         "/back-office/languages/*",
-        "/back-office/story-types/*",
+        "/back-office/story-book-types/*",
         "/back-office/illustration-types/*",
     ],
 };
@@ -95,8 +95,8 @@ const canAccessLanguageComputed = computed(() => {
     return canAccessLanguage(authUser);
 });
 
-const canAccessStoryTypeComputed = computed(() => {
-    return canAccessStoryType(authUser);
+const canAccessStoryBookTypeComputed = computed(() => {
+    return canAccessStoryBookType(authUser);
 });
 
 const canAccessIllustrationTypeComputed = computed(() => {
@@ -174,13 +174,13 @@ const isSubMenuVisible = (key) => {
         </a>
 
         <a
-            :href="route('back-office.stories.index')"
+            :href="route('back-office.story-books.index')"
             class="sbfa-nav-item"
-            :class="isCurrentPage('/back-office/stories/*') ? 'is-active' : ''"
+            :class="isCurrentPage('/back-office/story-books/*') ? 'is-active' : ''"
             @click="handleNavigate"
         >
             <FontAwesomeIcon icon="book" />
-            Stories
+            Story books
         </a>
 
         <button
@@ -259,18 +259,18 @@ const isSubMenuVisible = (key) => {
                 </a>
 
                 <a
-                    v-if="canAccessStoryTypeComputed"
-                    :href="route('back-office.story-types.index')"
+                    v-if="canAccessStoryBookTypeComputed"
+                    :href="route('back-office.story-book-types.index')"
                     class="sbfa-nav-item"
                     :class="
-                        isCurrentPage('/back-office/story-types/*')
+                        isCurrentPage('/back-office/story-book-types/*')
                             ? 'is-active'
                             : ''
                     "
                     @click="handleNavigate"
                 >
                     <FontAwesomeIcon icon="layer-group" />
-                    Story Types
+                    Story Book Types
                 </a>
 
                 <a

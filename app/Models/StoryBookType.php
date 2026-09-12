@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Observers\StoryObserver;
-use App\Policies\StoryPolicy;
+use App\Observers\StoryBookTypeObserver;
+use App\Policies\StoryBookTypePolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
@@ -21,34 +20,23 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-#[Table('stories')]
+#[Table('story_book_types')]
 #[Fillable([
-    'title',
-    'sub_title',
-    'datetime',
-    'slug',
-    'status',
-    "audience_id",
-    "story_type_id",
-    'language_id',
-    'ai_prompt',
-    'received_inputs',
-    'plot',
+    'name', 'brief', 'slug',
+    'prompt_instruction',
     'created_by_id',
 ])]
-#[UsePolicy(StoryPolicy::class)]
-#[ObservedBy([StoryObserver::class])]
-class Story extends Model
+#[UsePolicy(StoryBookTypePolicy::class)]
+#[ObservedBy([StoryBookTypeObserver::class])]
+class StoryBookType extends Model
 {
-    use HasFactory, LogsActivity, HasSlug;
+    use HasFactory, HasSlug, LogsActivity;
 
     protected $appends = [];
 
     protected function casts(): array
     {
         return [
-            'received_inputs'   => 'array',
-            'datetime'   => 'datetime',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
@@ -58,20 +46,10 @@ class Story extends Model
     {
         return LogOptions::defaults()
             ->logOnly([
-                'title',
-                'sub_title',
-                'datetime',
-                'slug',
-                'status',
-                "audience_id",
-                "story_type_id",
-                'language_id',
-                'ai_prompt',
-                'received_inputs',
-                'plot',
+                'name', 'brief', 'slug', 'prompt_instruction',
             ])
-            ->useLogName('Story')
-            ->setDescriptionForEvent(fn(string $eventName) => "The record has been {$eventName}.")
+            ->useLogName('StoryBookType')
+            ->setDescriptionForEvent(fn (string $eventName) => "The record has been {$eventName}.")
             ->logOnlyDirty()
             ->logExcept([
                 'id',
@@ -85,10 +63,10 @@ class Story extends Model
     {
         return SlugOptions::create()
             ->saveSlugsTo('slug')
-            ->generateSlugsFrom("name")
+            ->generateSlugsFrom('name')
             ->doNotGenerateSlugsOnUpdate()
             ->slugsShouldBeNoLongerThan(255)
-            ->usingSuffixGenerator(fn() => Str::lower(Str::random(5)));
+            ->usingSuffixGenerator(fn () => Str::lower(Str::random(5)));
     }
 
     public function getRouteKeyName(): string
@@ -104,11 +82,6 @@ class Story extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');
-    }
-
-    public function genres()
-    {
-        return $this->belongsToMany(Genre::class, 'genre_story');
     }
 
     public function latestActivityLog(): MorphOne

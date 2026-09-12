@@ -5,14 +5,14 @@ namespace App\Services;
 use App\Helpers\ActivityLogHelper;
 use App\Helpers\DatatableHelper;
 use App\Helpers\UserHelper;
-use App\Helpers\StoryBookGeneratorHelper;
+use App\Helpers\StoryBookHelper;
 use App\Models\User;
 use App\Models\Genre;
 use App\Models\Audience;
 use App\Models\AiBrain;
 use App\Models\AiPrompt;
 use App\Models\Language;
-use App\Models\StoryType;
+use App\Models\StoryBookType;
 use App\Models\IllustrationType;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
@@ -179,7 +179,7 @@ class SearchService
 
     public function storyBookContinuities(Request $request): array
     {
-        $options = StoryBookGeneratorHelper::continuities();
+        $options = StoryBookHelper::continuities();
 
         if ($request->filled('search')) {
             $search  = $request->input('search');
@@ -205,7 +205,7 @@ class SearchService
 
     public function storyBookStatuses(Request $request): array
     {
-        $options = StoryBookGeneratorHelper::statuses();
+        $options = StoryBookHelper::statuses();
 
         if ($request->filled('search')) {
             $search  = $request->input('search');
@@ -443,9 +443,9 @@ class SearchService
         ];
     }
 
-    public function storyTypes(Request $request): array
+    public function storyBookTypes(Request $request): array
     {
-        $query = StoryType::query();
+        $query = StoryBookType::query();
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -463,10 +463,10 @@ class SearchService
             ->orderByDesc('id')
             ->paginate($request->input('per_page', 25));
 
-        $items = $records->map(fn($storyType) => [
-            'id'   => $storyType->id,
-            'name' => $storyType->name,
-            'slug' => $storyType->slug,
+        $items = $records->map(fn($storyBookType) => [
+            'id'   => $storyBookType->id,
+            'name' => $storyBookType->name,
+            'slug' => $storyBookType->slug,
         ]);
 
         return [
@@ -650,9 +650,9 @@ class SearchService
         return Language::where('id', $slugOrId)->firstOrFail();
     }
 
-    public function storyType(int | string $slugOrId): StoryType
+    public function storyBookType(int | string $slugOrId): StoryBookType
     {
-        return StoryType::where('id', $slugOrId)->firstOrFail();
+        return StoryBookType::where('id', $slugOrId)->firstOrFail();
     }
 
     public function illustrationType(int | string $slugOrId): IllustrationType

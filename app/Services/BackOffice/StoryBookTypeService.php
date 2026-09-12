@@ -1,24 +1,24 @@
 <?php
 namespace App\Services\BackOffice;
 
-use App\Http\Requests\StoryTypeRequest;
-use App\Models\StoryType;
+use App\Http\Requests\StoryBookTypeRequest;
+use App\Models\StoryBookType;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class StoryTypeService
+class StoryBookTypeService
 {
-    public function new (): StoryType
+    public function new (): StoryBookType
     {
-        return new StoryType;
+        return new StoryBookType;
     }
 
-    public function find(string $slug): StoryType
+    public function find(string $slug): StoryBookType
     {
-        return StoryType::with([
+        return StoryBookType::with([
             'createdBy',
 
             'activityLogs' => fn($query) => $query->latest()->limit(10),
@@ -33,7 +33,7 @@ class StoryTypeService
     {
         $perPage = $request->input('per_page', 10);
 
-        $query = StoryType::query();
+        $query = StoryBookType::query();
 
         if ($request->filled('created_by_id')) {
             $query->where('created_by_id', $request->input('created_by_id'));
@@ -60,20 +60,20 @@ class StoryTypeService
             ->appends($request->all());
     }
 
-    public function save(StoryTypeRequest $request, StoryType $storyType): array
+    public function save(StoryBookTypeRequest $request, StoryBookType $storyBookType): array
     {
-        $isNew       = empty($storyType->id);
+        $isNew       = empty($storyBookType->id);
         $statusEvent = $isNew ? 'save' : 'update';
 
         try {
 
-            DB::transaction(function () use ($request, $storyType, $isNew) {
-                $storyType->name               = $request->input('name');
-                $storyType->brief              = $request->input('brief');
-                $storyType->prompt_instruction = $request->input('prompt_instruction');
-                $storyType->created_by_id      = $isNew ? Auth::id() : $storyType->created_by_id;
+            DB::transaction(function () use ($request, $storyBookType, $isNew) {
+                $storyBookType->name               = $request->input('name');
+                $storyBookType->brief              = $request->input('brief');
+                $storyBookType->prompt_instruction = $request->input('prompt_instruction');
+                $storyBookType->created_by_id      = $isNew ? Auth::id() : $storyBookType->created_by_id;
 
-                $storyType->save();
+                $storyBookType->save();
             });
 
             return [
@@ -92,13 +92,13 @@ class StoryTypeService
         }
     }
 
-    public function delete(StoryType $storyType): array
+    public function delete(StoryBookType $storyBookType): array
     {
 
         try {
 
-            DB::transaction(function () use ($storyType) {
-                $storyType->delete();
+            DB::transaction(function () use ($storyBookType) {
+                $storyBookType->delete();
             });
 
             return [

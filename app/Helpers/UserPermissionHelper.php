@@ -19,11 +19,11 @@ class UserPermissionHelper
     public const MODULE_GENRE  = 'Genre';
     public const MODULE_AUDIENCE = 'Audience';
     public const MODULE_LANGUAGE = 'Language';
-    public const MODULE_STORY_TYPE = 'Story Type';
+    public const MODULE_STORY_BOOK_TYPE = 'Story Type';
     public const MODULE_ILLUSTRATION_TYPE = 'Illustration Type';
     public const MODULE_AI_BRAIN = 'Ai Brain';
     public const MODULE_AI_PROMPT = 'Ai Prompt';
-    public const MODULE_STORY = 'Story';
+    public const MODULE_STORY_BOOK = 'Story';
 
     public static function modules(): Collection
     {
@@ -32,11 +32,11 @@ class UserPermissionHelper
             self::MODULE_GENRE,
             self::MODULE_AUDIENCE,
             self::MODULE_LANGUAGE,
-            self::MODULE_STORY_TYPE,
+            self::MODULE_STORY_BOOK_TYPE,
             self::MODULE_ILLUSTRATION_TYPE,
             self::MODULE_AI_BRAIN,
             self::MODULE_AI_PROMPT,
-            self::MODULE_STORY,
+            self::MODULE_STORY_BOOK,
 
         ]);
     }

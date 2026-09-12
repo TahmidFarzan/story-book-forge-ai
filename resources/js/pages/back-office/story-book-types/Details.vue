@@ -10,7 +10,7 @@ import { library as FontAwesomeLibrary } from '@fortawesome/fontawesome-svg-core
 import { faTrash, faPen, faEye, faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 import { formatDateTime } from '@/composables/useDateTime'
-import { canUpdateStoryType, canDeleteStoryType } from '@/composables/useUserPermissions'
+import { canUpdateStoryBookType, canDeleteStoryBookType } from '@/composables/useUserPermissions'
 
 FontAwesomeLibrary.add(faTrash, faPen, faEye, faEyeSlash, faSpinner)
 
@@ -21,21 +21,21 @@ const authUser = inject("authUser")
 const showDeleteModal = ref(false)
 const deleteProcessing = ref(false)
 
-const { storyType } = defineProps({
-    storyType: Object,
+const { storyBookType } = defineProps({
+    storyBookType: Object,
 })
 
-const pageTitle = computed(() => `Details of ${storyType?.name}`)
+const pageTitle = computed(() => `Details of ${storyBookType?.name}`)
 
-const canUpdate = (storyType) => canUpdateStoryType(authUser?.value, storyType)
-const canDelete = (storyType) => canDeleteStoryType(authUser?.value, storyType)
+const canUpdate = (storyBookType) => canUpdateStoryBookType(authUser?.value, storyBookType)
+const canDelete = (storyBookType) => canDeleteStoryBookType(authUser?.value, storyBookType)
 
 const handleDelete = () => {
     if (deleteProcessing.value) return
 
     deleteProcessing.value = true
 
-    intertiaJsRoute.delete(route('back-office.story-types.delete', { slug: storyType?.slug }), {
+    intertiaJsRoute.delete(route('back-office.story-book-types.delete', { slug: storyBookType?.slug }), {
         onFinish: () => {
             deleteProcessing.value = false
             showDeleteModal.value = false
@@ -49,7 +49,7 @@ onMounted(async () => {
     window.dispatchEvent(
         new CustomEvent('set-breadcrumb', {
             detail: [
-                { text: 'Story Types', href: route('back-office.story-types.index') },
+                { text: 'Story Book Types', href: route('back-office.story-book-types.index') },
                 { text: pageTitle.value, active: true }
             ],
         })
@@ -64,17 +64,17 @@ onMounted(async () => {
 
         <div class="flex justify-between items-center">
             <h2 class="text-lg font-semibold">
-                Story Type Details
+                Story Book Type Details
             </h2>
 
             <div class="flex gap-2">
-                <a v-if="canUpdate(storyType)" :href="route('back-office.story-types.edit', { slug: storyType?.slug })"
+                <a v-if="canUpdate(storyBookType)" :href="route('back-office.story-book-types.edit', { slug: storyBookType?.slug })"
                     class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md flex items-center gap-2 transition">
                     <FontAwesomeIcon icon="pen" />
                     Edit
                 </a>
 
-                <button v-if="canDelete(storyType)" @click="showDeleteModal = true"
+                <button v-if="canDelete(storyBookType)" @click="showDeleteModal = true"
                     class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition">
                     <FontAwesomeIcon icon="trash" />
                     Delete
@@ -92,14 +92,14 @@ onMounted(async () => {
                 <div class="border border-gray-200 rounded-lg p-4 space-y-2">
                     <div class="flex justify-between">
                         <span class="text-gray-500">Name</span>
-                        <span class="font-medium">{{ storyType?.name || 'N/A' }}</span>
+                        <span class="font-medium">{{ storyBookType?.name || 'N/A' }}</span>
                     </div>
                 </div>
 
                 <div class="border border-gray-200 rounded-lg p-4 space-y-2">
                     <div>
                         <div class="text-gray-500 mb-1">Brief</div>
-                        <div class="text-gray-700">{{ storyType?.brief || 'N/A' }}</div>
+                        <div class="text-gray-700">{{ storyBookType?.brief || 'N/A' }}</div>
                     </div>
                 </div>
 
@@ -111,9 +111,9 @@ onMounted(async () => {
                 Prompt Instruction
             </h3>
 
-            <div v-if="storyType?.prompt_instruction" class="border border-gray-200 rounded-lg p-4 text-sm text-gray-700"
+            <div v-if="storyBookType?.prompt_instruction" class="border border-gray-200 rounded-lg p-4 text-sm text-gray-700"
                 style="white-space: pre-wrap; word-break: break-word;">
-                {{ storyType.prompt_instruction }}
+                {{ storyBookType.prompt_instruction }}
             </div>
 
             <div v-else class="border border-gray-200 rounded-lg p-4 text-sm text-gray-500">
@@ -132,14 +132,14 @@ onMounted(async () => {
                     <div class="flex justify-between">
                         <span class="text-gray-500">Created At</span>
                         <span class="font-medium">
-                            {{ storyType?.created_at ? formatDateTime(storyType.created_at) : 'N/A' }}
+                            {{ storyBookType?.created_at ? formatDateTime(storyBookType.created_at) : 'N/A' }}
                         </span>
                     </div>
 
                     <div class="flex justify-between">
                         <span class="text-gray-500">Created By</span>
                         <span class="font-medium">
-                            {{ storyType?.created_by?.name || 'N/A' }}
+                            {{ storyBookType?.created_by?.name || 'N/A' }}
                         </span>
                     </div>
                 </div>
@@ -148,14 +148,14 @@ onMounted(async () => {
                     <div class="flex justify-between">
                         <span class="text-gray-500">Updated At</span>
                         <span class="font-medium">
-                            {{ storyType?.updated_at ? formatDateTime(storyType.updated_at) : 'N/A' }}
+                            {{ storyBookType?.updated_at ? formatDateTime(storyBookType.updated_at) : 'N/A' }}
                         </span>
                     </div>
 
                     <div class="flex justify-between">
                         <span class="text-gray-500">Updated By</span>
                         <span class="font-medium">
-                            {{ storyType?.latest_activity_log?.causer?.name || 'N/A' }}
+                            {{ storyBookType?.latest_activity_log?.causer?.name || 'N/A' }}
                         </span>
                     </div>
                 </div>
@@ -168,7 +168,7 @@ onMounted(async () => {
                 Activity Logs
             </h3>
 
-            <RecentActivities :model-slug="'story-type'" :model="storyType" />
+            <RecentActivities :model-slug="'story-book-type'" :model="storyBookType" />
         </div>
 
         <Teleport to="body">
@@ -186,11 +186,11 @@ onMounted(async () => {
                         leave-to-class="opacity-0 scale-95 translate-y-4">
                         <div v-if="showDeleteModal" class="bg-white rounded-xl shadow-lg w-[380px] p-6 space-y-4">
                             <h3 class="text-lg font-semibold text-red-600">
-                                Delete Story Type
+                                Delete Story Book Type
                             </h3>
 
                             <p class="text-sm font-medium">
-                                {{ storyType?.name }}
+                                {{ storyBookType?.name }}
                             </p>
 
                             <p class="text-sm text-gray-500">

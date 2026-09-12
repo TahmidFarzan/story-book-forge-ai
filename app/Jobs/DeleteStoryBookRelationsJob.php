@@ -1,7 +1,7 @@
 <?php
 namespace App\Jobs;
 
-use App\Models\StoryType;
+use App\Models\StoryBook;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -13,20 +13,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use romanzipp\QueueMonitor\Traits\IsMonitored;
 
-class DeleteStoryTypeRelationsJob implements ShouldQueue, ShouldBeUnique
+class DeleteStoryBookRelationsJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, IsMonitored;
 
-    public int $storyTypeId;
+    public int $storyBookId;
 
-    public function __construct(int $storyTypeId)
+    public function __construct(int $storyBookId)
     {
-        $this->storyTypeId = $storyTypeId;
+        $this->storyBookId = $storyBookId;
     }
 
     public function uniqueId(): string
     {
-        return "delete-story-type-{$this->storyTypeId}-relations";
+        return "delete-story-book-{$this->storyBookId}-relations";
     }
 
     public function retryAfter()
@@ -41,20 +41,19 @@ class DeleteStoryTypeRelationsJob implements ShouldQueue, ShouldBeUnique
 
     public function handle(): void
     {
-        $storyType = StoryType::find($this->storyTypeId);
+        $storyBook = StoryBook::find($this->storyBookId);
 
-        if ($storyType && ($storyType->activityLogs()->exists())) {
+        if ($storyBook && ($storyBook->activityLogs()->exists() )) {
 
             try {
-
-                DB::transaction(function () use ($storyType) {
-                    if ($storyType->activityLogs()->exists()) {
-                        $storyType->activityLogs()->delete();
+                DB::transaction(function () use ($storyBook) {
+                    if ($storyBook->activityLogs()->exists()) {
+                        $storyBook->activityLogs()->delete();
                     }
                 });
 
             } catch (Exception $ex) {
-                Log::error("Fail to delete story type relations.", [
+                Log::error("Fail to delete story relations.", [
                     'exception' => $ex,
                 ]);
 

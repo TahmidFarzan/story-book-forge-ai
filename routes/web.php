@@ -8,11 +8,11 @@ use App\Http\Controllers\BackOffice\UserController;
 use App\Http\Controllers\BackOffice\GenreController;
 use App\Http\Controllers\BackOffice\AudienceController;
 use App\Http\Controllers\BackOffice\LanguageController;
-use App\Http\Controllers\BackOffice\StoryTypeController;
+use App\Http\Controllers\BackOffice\StoryBookTypeController;
 use App\Http\Controllers\BackOffice\IllustrationTypeController;
 use App\Http\Controllers\BackOffice\AiBrainController;
 use App\Http\Controllers\BackOffice\AiPromptController;
-use App\Http\Controllers\BackOffice\StoryController;
+use App\Http\Controllers\BackOffice\StoryBookController;
 use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\ActivityLogController;
 
@@ -93,7 +93,7 @@ Route::prefix('search')->name('search.')->group(function () {
         Route::get('genres', [SearchController::class, 'genres'])->name('genres');
         Route::get('audiences', [SearchController::class, 'audiences'])->name('audiences');
         Route::get('languages', [SearchController::class, 'languages'])->name('languages');
-        Route::get('story-types', [SearchController::class, 'storyTypes'])->name('story-types');
+        Route::get('story-book-types', [SearchController::class, 'storyBookTypes'])->name('story-book-types');
         Route::get('illustration-types', [SearchController::class, 'illustrationTypes'])->name('illustration-types');
         Route::get('ai-brains', [SearchController::class, 'aiBrains'])->name('ai-brains');
         Route::get('ai-prompts', [SearchController::class, 'aiPrompts'])->name('ai-prompts');
@@ -105,7 +105,7 @@ Route::prefix('search')->name('search.')->group(function () {
         Route::get('genre/{slugOrId}', [SearchController::class, 'genre'])->name('genre');
         Route::get('audience/{slugOrId}', [SearchController::class, 'audience'])->name('audience');
         Route::get('language/{slugOrId}', [SearchController::class, 'language'])->name('language');
-        Route::get('story-type/{slugOrId}', [SearchController::class, 'storyType'])->name('story-type');
+        Route::get('story-book-type/{slugOrId}', [SearchController::class, 'storyBookType'])->name('story-book-type');
         Route::get('illustration-type/{slugOrId}', [SearchController::class, 'illustrationType'])->name('illustration-type');
         Route::get('ai-brain/{slugOrId}', [SearchController::class, 'aiBrain'])->name('ai-brain');
         Route::get('ai-prompt/{slugOrId}', [SearchController::class, 'aiPrompt'])->name('ai-prompt');
@@ -158,15 +158,15 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::delete('delete/{slug}', [LanguageController::class, 'delete'])->name('delete');
     });
 
-    Route::prefix('story-types')->name('story-types.')->group(function () {
-        Route::get('/', [StoryTypeController::class, 'index'])->name('index');
-        Route::get('create', [StoryTypeController::class, 'create'])->name('create');
-        Route::get('edit/{slug}', [StoryTypeController::class, 'edit'])->name('edit');
-        Route::get('details/{slug}', [StoryTypeController::class, 'details'])->name('details');
+    Route::prefix('story-book-types')->name('story-book-types.')->group(function () {
+        Route::get('/', [StoryBookTypeController::class, 'index'])->name('index');
+        Route::get('create', [StoryBookTypeController::class, 'create'])->name('create');
+        Route::get('edit/{slug}', [StoryBookTypeController::class, 'edit'])->name('edit');
+        Route::get('details/{slug}', [StoryBookTypeController::class, 'details'])->name('details');
 
-        Route::post('save', [StoryTypeController::class, 'save'])->name('save');
-        Route::patch('update/{slug}', [StoryTypeController::class, 'update'])->name('update');
-        Route::delete('delete/{slug}', [StoryTypeController::class, 'delete'])->name('delete');
+        Route::post('save', [StoryBookTypeController::class, 'save'])->name('save');
+        Route::patch('update/{slug}', [StoryBookTypeController::class, 'update'])->name('update');
+        Route::delete('delete/{slug}', [StoryBookTypeController::class, 'delete'])->name('delete');
     });
 
     Route::prefix('illustration-types')->name('illustration-types.')->group(function () {
@@ -202,11 +202,11 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::delete('delete/{slug}', [AiBrainController::class, 'delete'])->name('delete');
     });
 
-    Route::prefix('stories')->name('stories.')->group(function () {
-        Route::get('/', [StoryController::class, 'index'])->name('index');
-        Route::post('save', [StoryController::class, 'save'])->name('save');
+    Route::prefix('story-books')->name('story-books.')->group(function () {
+        Route::get('/', [StoryBookController::class, 'index'])->name('index');
+        Route::post('save', [StoryBookController::class, 'save'])->name('save');
 
-        Route::delete('delete/{slug}', [StoryController::class, 'delete'])->name('delete');
+        Route::delete('delete/{slug}', [StoryBookController::class, 'delete'])->name('delete');
     });
 
     Route::prefix('users')->name('users.')->group(function () {

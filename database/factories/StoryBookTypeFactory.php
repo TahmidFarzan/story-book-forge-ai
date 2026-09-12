@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\StoryType;
+use App\Models\StoryBookType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<StoryType>
+ * @extends Factory<StoryBookType>
  */
-class StoryTypeFactory extends Factory
+class StoryBookTypeFactory extends Factory
 {
     /**
      * Define the model's default state.

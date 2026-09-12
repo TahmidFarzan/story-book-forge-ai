@@ -12,22 +12,22 @@ FontAwesomeLibrary.add(faSave, faEye, faEyeSlash, faSpinner)
 
 defineOptions({ layout: Layout })
 
-const { storyType } = defineProps({
-    storyType: Object,
+const { storyBookType } = defineProps({
+    storyBookType: Object,
 })
 
-const isUpdate = computed(() => !!storyType?.slug)
+const isUpdate = computed(() => !!storyBookType?.slug)
 
 const pageTitle = computed(() => {
     return isUpdate.value
-        ? `Edit ${storyType?.name}`
-        : 'Create Story Type'
+        ? `Edit ${storyBookType?.name}`
+        : 'Create Story Book Type'
 })
 
 const saveForm = useForm({
-    name: storyType?.name || null,
-    brief: storyType?.brief || null,
-    prompt_instruction: storyType?.prompt_instruction || null,
+    name: storyBookType?.name || null,
+    brief: storyBookType?.brief || null,
+    prompt_instruction: storyBookType?.prompt_instruction || null,
 })
 
 function validateForm() {
@@ -73,12 +73,12 @@ function handleSave() {
 
     if (isUpdate.value) {
         intertiaJsRoute.post(
-            route('back-office.story-types.update', { slug: storyType?.slug }),
+            route('back-office.story-book-types.update', { slug: storyBookType?.slug }),
             { ...saveForm.data(), _method: 'patch' },
             requestConfig
         )
     } else {
-        saveForm.post(route('back-office.story-types.save'), requestConfig)
+        saveForm.post(route('back-office.story-book-types.save'), requestConfig)
     }
 }
 
@@ -88,7 +88,7 @@ onMounted(async () => {
     window.dispatchEvent(
         new CustomEvent('set-breadcrumb', {
             detail: [
-                { text: 'Story Types', href: route('back-office.story-types.index') },
+                { text: 'Story Book Types', href: route('back-office.story-book-types.index') },
                 { text: pageTitle.value, active: true }
             ],
         })
@@ -116,7 +116,7 @@ onMounted(async () => {
                                 Name <span class="text-red-500">*</span>
                             </label>
 
-                            <input v-model="saveForm.name" placeholder="Enter story type name"
+                            <input v-model="saveForm.name" placeholder="Enter story book type name"
                                 class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                 :class="saveForm.errors.name ? 'border-red-500' : 'border-gray-300'" />
 
@@ -153,7 +153,7 @@ onMounted(async () => {
                         </label>
 
                         <textarea v-model="saveForm.prompt_instruction" rows="8"
-                            placeholder="Enter the master instruction for AI story generation for this story type. This controls the required story length in pages and the story-length specific generation rules."
+                            placeholder="Enter the master instruction for AI story generation for this story book type. This controls the required story length in pages and the story-length specific generation rules."
                             class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             :class="saveForm.errors.prompt_instruction ? 'border-red-500' : 'border-gray-300'"></textarea>
 

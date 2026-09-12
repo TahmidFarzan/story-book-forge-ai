@@ -13,15 +13,15 @@ import {
     faCalendar, faHashtag, faWandMagicSparkles
 } from '@fortawesome/free-solid-svg-icons'
 
-import StoryCreateForm from '@/components/back-office/story/StoryCreateForm.vue'
+import StoryBookCreateForm from '@/components/back-office/story-book/StoryBookCreateForm.vue'
 
 import { formatDateTime } from '@/composables/useDateTime'
 import { itemListFilterParameters } from '@/composables/useDataTable'
 
 import {
-    canCreateStory,
-    canUpdateStory,
-    canDeleteStory
+    canCreateStoryBook,
+    canUpdateStoryBook,
+    canDeleteStoryBook
 } from '@/composables/useUserPermissions'
 
 FontAwesomeLibrary.add(
@@ -40,13 +40,13 @@ const deleteProcessing = ref(false)
 const showCreateForm = ref(false)
 const showFloatingButton = ref(false)
 
-const { stories } = defineProps({
-    stories: Object,
+const { storyBooks } = defineProps({
+    storyBooks: Object,
 })
 
 const paginationOnly = computed(() => {
-    if (!stories) return {}
-    const { data, ...rest } = stories
+    if (!storyBooks) return {}
+    const { data, ...rest } = storyBooks
     return rest
 })
 
@@ -63,7 +63,7 @@ const applyFilter = () => {
 
     const cleanParams = itemListFilterParameters(filterForm.data())
 
-    intertiaJsRoute.get(route('back-office.stories.index'), cleanParams, {
+    intertiaJsRoute.get(route('back-office.story-books.index'), cleanParams, {
         replace: true,
         preserveScroll: true,
         preserveState: true,
@@ -80,7 +80,7 @@ const clearFilters = () => {
     filterForm.search = ''
     filterForm.status = null
 
-    intertiaJsRoute.get(route('back-office.stories.index'), {}, {
+    intertiaJsRoute.get(route('back-office.story-books.index'), {}, {
         replace: true,
         preserveScroll: true,
         preserveState: true,
@@ -102,16 +102,16 @@ const closeDeleteModal = () => {
     deletingRow.value = null
 }
 
-const canCreate = () => canCreateStory(authUser?.value)
-const canUpdate = (item) => canUpdateStory(authUser?.value, item)
-const canDelete = (item) => canDeleteStory(authUser?.value, item)
+const canCreate = () => canCreateStoryBook(authUser?.value)
+const canUpdate = (item) => canUpdateStoryBook(authUser?.value, item)
+const canDelete = (item) => canDeleteStoryBook(authUser?.value, item)
 
 const handleDelete = (item) => {
     if (!item || deleteProcessing.value) return
 
     deleteProcessing.value = true
 
-    intertiaJsRoute.delete(route('back-office.stories.delete', { slug: item?.slug }), {
+    intertiaJsRoute.delete(route('back-office.story-books.delete', { slug: item?.slug }), {
         onFinish: () => {
             closeDeleteModal()
             deleteProcessing.value = false
@@ -175,7 +175,7 @@ onMounted(async () => {
     window.dispatchEvent(
         new CustomEvent('set-breadcrumb', {
             detail: [
-                { text: 'Stories', active: true },
+                { text: 'Story Books', active: true },
             ],
         })
     )
@@ -187,13 +187,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <Head :title="'Stories'" />
+    <Head :title="'Story Books'" />
 
     <div class="w-full space-y-6">
 
         <div class="flex justify-between items-center">
             <h2 class="text-lg font-semibold">
-                Stories
+                Story Books
             </h2>
 
             <button v-if="canCreate()" type="button" @click="openCreateForm"
@@ -242,7 +242,7 @@ onUnmounted(() => {
         </form>
 
         <div class="space-y-4">
-            <div v-for="item in stories?.data" :key="item.id"
+            <div v-for="item in storyBooks?.data" :key="item.id"
                 class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-5">
 
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -295,11 +295,11 @@ onUnmounted(() => {
                 </div>
             </div>
 
-            <div v-if="!stories?.data?.length"
+            <div v-if="!storyBooks?.data?.length"
                 class="bg-white border border-gray-200 rounded-xl shadow-sm p-12 text-center">
                 <FontAwesomeIcon icon="wand-magic-sparkles" class="text-4xl text-gray-300 mb-3" />
                 <p class="text-gray-500 text-sm">
-                    No stories found
+                    No story book found
                 </p>
             </div>
         </div>
@@ -367,7 +367,7 @@ onUnmounted(() => {
                         <div v-if="showCreateForm"
                             class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 my-auto">
 
-                            <StoryCreateForm
+                            <StoryBookCreateForm
                                 @close="handleFormClose"
                                 @success="handleFormSuccess"
                             />

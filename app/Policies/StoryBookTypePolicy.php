@@ -2,11 +2,11 @@
 namespace App\Policies;
 
 use App\Helpers\UserPermissionHelper;
-use App\Models\Story;
+use App\Models\StoryBookType;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class StoryPolicy
+class StoryBookTypePolicy
 {
     public function before(User $authUser, string $ability): bool | null
     {
@@ -19,15 +19,15 @@ class StoryPolicy
 
     public function viewAny(User $authUser): Response
     {
-        $module = UserPermissionHelper::MODULE_STORY;
+        $module = UserPermissionHelper::MODULE_STORY_BOOK_TYPE;
         $access = UserPermissionHelper::ACCESS_VIEW_ANY;
 
         return $authUser->hasUserPermission($module, $access) ? Response::allow() : Response::deny();
     }
 
-    public function view(User $authUser, Story $story): Response
+    public function view(User $authUser, StoryBookType $storyBookType): Response
     {
-        $module = UserPermissionHelper::MODULE_STORY;
+        $module = UserPermissionHelper::MODULE_STORY_BOOK_TYPE;
         $access = UserPermissionHelper::ACCESS_VIEW;
 
         return $authUser->hasUserPermission($module, $access) ? Response::allow() : Response::deny();
@@ -35,15 +35,15 @@ class StoryPolicy
 
     public function create(User $authUser): Response
     {
-        $module = UserPermissionHelper::MODULE_STORY;
+        $module = UserPermissionHelper::MODULE_STORY_BOOK_TYPE;
         $access = UserPermissionHelper::ACCESS_CREATE;
 
         return $authUser->hasUserPermission($module, $access) ? Response::allow() : Response::deny();
     }
 
-    public function update(User $authUser, Story $story): Response
+    public function update(User $authUser, StoryBookType $storyBookType): Response
     {
-        $module = UserPermissionHelper::MODULE_STORY;
+        $module = UserPermissionHelper::MODULE_STORY_BOOK_TYPE;
         $access = UserPermissionHelper::ACCESS_UPDATE;
 
         if ($authUser->hasUserPermission($module, $access)) {
@@ -53,10 +53,10 @@ class StoryPolicy
         return Response::deny();
     }
 
-    public function delete(User $authUser, Story $story): Response
+    public function delete(User $authUser, StoryBookType $storyBookType): Response
     {
 
-        $module = UserPermissionHelper::MODULE_STORY;
+        $module = UserPermissionHelper::MODULE_STORY_BOOK_TYPE;
         $access = UserPermissionHelper::ACCESS_DELETE;
 
         if ($authUser->hasUserPermission($module, $access)) {
