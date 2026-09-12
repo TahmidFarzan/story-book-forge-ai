@@ -209,8 +209,6 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::delete('delete/{slug}', [StoryController::class, 'delete'])->name('delete');
     });
 
-
-
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('create', [UserController::class, 'create'])->name('create');

@@ -1,9 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { usePage } from '@inertiajs/vue3'
+import { ref, computed } from "vue";
+import { usePage } from "@inertiajs/vue3";
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 import {
     faUser,
@@ -19,7 +19,8 @@ import {
     faLayerGroup,
     faPalette,
     faClipboardList,
-} from '@fortawesome/free-solid-svg-icons'
+    faBook,
+} from "@fortawesome/free-solid-svg-icons";
 
 library.add(
     faUser,
@@ -34,8 +35,9 @@ library.add(
     faLanguage,
     faLayerGroup,
     faPalette,
-    faClipboardList
-)
+    faClipboardList,
+    faBook,
+);
 
 import {
     canAccessUser,
@@ -46,36 +48,40 @@ import {
     canAccessIllustrationType,
     canAccessAiBrain,
     canAccessAiPrompt,
-} from '@/composables/useUserPermissions'
+} from "@/composables/useUserPermissions";
 
-const {
-    authUser
-} = defineProps({
+const { authUser } = defineProps({
     authUser: {
         type: Object,
-        default: null
-    }
-})
+        default: null,
+    },
+});
 
-const emit = defineEmits(['navigate'])
+const emit = defineEmits(["navigate"]);
 
-const page = usePage()
+const page = usePage();
 
 const subMenus = ref({
     UserManagement: false,
-    AiManagement: false,
-    StoryBookManagement: false,
-})
+    AiAttributes: false,
+    StoryBookAttribute: false,
+});
 
 const routeMap = {
-    UserManagement: ['/back-office/users/*'],
-    AiManagement: ['/back-office/ai-brains/*', '/back-office/ai-prompts/*'],
-    StoryBookManagement: ['/back-office/genres/*', '/back-office/audiences/*', '/back-office/languages/*', '/back-office/story-types/*', '/back-office/illustration-types/*'],
-}
+    UserManagement: ["/back-office/users/*"],
+    AiAttributes: ["/back-office/ai-brains/*", "/back-office/ai-prompts/*"],
+    StoryBookAttribute: [
+        "/back-office/genres/*",
+        "/back-office/audiences/*",
+        "/back-office/languages/*",
+        "/back-office/story-types/*",
+        "/back-office/illustration-types/*",
+    ],
+};
 
 const canAccessUserComputed = computed(() => {
-    return canAccessUser(authUser)
-})
+    return canAccessUser(authUser);
+});
 
 const canAccessGenreComputed = computed(() => {
     return canAccessGenre(authUser);
@@ -106,154 +112,294 @@ const canAccessAiPromptComputed = computed(() => {
 });
 
 const toggleShowSubMenu = (key) => {
-    subMenus.value[key] = !subMenus.value[key]
-}
+    subMenus.value[key] = !subMenus.value[key];
+};
 
 const handleNavigate = () => {
-    emit('navigate')
-}
+    emit("navigate");
+};
 
 const isCurrentPage = (url) => {
-    const currentUrl = typeof page.url === 'string'
-        ? page.url.split('?')[0].replace(/\/+$/, '')
-        : ''
+    const currentUrl =
+        typeof page.url === "string"
+            ? page.url.split("?")[0].replace(/\/+$/, "")
+            : "";
 
-    const cleanUrl = url.replace(/\/+$/, '')
+    const cleanUrl = url.replace(/\/+$/, "");
 
-    if (cleanUrl.endsWith('/*')) {
-        const basePattern = cleanUrl.slice(0, -2)
+    if (cleanUrl.endsWith("/*")) {
+        const basePattern = cleanUrl.slice(0, -2);
 
-        return currentUrl === basePattern || currentUrl.startsWith(`${basePattern}/`)
+        return (
+            currentUrl === basePattern ||
+            currentUrl.startsWith(`${basePattern}/`)
+        );
     }
 
-    return currentUrl === cleanUrl
-}
+    return currentUrl === cleanUrl;
+};
 
 const isAnyCurrentPage = (urls = []) => {
-    return urls.some((url) => isCurrentPage(url))
-}
+    return urls.some((url) => isCurrentPage(url));
+};
 
 const isSubMenuVisible = (key) => {
-    const routes = routeMap[key] || []
-    const inRoute = isAnyCurrentPage(routes)
+    const routes = routeMap[key] || [];
+    const inRoute = isAnyCurrentPage(routes);
 
-    return subMenus.value[key] || inRoute
-}
+    return subMenus.value[key] || inRoute;
+};
 </script>
 
 <template>
     <div class="flex flex-col space-y-1 text-sm">
-
-        <a :href="route('auth-user.dashboard.index')" class="sbfa-nav-item"
-            :class="isCurrentPage('/auth-user/dashboard/*') ? 'is-active' : ''" @click="handleNavigate">
+        <a
+            :href="route('auth-user.dashboard.index')"
+            class="sbfa-nav-item"
+            :class="isCurrentPage('/auth-user/dashboard/*') ? 'is-active' : ''"
+            @click="handleNavigate"
+        >
             <FontAwesomeIcon icon="gauge" />
             Dashboard
         </a>
 
-        <a :href="route('back-office.medias.index')" class="sbfa-nav-item"
-            :class="isCurrentPage('/back-office/medias/*') ? 'is-active' : ''" @click="handleNavigate">
+        <a
+            :href="route('back-office.medias.index')"
+            class="sbfa-nav-item"
+            :class="isCurrentPage('/back-office/medias/*') ? 'is-active' : ''"
+            @click="handleNavigate"
+        >
             <FontAwesomeIcon icon="photo-film" />
             Media
         </a>
 
-        <button @click="toggleShowSubMenu('StoryBookManagement')" class="sbfa-nav-item">
+        <a
+            :href="route('back-office.stories.index')"
+            class="sbfa-nav-item"
+            :class="isCurrentPage('/back-office/stories/*') ? 'is-active' : ''"
+            @click="handleNavigate"
+        >
+            <FontAwesomeIcon icon="book" />
+            Stories
+        </a>
+
+        <button
+            @click="toggleShowSubMenu('StoryBookAttribute')"
+            class="sbfa-nav-item"
+        >
             <span class="flex items-center gap-2">
                 <FontAwesomeIcon icon="book" />
-                Story Book
+                Story Book Attributes
             </span>
 
-            <FontAwesomeIcon :icon="isSubMenuVisible('StoryBookManagement') ? 'chevron-up' : 'chevron-down'" />
+            <FontAwesomeIcon
+                :icon="
+                    isSubMenuVisible('StoryBookAttribute')
+                        ? 'chevron-up'
+                        : 'chevron-down'
+                "
+            />
         </button>
 
         <Transition
-            enter-active-class="transition-all duration-300 ease-out" enter-from-class="opacity-0 max-h-0"
-            enter-to-class="opacity-100 max-h-40" leave-active-class="transition-all duration-200 ease-in"
-            leave-from-class="opacity-100 max-h-40" leave-to-class="opacity-0 max-h-0">
-            <div v-if="isSubMenuVisible('StoryBookManagement')" class="ml-4 flex flex-col space-y-1 overflow-hidden">
-
-                <a v-if="canAccessGenreComputed" :href="route('back-office.genres.index')" class="sbfa-nav-item"
-                    :class="isCurrentPage('/back-office/genres/*') ? 'is-active' : ''" @click="handleNavigate">
+            enter-active-class="transition-all duration-300 ease-out"
+            enter-from-class="opacity-0 max-h-0"
+            enter-to-class="opacity-100 max-h-40"
+            leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="opacity-100 max-h-40"
+            leave-to-class="opacity-0 max-h-0"
+        >
+            <div
+                v-if="isSubMenuVisible('StoryBookAttribute')"
+                class="ml-4 flex flex-col space-y-1 overflow-hidden"
+            >
+                <a
+                    v-if="canAccessGenreComputed"
+                    :href="route('back-office.genres.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isCurrentPage('/back-office/genres/*')
+                            ? 'is-active'
+                            : ''
+                    "
+                    @click="handleNavigate"
+                >
                     <FontAwesomeIcon icon="star" />
                     Genres
                 </a>
 
-                <a v-if="canAccessAudienceComputed" :href="route('back-office.audiences.index')" class="sbfa-nav-item"
-                    :class="isCurrentPage('/back-office/audiences/*') ? 'is-active' : ''" @click="handleNavigate">
+                <a
+                    v-if="canAccessAudienceComputed"
+                    :href="route('back-office.audiences.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isCurrentPage('/back-office/audiences/*')
+                            ? 'is-active'
+                            : ''
+                    "
+                    @click="handleNavigate"
+                >
                     <FontAwesomeIcon icon="users" />
                     Audiences
                 </a>
 
-                <a v-if="canAccessLanguageComputed" :href="route('back-office.languages.index')" class="sbfa-nav-item"
-                    :class="isCurrentPage('/back-office/languages/*') ? 'is-active' : ''" @click="handleNavigate">
+                <a
+                    v-if="canAccessLanguageComputed"
+                    :href="route('back-office.languages.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isCurrentPage('/back-office/languages/*')
+                            ? 'is-active'
+                            : ''
+                    "
+                    @click="handleNavigate"
+                >
                     <FontAwesomeIcon icon="language" />
                     Languages
                 </a>
 
-                <a v-if="canAccessStoryTypeComputed" :href="route('back-office.story-types.index')" class="sbfa-nav-item"
-                    :class="isCurrentPage('/back-office/story-types/*') ? 'is-active' : ''" @click="handleNavigate">
+                <a
+                    v-if="canAccessStoryTypeComputed"
+                    :href="route('back-office.story-types.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isCurrentPage('/back-office/story-types/*')
+                            ? 'is-active'
+                            : ''
+                    "
+                    @click="handleNavigate"
+                >
                     <FontAwesomeIcon icon="layer-group" />
                     Story Types
                 </a>
 
-                <a v-if="canAccessIllustrationTypeComputed" :href="route('back-office.illustration-types.index')" class="sbfa-nav-item"
-                    :class="isCurrentPage('/back-office/illustration-types/*') ? 'is-active' : ''" @click="handleNavigate">
+                <a
+                    v-if="canAccessIllustrationTypeComputed"
+                    :href="route('back-office.illustration-types.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isCurrentPage('/back-office/illustration-types/*')
+                            ? 'is-active'
+                            : ''
+                    "
+                    @click="handleNavigate"
+                >
                     <FontAwesomeIcon icon="palette" />
                     Illustration Types
                 </a>
-
             </div>
         </Transition>
 
-        <button @click="toggleShowSubMenu('AiAttributes')" class="sbfa-nav-item">
+        <button
+            @click="toggleShowSubMenu('AiAttributes')"
+            class="sbfa-nav-item"
+            :class="isAnyCurrentPage(routeMap.AiAttributes) ? 'is-active' : ''"
+        >
             <span class="flex items-center gap-2">
                 <FontAwesomeIcon icon="brain" />
                 Ai Attributes
             </span>
 
-            <FontAwesomeIcon :icon="isSubMenuVisible('AiAttributes') ? 'chevron-up' : 'chevron-down'" />
+            <FontAwesomeIcon
+                :icon="
+                    isSubMenuVisible('AiAttributes')
+                        ? 'chevron-up'
+                        : 'chevron-down'
+                "
+            />
         </button>
 
         <Transition
-            enter-active-class="transition-all duration-300 ease-out" enter-from-class="opacity-0 max-h-0"
-            enter-to-class="opacity-100 max-h-40" leave-active-class="transition-all duration-200 ease-in"
-            leave-from-class="opacity-100 max-h-40" leave-to-class="opacity-0 max-h-0">
-            <div v-if="isSubMenuVisible('AiManagement')" class="ml-4 flex flex-col space-y-1 overflow-hidden">
-
-                <a v-if="canAccessAiBrainComputed" :href="route('back-office.ai-brains.index')" class="sbfa-nav-item"
-                    :class="isAnyCurrentPage(routeMap.AiManagement) ? 'is-active' : ''" @click="handleNavigate">
+            enter-active-class="transition-all duration-300 ease-out"
+            enter-from-class="opacity-0 max-h-0"
+            enter-to-class="opacity-100 max-h-40"
+            leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="opacity-100 max-h-40"
+            leave-to-class="opacity-0 max-h-0"
+        >
+            <div
+                v-if="isSubMenuVisible('AiAttributes')"
+                class="ml-4 flex flex-col space-y-1 overflow-hidden"
+            >
+                <a
+                    v-if="canAccessAiBrainComputed"
+                    :href="route('back-office.ai-brains.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isCurrentPage('/back-office/ai-brains/*')
+                            ? 'is-active'
+                            : ''
+                    "
+                    @click="handleNavigate"
+                >
                     <FontAwesomeIcon icon="brain" />
                     Ai Brains
                 </a>
 
-                <a v-if="canAccessAiPromptComputed" :href="route('back-office.ai-prompts.index')" class="sbfa-nav-item"
-                    :class="isAnyCurrentPage(routeMap.AiManagement) ? 'is-active' : ''" @click="handleNavigate">
+                <a
+                    v-if="canAccessAiPromptComputed"
+                    :href="route('back-office.ai-prompts.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isCurrentPage('/back-office/ai-prompts/*')
+                            ? 'is-active'
+                            : ''
+                    "
+                    @click="handleNavigate"
+                >
                     <FontAwesomeIcon icon="clipboard-list" class="w-4" />
                     Ai Prompts
                 </a>
-
             </div>
         </Transition>
 
-        <button type="button" class="sbfa-nav-item" @click="toggleShowSubMenu('UserManagement')" :aria-expanded="isSubMenuVisible('UserManagement')">
+        <button
+            type="button"
+            class="sbfa-nav-item"
+            @click="toggleShowSubMenu('UserManagement')"
+            :aria-expanded="isSubMenuVisible('UserManagement')"
+        >
             <span class="flex items-center gap-2">
                 <FontAwesomeIcon icon="users" />
                 User Management
             </span>
-            <FontAwesomeIcon :icon="isSubMenuVisible('UserManagement') ? 'chevron-up' : 'chevron-down'" class="ml-auto" />
+            <FontAwesomeIcon
+                :icon="
+                    isSubMenuVisible('UserManagement')
+                        ? 'chevron-up'
+                        : 'chevron-down'
+                "
+                class="ml-auto"
+            />
         </button>
 
-        <Transition enter-active-class="transition-all duration-300 ease-out" enter-from-class="opacity-0 max-h-0"
-            enter-to-class="opacity-100 max-h-40" leave-active-class="transition-all duration-200 ease-in"
-            leave-from-class="opacity-100 max-h-40" leave-to-class="opacity-0 max-h-0">
-            <div v-if="isSubMenuVisible('UserManagement') && canAccessUserComputed"
-                class="ml-4 flex flex-col space-y-1 overflow-hidden">
-
-                <a :href="route('back-office.users.index')" class="sbfa-nav-item"
-                    :class="isAnyCurrentPage(routeMap.UserManagement) ? 'is-active' : ''" @click="handleNavigate">
+        <Transition
+            enter-active-class="transition-all duration-300 ease-out"
+            enter-from-class="opacity-0 max-h-0"
+            enter-to-class="opacity-100 max-h-40"
+            leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="opacity-100 max-h-40"
+            leave-to-class="opacity-0 max-h-0"
+        >
+            <div
+                v-if="
+                    isSubMenuVisible('UserManagement') && canAccessUserComputed
+                "
+                class="ml-4 flex flex-col space-y-1 overflow-hidden"
+            >
+                <a
+                    :href="route('back-office.users.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isAnyCurrentPage(routeMap.UserManagement)
+                            ? 'is-active'
+                            : ''
+                    "
+                    @click="handleNavigate"
+                >
                     <FontAwesomeIcon icon="user" />
                     Users
                 </a>
-
             </div>
         </Transition>
     </div>
