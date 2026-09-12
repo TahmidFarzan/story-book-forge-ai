@@ -91,17 +91,31 @@ const formattedOptions = computed(() =>
 const normalizeItems = raw =>
     !raw ? [] : Array.isArray(raw) ? raw : Object.values(raw)
 
+const valuesDiffer = (a, b) => {
+    if (Array.isArray(a) && Array.isArray(b)) {
+        return a.length !== b.length || a.some((value, index) => value !== b[index])
+    }
+
+    return a !== b
+}
+
 const updateForm = val => {
     if (!form || !fieldName) return
 
+    let next
+
     if (multiple) {
-        form[fieldName] = Array.isArray(val)
+        next = Array.isArray(val)
             ? val.map(v => v?.raw?.[selectedValueKey] ?? v?.value ?? v)
             : []
     } else {
-        form[fieldName] = val
+        next = val
             ? val?.raw?.[selectedValueKey] ?? val?.value ?? val
             : null
+    }
+
+    if (valuesDiffer(form[fieldName], next)) {
+        form[fieldName] = next
     }
 }
 
