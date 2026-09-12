@@ -79,6 +79,9 @@ Route::prefix('search')->name('search.')->group(function () {
         Route::get('activity-log-events', [SearchController::class, 'activityLogEvents'])->name('activity-log-events');
         Route::get('activity-log-subject-types', [SearchController::class, 'activityLogSubjectTypes'])->name('activity-log-subject-types');
 
+        Route::get('story-book-continuities', [SearchController::class, 'storyBookContinuities'])->name('story-book-continuities');
+        Route::get('story-book-statuses', [SearchController::class, 'storyBookStatuses'])->name('story-book-statuses');
+
         Route::get('user-permissions', [SearchController::class, 'userPermissions'])->name('user-permissions');
         Route::get('user-permissions-by-group', [SearchController::class, 'userPermissionsByGroup'])->name('user-permissions-by-group');
     });

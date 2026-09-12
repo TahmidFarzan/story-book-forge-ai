@@ -57,6 +57,20 @@ class SearchController extends Controller
         );
     }
 
+    public function storyBookContinuities(Request $request): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->storyBookContinuities($request)
+        );
+    }
+
+    public function storyBookStatuses(Request $request): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->storyBookStatuses($request)
+        );
+    }
+
     public function users(Request $request): JsonResponse
     {
         return response()->json(
