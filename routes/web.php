@@ -12,6 +12,7 @@ use App\Http\Controllers\BackOffice\StoryTypeController;
 use App\Http\Controllers\BackOffice\IllustrationTypeController;
 use App\Http\Controllers\BackOffice\AiBrainController;
 use App\Http\Controllers\BackOffice\AiPromptController;
+use App\Http\Controllers\BackOffice\StoryController;
 use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\ActivityLogController;
 
@@ -107,7 +108,7 @@ Route::prefix('search')->name('search.')->group(function () {
         Route::get('story-type/{slugOrId}', [SearchController::class, 'storyType'])->name('story-type');
         Route::get('illustration-type/{slugOrId}', [SearchController::class, 'illustrationType'])->name('illustration-type');
         Route::get('ai-brain/{slugOrId}', [SearchController::class, 'aiBrain'])->name('ai-brain');
-         Route::get('ai-prompt/{slugOrId}', [SearchController::class, 'aiPrompt'])->name('ai-prompt');
+        Route::get('ai-prompt/{slugOrId}', [SearchController::class, 'aiPrompt'])->name('ai-prompt');
     });
 
     Route::middleware(['response.cache:60,private,300,etag'])->get('user/{slugOrId}', [SearchController::class, 'user'])->name('user');
@@ -200,6 +201,14 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::patch('update/{slug}', [AiBrainController::class, 'update'])->name('update');
         Route::delete('delete/{slug}', [AiBrainController::class, 'delete'])->name('delete');
     });
+
+    Route::prefix('stories')->name('stories.')->group(function () {
+        Route::get('/', [StoryController::class, 'index'])->name('index');
+        Route::post('save', [StoryController::class, 'save'])->name('save');
+
+        Route::delete('delete/{slug}', [StoryController::class, 'delete'])->name('delete');
+    });
+
 
 
     Route::prefix('users')->name('users.')->group(function () {

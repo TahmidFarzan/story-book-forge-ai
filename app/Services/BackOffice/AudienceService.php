@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\BackOffice;
 
 use App\Http\Requests\AudienceRequest;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class AudienceService
 {
-    public function new (): Audience
+    public function new(): Audience
     {
         return new Audience;
     }
@@ -29,6 +30,11 @@ class AudienceService
             'latestActivityLog',
             'latestActivityLog.causer',
         ])->where('slug', $slug)->firstOrFail();
+    }
+
+    public function findById(string|int $id): Audience
+    {
+        return Audience::where('id', $id)->firstOrFail();
     }
 
     public function search(Request $request)

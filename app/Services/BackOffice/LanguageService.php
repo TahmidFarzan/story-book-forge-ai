@@ -29,6 +29,15 @@ class LanguageService
         ])->where('slug', $slug)->firstOrFail();
     }
 
+
+    public function findByIdsOrEnglish(string | int | null $id): Language
+    {
+        if (empty($id)) {
+            return Language::where('name', "English")->firstOrFail();
+        }
+        return Language::where('id', $id)->firstOrFail();
+    }
+
     public function search(Request $request)
     {
         $perPage = $request->input('per_page', 10);

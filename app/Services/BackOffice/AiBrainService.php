@@ -29,6 +29,19 @@ class AiBrainService
         ])->where('slug', $slug)->firstOrFail();
     }
 
+    public function findById(string|int $id): AiBrain
+    {
+        return AiBrain::with([
+            'createdBy',
+
+            'activityLogs' => fn($query) => $query->latest()->limit(10),
+            'activityLogs.causer',
+
+            'latestActivityLog',
+            'latestActivityLog.causer',
+        ])->where('id', $id)->firstOrFail();
+    }
+
     public function search(Request $request)
     {
         $perPage = $request->input('per_page', 10);
