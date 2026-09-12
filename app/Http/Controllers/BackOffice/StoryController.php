@@ -25,8 +25,8 @@ class StoryController extends Controller
 
         Gate::authorize('viewAny', $story);
 
-        return Inertia::render('back-office/storys/Index', [
-            'storys' => $this->storyService->search($request),
+        return Inertia::render('back-office/stories/Index', [
+            'stories' => $this->storyService->search($request),
         ]);
     }
 
@@ -37,7 +37,7 @@ class StoryController extends Controller
 
         $result = $this->storyService->save($request, $story);
 
-        return to_route('back-office.storys.index')->with('flash_message', [
+        return to_route('back-office.stories.index')->with('flash_message', [
             'message' => $result['message'],
             'status'  => $result['status'],
         ]);
@@ -51,7 +51,7 @@ class StoryController extends Controller
 
         $result = $this->storyService->delete($user);
 
-        return to_route('back-office.storys.index')->with('flash_message', [
+        return to_route('back-office.stories.index')->with('flash_message', [
             'message' => $result['message'],
             'status'  => $result['status'],
         ]);

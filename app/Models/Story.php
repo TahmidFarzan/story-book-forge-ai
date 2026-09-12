@@ -21,7 +21,7 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-#[Table('storys')]
+#[Table('stories')]
 #[Fillable([
     'title',
     'sub_title',
