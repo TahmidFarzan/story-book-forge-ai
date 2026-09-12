@@ -445,6 +445,21 @@ class SeederHelper
         ]);
     }
 
+    public static function aiPrompts()
+    {
+        return collect([
+
+            (object) [
+                'name'                 => "Plot Generator",
+                'code'                 => "PlotGenerator",
+                'step_number'          => 1,
+                'depend_on_prompt_ids' => null,
+                'prompt'               => AiPromptGeneratorHelper::plotGenerator()
+            ],
+
+        ]);
+    }
+
     public static function imageSettings()
     {
         return [
