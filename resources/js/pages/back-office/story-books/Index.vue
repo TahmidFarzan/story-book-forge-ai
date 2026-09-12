@@ -321,7 +321,7 @@ onUnmounted(() => {
                         leave-to-class="opacity-0 scale-95 translate-y-4">
                         <div v-if="showDeleteModal" class="bg-white rounded-xl shadow-lg w-[380px] p-6 space-y-4">
                             <h3 class="text-lg font-semibold text-red-600">
-                                Delete Story
+                                Delete Story Book
                             </h3>
 
                             <p class="text-sm font-medium">
@@ -388,7 +388,7 @@ onUnmounted(() => {
             <button v-if="canCreate() && showFloatingButton && !showCreateForm" type="button"
                 @click="openCreateForm"
                 class="fixed bottom-6 right-6 z-40 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-full shadow-lg flex items-center gap-2 transition"
-                title="Create Story">
+                title="Create Story Book">
                 <FontAwesomeIcon icon="wand-magic-sparkles" />
                 <span class="hidden sm:inline text-sm font-medium">New Generator</span>
             </button>
