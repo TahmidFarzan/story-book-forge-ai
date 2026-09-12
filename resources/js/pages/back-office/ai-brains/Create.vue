@@ -36,9 +36,6 @@ const saveForm = useForm({
     max_output_tokens: aiBrain?.max_output_tokens,
 });
 
-console.log(aiBrain);
-console.log(saveForm?.minimum_wait_time);
-
 function validateForm() {
     saveForm.clearErrors();
 
