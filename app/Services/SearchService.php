@@ -354,6 +354,27 @@ class SearchService
     {
         $query = AiBrain::query();
 
+        if ($request->filled('ai_brain_output_type_id')) {
+            $query->whereHas(
+                'aiBrainOutputTypes',
+                fn($query) => $query->where('ai_brain_output_types.id', $request->input('ai_brain_output_type_id'))
+            );
+        }
+
+        if ($request->filled('ai_brain_output_type_name')) {
+            $query->whereHas(
+                'aiBrainOutputTypes',
+                fn($query) => $query->where('ai_brain_output_types.name', 'like', '%' . $request->input('ai_brain_output_type_name') . '%')
+            );
+        }
+
+        if ($request->filled('ai_brain_output_type_code')) {
+            $query->whereHas(
+                'aiBrainOutputTypes',
+                fn($query) => $query->where('ai_brain_output_types.code', $request->input('ai_brain_output_type_code'))
+            );
+        }
+
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {

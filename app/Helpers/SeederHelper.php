@@ -445,21 +445,6 @@ class SeederHelper
         ]);
     }
 
-    public static function aiPrompts()
-    {
-        return collect([
-
-            (object) [
-                'name'                 => "Plot Generator",
-                'code'                 => "PlotGenerator",
-                'step_number'          => 1,
-                'depend_on_prompt_ids' => null,
-                'prompt'               => AiPromptGeneratorHelper::plotGenerator()
-            ],
-
-        ]);
-    }
-
     public static function aiBrainOutputTypes()
     {
         return collect([
@@ -472,6 +457,21 @@ class SeederHelper
             (object) [
                 'name'              => 'Text',
                 'brief'             => 'Written output generated as a text-based story book without illustrations',
+            ],
+
+        ]);
+    }
+
+    public static function aiPrompts()
+    {
+        return collect([
+
+            (object) [
+                'name'                 => "Plot Generator",
+                'code'                 => "PlotGenerator",
+                'step_number'          => 1,
+                'depend_on_prompt_ids' => null,
+                'prompt'               => AiPromptGeneratorHelper::plotGenerator()
             ],
 
         ]);

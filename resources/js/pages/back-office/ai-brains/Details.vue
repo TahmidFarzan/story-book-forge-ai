@@ -232,6 +232,26 @@ onMounted(async () => {
         <div
             class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4"
         >
+            <h3 class="text-base font-semibold border-b pb-2">Output Types</h3>
+
+            <div class="flex flex-wrap gap-2">
+                <span
+                    v-for="outputType in aiBrain?.ai_brain_output_types"
+                    :key="outputType.id"
+                    class="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-sm font-medium"
+                >
+                    {{ outputType.name || "N/A" }}
+                </span>
+
+                <span v-if="!aiBrain?.ai_brain_output_types?.length" class="text-sm text-gray-500">
+                    No output types assigned.
+                </span>
+            </div>
+        </div>
+
+        <div
+            class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4"
+        >
             <h3 class="text-base font-semibold border-b pb-2">
                 System Information
             </h3>

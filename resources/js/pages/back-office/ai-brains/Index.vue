@@ -41,6 +41,7 @@ const paginationOnly = computed(() => {
 const filterForm = useForm({
     per_page: null,
     created_by_id: null,
+    output_type_id: null,
     date: '',
     search: '',
 })
@@ -90,6 +91,7 @@ onMounted(async () => {
 
     filterForm.per_page = urlParams.get('per_page') || ''
     filterForm.created_by_id = urlParams.get('created_by_id') || ''
+    filterForm.output_type_id = urlParams.get('output_type_id') || ''
     filterForm.date = urlParams.get('date') || ''
     filterForm.search = urlParams.get('search') || ''
 
@@ -132,6 +134,10 @@ onMounted(async () => {
                 <InfiniteScrollApiSelect :form="filterForm" fieldName="created_by_id"
                     :selectedItem="filterForm.created_by_id" :apiUrl="route('search.users')" :multiple="false"
                     placeholder="Created By" />
+
+                <InfiniteScrollApiSelect :form="filterForm" fieldName="output_type_id"
+                    :selectedItem="filterForm.output_type_id" :apiUrl="route('search.ai-brain-output-types')" :multiple="false"
+                    placeholder="Output Type" />
 
                 <input type="date" v-model="filterForm.date"
                     class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />

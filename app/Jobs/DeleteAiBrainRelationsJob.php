@@ -43,23 +43,28 @@ class DeleteAiBrainRelationsJob implements ShouldQueue, ShouldBeUnique
     {
         $aiBrain = AiBrain::find($this->aiBrainId);
 
-        if ($aiBrain && ($aiBrain->activityLogs()->exists())) {
+        if (! $aiBrain) {
+            return;
+        }
 
-            try {
+        try {
 
-                DB::transaction(function () use ($aiBrain) {
-                    if ($aiBrain->activityLogs()->exists()) {
-                        $aiBrain->activityLogs()->delete();
-                    }
-                });
+            DB::transaction(function () use ($aiBrain) {
+                if ($aiBrain->aiBrainOutputTypes()->exists()) {
+                    $aiBrain->aiBrainOutputTypes()->detach();
+                }
 
-            } catch (Exception $ex) {
-                Log::error("Fail to delete ai brain relations.", [
-                    'exception' => $ex,
-                ]);
+                if ($aiBrain->activityLogs()->exists()) {
+                    $aiBrain->activityLogs()->delete();
+                }
+            });
 
-                throw $ex;
-            }
+        } catch (Exception $ex) {
+            Log::error("Fail to delete ai brain relations.", [
+                'exception' => $ex,
+            ]);
+
+            throw $ex;
         }
     }
 }

@@ -1,7 +1,8 @@
 <script setup>
 import Layout from "@/pages/layouts/AuthLayout.vue";
+import InfiniteScrollApiSelect from "@/components/common/multi-select/InfiniteScrollApiSelect.vue";
 
-import { computed, onMounted, nextTick } from "vue";
+import { computed, onMounted, nextTick, ref } from "vue";
 import { Head, useForm, router as intertiaJsRoute } from "@inertiajs/vue3";
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -34,7 +35,15 @@ const saveForm = useForm({
     minimum_wait_time: aiBrain?.minimum_wait_time,
     timeout_seconds: aiBrain?.timeout_seconds,
     max_output_tokens: aiBrain?.max_output_tokens,
+    ai_brain_output_type_ids: [],
 });
+
+const selectedOutputTypes = ref(
+    (aiBrain?.ai_brain_output_types || []).map((outputType) => ({
+        id: outputType.id,
+        name: outputType.name,
+    })),
+);
 
 function validateForm() {
     saveForm.clearErrors();
@@ -58,6 +67,15 @@ function validateForm() {
 
     if (!saveForm.api_key) {
         saveForm.setError("api_key", "API key is required");
+        valid = false;
+    }
+
+    if (!saveForm.ai_brain_output_type_ids || !saveForm.ai_brain_output_type_ids.length) {
+        saveForm.setError(
+            "ai_brain_output_type_ids",
+            "At least one output type is required.",
+        );
+
         valid = false;
     }
 
@@ -450,6 +468,31 @@ onMounted(async () => {
                                 {{ saveForm.errors.timeout_seconds }}
                             </p>
                         </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                    <h3 class="text-base font-semibold">Output Types</h3>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">
+                            Output Type
+                        </label>
+
+                        <InfiniteScrollApiSelect
+                            :form="saveForm"
+                            fieldName="ai_brain_output_type_ids"
+                            :selectedItem="selectedOutputTypes"
+                            :apiUrl="route('search.ai-brain-output-types')"
+                            :multiple="true"
+                            placeholder="Select Output Types" />
+
+                        <p
+                            v-if="saveForm.errors.ai_brain_output_type_ids"
+                            class="text-red-500 text-sm mt-1"
+                        >
+                            {{ saveForm.errors.ai_brain_output_type_ids }}
+                        </p>
                     </div>
                 </div>
 

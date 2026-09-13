@@ -38,6 +38,16 @@ class AiBrainRequest extends FormRequest
             'minimum_wait_time' => ['required', 'integer', 'min:0'],
             'timeout_seconds'   => ['required', 'integer', 'min:1'],
             'max_output_tokens' => ['nullable', 'integer', 'min:1'],
+            'ai_brain_output_type_ids'   => [
+                'required',
+                'array',
+                'min:1',
+            ],
+            'ai_brain_output_type_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists('ai_brain_output_types', 'id'),
+            ],
         ];
     }
 
@@ -67,6 +77,12 @@ class AiBrainRequest extends FormRequest
             'timeout_seconds.min'        => 'The timeout seconds must be at least 1.',
             'max_output_tokens.integer'  => 'The max output tokens must be an integer.',
             'max_output_tokens.min'      => 'The max output tokens must be at least 1.',
+            'ai_brain_output_type_ids.required'   => 'The output type field is required.',
+            'ai_brain_output_type_ids.array'      => 'The output type must be an array.',
+            'ai_brain_output_type_ids.min'        => 'At least one output type is required.',
+            'ai_brain_output_type_ids.*.integer'  => 'The output type id must be an integer.',
+            'ai_brain_output_type_ids.*.distinct' => 'The output type ids must be distinct.',
+            'ai_brain_output_type_ids.*.exists'   => 'The selected output type is invalid.',
         ];
     }
 }
