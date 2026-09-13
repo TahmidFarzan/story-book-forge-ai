@@ -1,5 +1,19 @@
 @import 'tailwindcss';
 
+@theme {
+    --animate-nav-progress: nav-progress-slide 1.1s ease-in-out infinite;
+
+    @keyframes nav-progress-slide {
+        from {
+            transform: translateX(-100%);
+        }
+
+        to {
+            transform: translateX(350%);
+        }
+    }
+}
+
 :root {
     --story-book-forge-ai-font: 'Instrument Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 

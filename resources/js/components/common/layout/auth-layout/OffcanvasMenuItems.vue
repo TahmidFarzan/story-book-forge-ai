@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-import { usePage } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -153,35 +153,35 @@ const isSubMenuVisible = (key) => {
 
 <template>
     <div class="flex flex-col space-y-1 text-sm">
-        <a
+        <Link
             :href="route('auth-user.dashboard.index')"
             class="sbfa-nav-item"
             :class="isCurrentPage('/auth-user/dashboard/*') ? 'is-active' : ''"
-            @click="handleNavigate"
+            @start="handleNavigate"
         >
             <FontAwesomeIcon icon="gauge" />
             Dashboard
-        </a>
+        </Link>
 
-        <a
+        <Link
             :href="route('back-office.medias.index')"
             class="sbfa-nav-item"
             :class="isCurrentPage('/back-office/medias/*') ? 'is-active' : ''"
-            @click="handleNavigate"
+            @start="handleNavigate"
         >
             <FontAwesomeIcon icon="photo-film" />
             Media
-        </a>
+        </Link>
 
-        <a
+        <Link
             :href="route('back-office.story-books.index')"
             class="sbfa-nav-item"
             :class="isCurrentPage('/back-office/story-books/*') ? 'is-active' : ''"
-            @click="handleNavigate"
+            @start="handleNavigate"
         >
             <FontAwesomeIcon icon="book" />
             Story books
-        </a>
+        </Link>
 
         <button
             @click="toggleShowSubMenu('StoryBookAttribute')"
@@ -213,7 +213,7 @@ const isSubMenuVisible = (key) => {
                 v-if="isSubMenuVisible('StoryBookAttribute')"
                 class="ml-4 flex flex-col space-y-1 overflow-hidden"
             >
-                <a
+                <Link
                     v-if="canAccessGenreComputed"
                     :href="route('back-office.genres.index')"
                     class="sbfa-nav-item"
@@ -222,13 +222,13 @@ const isSubMenuVisible = (key) => {
                             ? 'is-active'
                             : ''
                     "
-                    @click="handleNavigate"
+                    @start="handleNavigate"
                 >
                     <FontAwesomeIcon icon="star" />
                     Genres
-                </a>
+                </Link>
 
-                <a
+                <Link
                     v-if="canAccessAudienceComputed"
                     :href="route('back-office.audiences.index')"
                     class="sbfa-nav-item"
@@ -237,13 +237,13 @@ const isSubMenuVisible = (key) => {
                             ? 'is-active'
                             : ''
                     "
-                    @click="handleNavigate"
+                    @start="handleNavigate"
                 >
                     <FontAwesomeIcon icon="users" />
                     Audiences
-                </a>
+                </Link>
 
-                <a
+                <Link
                     v-if="canAccessLanguageComputed"
                     :href="route('back-office.languages.index')"
                     class="sbfa-nav-item"
@@ -252,13 +252,13 @@ const isSubMenuVisible = (key) => {
                             ? 'is-active'
                             : ''
                     "
-                    @click="handleNavigate"
+                    @start="handleNavigate"
                 >
                     <FontAwesomeIcon icon="language" />
                     Languages
-                </a>
+                </Link>
 
-                <a
+                <Link
                     v-if="canAccessStoryBookTypeComputed"
                     :href="route('back-office.story-book-types.index')"
                     class="sbfa-nav-item"
@@ -267,13 +267,13 @@ const isSubMenuVisible = (key) => {
                             ? 'is-active'
                             : ''
                     "
-                    @click="handleNavigate"
+                    @start="handleNavigate"
                 >
                     <FontAwesomeIcon icon="layer-group" />
                     Story Book Types
-                </a>
+                </Link>
 
-                <a
+                <Link
                     v-if="canAccessIllustrationTypeComputed"
                     :href="route('back-office.illustration-types.index')"
                     class="sbfa-nav-item"
@@ -282,11 +282,11 @@ const isSubMenuVisible = (key) => {
                             ? 'is-active'
                             : ''
                     "
-                    @click="handleNavigate"
+                    @start="handleNavigate"
                 >
                     <FontAwesomeIcon icon="palette" />
                     Illustration Types
-                </a>
+                </Link>
             </div>
         </Transition>
 
@@ -321,7 +321,7 @@ const isSubMenuVisible = (key) => {
                 v-if="isSubMenuVisible('AiAttributes')"
                 class="ml-4 flex flex-col space-y-1 overflow-hidden"
             >
-                <a
+                <Link
                     v-if="canAccessAiBrainComputed"
                     :href="route('back-office.ai-brains.index')"
                     class="sbfa-nav-item"
@@ -330,13 +330,13 @@ const isSubMenuVisible = (key) => {
                             ? 'is-active'
                             : ''
                     "
-                    @click="handleNavigate"
+                    @start="handleNavigate"
                 >
                     <FontAwesomeIcon icon="brain" />
                     Ai Brains
-                </a>
+                </Link>
 
-                <a
+                <Link
                     v-if="canAccessAiPromptComputed"
                     :href="route('back-office.ai-prompts.index')"
                     class="sbfa-nav-item"
@@ -345,11 +345,11 @@ const isSubMenuVisible = (key) => {
                             ? 'is-active'
                             : ''
                     "
-                    @click="handleNavigate"
+                    @start="handleNavigate"
                 >
                     <FontAwesomeIcon icon="clipboard-list" class="w-4" />
                     Ai Prompts
-                </a>
+                </Link>
             </div>
         </Transition>
 
@@ -387,7 +387,7 @@ const isSubMenuVisible = (key) => {
                 "
                 class="ml-4 flex flex-col space-y-1 overflow-hidden"
             >
-                <a
+                <Link
                     :href="route('back-office.users.index')"
                     class="sbfa-nav-item"
                     :class="
@@ -395,11 +395,11 @@ const isSubMenuVisible = (key) => {
                             ? 'is-active'
                             : ''
                     "
-                    @click="handleNavigate"
+                    @start="handleNavigate"
                 >
                     <FontAwesomeIcon icon="user" />
                     Users
-                </a>
+                </Link>
             </div>
         </Transition>
     </div>

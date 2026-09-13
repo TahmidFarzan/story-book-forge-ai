@@ -4,8 +4,8 @@ import Breadcrumbs from '@/components/common/layout/auth-layout/Breadcrumbs.vue'
 import AuthTopbarDropdownMenu from '@/components/common/layout/auth-layout/AuthTopbarDropdownMenu.vue'
 import FlashMessageToaster from '@/components/common/layout/FlashMessageToaster.vue'
 
-import { usePage } from '@inertiajs/vue3'
-import { computed, provide } from 'vue'
+import { router, usePage } from '@inertiajs/vue3'
+import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -21,10 +21,52 @@ const authUser = computed(() => page.props.auth?.user ?? null)
 const flashMessage = computed(() => page.props.flashMessage ?? null)
 
 provide('authUser', authUser)
+
+const navigating = ref(false)
+const navigationCleanups = []
+
+const handleNavigationStart = () => {
+    navigating.value = true
+}
+
+const handleNavigationEnd = () => {
+    navigating.value = false
+}
+
+onMounted(() => {
+    navigationCleanups.push(router.on('start', handleNavigationStart))
+    navigationCleanups.push(router.on('finish', handleNavigationEnd))
+    navigationCleanups.push(router.on('error', handleNavigationEnd))
+    navigationCleanups.push(router.on('networkError', handleNavigationEnd))
+    navigationCleanups.push(router.on('httpException', handleNavigationEnd))
+})
+
+onBeforeUnmount(() => {
+    navigationCleanups.forEach((remove) => remove())
+})
 </script>
 
 <template>
     <div class="sbfa-dashboard-layout flex min-h-screen flex-col">
+        <Transition
+            enter-active-class="transition-opacity duration-200 ease-out motion-reduce:transition-none"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition-opacity duration-200 ease-in motion-reduce:transition-none"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div
+                v-if="navigating"
+                class="pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden"
+                aria-hidden="true"
+            >
+                <div
+                    class="h-full w-2/5 animate-nav-progress rounded-full bg-gradient-to-r from-[var(--story-book-forge-ai-accent)] to-[var(--story-book-forge-ai-violet)] shadow-[0_0_10px_rgba(79,70,229,0.4)] motion-reduce:animate-none"
+                ></div>
+            </div>
+        </Transition>
+
         <header class="sbfa-dashboard-header">
             <div class="mx-auto flex h-16 w-full max-w-[100rem] items-center justify-between gap-4 px-4 sm:px-6">
                 <a :href="route('home')" class="sbfa-dashboard-brand" :aria-label="appName">
