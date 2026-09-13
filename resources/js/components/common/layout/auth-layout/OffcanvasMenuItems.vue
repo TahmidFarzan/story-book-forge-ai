@@ -48,6 +48,7 @@ import {
     canAccessIllustrationType,
     canAccessAiBrain,
     canAccessAiPrompt,
+    canAccessAiBrainOutputType,
 } from "@/composables/useUserPermissions";
 
 const { authUser } = defineProps({
@@ -69,7 +70,7 @@ const subMenus = ref({
 
 const routeMap = {
     UserManagement: ["/back-office/users/*"],
-    AiAttributes: ["/back-office/ai-brains/*", "/back-office/ai-prompts/*"],
+    AiAttributes: ["/back-office/ai-brains/*", "/back-office/ai-prompts/*", "/back-office/ai-brain-output-types/*"],
     StoryBookAttribute: [
         "/back-office/genres/*",
         "/back-office/audiences/*",
@@ -109,6 +110,10 @@ const canAccessAiBrainComputed = computed(() => {
 
 const canAccessAiPromptComputed = computed(() => {
     return canAccessAiPrompt(authUser);
+});
+
+const canAccessAiBrainOutputTypeComputed = computed(() => {
+    return canAccessAiBrainOutputType(authUser);
 });
 
 const toggleShowSubMenu = (key) => {
@@ -349,6 +354,21 @@ const isSubMenuVisible = (key) => {
                 >
                     <FontAwesomeIcon icon="clipboard-list" class="w-4" />
                     Ai Prompts
+                </Link>
+
+                <Link
+                    v-if="canAccessAiBrainOutputTypeComputed"
+                    :href="route('back-office.ai-brain-output-types.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isCurrentPage('/back-office/ai-brain-output-types/*')
+                            ? 'is-active'
+                            : ''
+                    "
+                    @start="handleNavigate"
+                >
+                    <FontAwesomeIcon icon="brain" class="w-4" />
+                    Ai Brain Output Types
                 </Link>
             </div>
         </Transition>

@@ -13,6 +13,7 @@ export const groups = {
     IllustrationType: 'Illustration Type',
     AiBrain: 'Ai Brain',
     AiPrompt: 'Ai Prompt',
+    AiBrainOutputType: 'Ai Brain Output Type',
     StoryBook: 'Story',
 }
 
@@ -153,6 +154,9 @@ export const canViewAiPrompt = async (authUser, aiPrompt) => hasPermission(authU
 export const canCreateAiPrompt = async (authUser, aiPrompt) => hasPermission(authUser, groups.AiPrompt, access.Create)
 export const canUpdateAiPrompt = async (authUser, aiPrompt) => hasPermission(authUser, groups.AiPrompt, access.Update)
 export const canDeleteAiPrompt = async (authUser, aiPrompt) => hasPermission(authUser, groups.AiPrompt, access.Delete)
+
+export const canAccessAiBrainOutputType = async (authUser) => hasPermission(authUser, groups.AiBrainOutputType, access.View)
+export const canViewAiBrainOutputType = async (authUser, aiBrainOutputType) => hasPermission(authUser, groups.AiBrainOutputType, access.ViewAny)
 
 export const canAccessStoryBook = async (authUser) => hasPermission(authUser, groups.StoryBook, access.View)
 export const canViewStoryBook = async (authUser, storyBook) => hasPermission(authUser, groups.StoryBook, access.ViewAny)

@@ -106,6 +106,13 @@ class SearchController extends Controller
         );
     }
 
+    public function aiBrainOutputTypes(Request $request): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->aiBrainOutputTypes($request)
+        );
+    }
+
     public function languages(Request $request): JsonResponse
     {
         return response()->json(
@@ -180,6 +187,13 @@ class SearchController extends Controller
     {
         return response()->json(
             $this->searchService->aiPrompt($slugOrId)
+        );
+    }
+
+    public function aiBrainOutputType(string | int $slugOrId): JsonResponse
+    {
+        return response()->json(
+            $this->searchService->aiBrainOutputType($slugOrId)
         );
     }
 

@@ -31,5 +31,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AiBrainSeeder::class);
 
         $this->call(AiPromptSeeder::class);
+
+        $this->call(AiBrainOutputTypeSeeder::class);
     }
 }

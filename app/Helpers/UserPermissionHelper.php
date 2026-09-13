@@ -23,6 +23,7 @@ class UserPermissionHelper
     public const MODULE_ILLUSTRATION_TYPE = 'Illustration Type';
     public const MODULE_AI_BRAIN = 'Ai Brain';
     public const MODULE_AI_PROMPT = 'Ai Prompt';
+    public const MODULE_AI_BRAIN_OUTPUT_TYPE = 'Ai Brain Output Type';
     public const MODULE_STORY_BOOK = 'Story';
 
     public static function modules(): Collection
@@ -36,6 +37,7 @@ class UserPermissionHelper
             self::MODULE_ILLUSTRATION_TYPE,
             self::MODULE_AI_BRAIN,
             self::MODULE_AI_PROMPT,
+            self::MODULE_AI_BRAIN_OUTPUT_TYPE,
             self::MODULE_STORY_BOOK,
 
         ]);
@@ -47,6 +49,10 @@ class UserPermissionHelper
             self::MODULE_USER,
         ];
 
+        $readOnlyPermissionModules = [
+            self::MODULE_AI_BRAIN_OUTPUT_TYPE,
+        ];
+
         if (in_array($moduleName, $fullPermissionModules, true)) {
             return SystemHelper::toOptions([
                 self::ACCESS_VIEW_ANY,
@@ -56,6 +62,13 @@ class UserPermissionHelper
                 self::ACCESS_DELETE,
                 self::ACCESS_RESTORE,
                 self::ACCESS_FORCE_DELETE,
+            ]);
+        }
+
+        if (in_array($moduleName, $readOnlyPermissionModules, true)) {
+            return SystemHelper::toOptions([
+                self::ACCESS_VIEW_ANY,
+                self::ACCESS_VIEW,
             ]);
         }
 

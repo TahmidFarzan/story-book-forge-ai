@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Genre;
 use App\Models\Audience;
 use App\Models\AiBrain;
+use App\Models\AiBrainOutputType;
 use App\Models\AiPrompt;
 use App\Models\Language;
 use App\Models\StoryBookType;
@@ -409,6 +410,37 @@ class SearchService
         ];
     }
 
+    public function aiBrainOutputTypes(Request $request): array
+    {
+        $query = AiBrainOutputType::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('brief', 'like', "%{$search}%");
+            });
+        }
+
+        $records = $query
+            ->orderByDesc('id')
+            ->paginate($request->input('per_page', 25));
+
+        $items = $records->map(fn($aiBrainOutputType) => [
+            'id'   => $aiBrainOutputType->id,
+            'name' => $aiBrainOutputType->name,
+            'slug' => $aiBrainOutputType->slug,
+        ]);
+
+        return [
+            'items'        => $items,
+            'total'        => $records->total(),
+            'current_page' => $records->currentPage(),
+            'last_page'    => $records->lastPage(),
+        ];
+    }
+
     public function languages(Request $request): array
     {
         $query = Language::query();
@@ -643,6 +675,11 @@ class SearchService
     public function aiPrompt(int | string $slugOrId): AiPrompt
     {
         return AiPrompt::where('id', $slugOrId)->firstOrFail();
+    }
+
+    public function aiBrainOutputType(int | string $slugOrId): AiBrainOutputType
+    {
+        return AiBrainOutputType::where('id', $slugOrId)->firstOrFail();
     }
 
     public function language(int | string $slugOrId): Language

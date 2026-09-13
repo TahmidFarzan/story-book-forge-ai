@@ -460,6 +460,23 @@ class SeederHelper
         ]);
     }
 
+    public static function aiBrainOutputTypes()
+    {
+        return collect([
+
+            (object) [
+                'name'              => 'Image',
+                'brief'             => 'Illustrated output generated as a visual story book with artwork for each page',
+            ],
+
+            (object) [
+                'name'              => 'Text',
+                'brief'             => 'Written output generated as a text-based story book without illustrations',
+            ],
+
+        ]);
+    }
+
     public static function imageSettings()
     {
         return [
