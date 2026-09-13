@@ -30,6 +30,16 @@ class StoryBookController extends Controller
         ]);
     }
 
+    public function create(): InertiaResponse
+    {
+        $storyBook = $this->storyBookService->new();
+        Gate::authorize('view', $storyBook);
+
+        return Inertia::render('back-office/story-books/Create', [
+            'storyBook' => $storyBook,
+        ]);
+    }
+
     public function save(StoryBookRequest $request): RedirectResponse
     {
         $storyBook = $this->storyBookService->new();

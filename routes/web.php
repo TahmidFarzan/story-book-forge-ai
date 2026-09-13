@@ -204,6 +204,7 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
 
     Route::prefix('story-books')->name('story-books.')->group(function () {
         Route::get('/', [StoryBookController::class, 'index'])->name('index');
+        Route::get('create', [StoryBookController::class, 'create'])->name('create');
         Route::post('save', [StoryBookController::class, 'save'])->name('save');
 
         Route::delete('delete/{slug}', [StoryBookController::class, 'delete'])->name('delete');

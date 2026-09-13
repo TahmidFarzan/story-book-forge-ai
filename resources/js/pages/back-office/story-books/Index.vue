@@ -13,8 +13,6 @@ import {
     faCalendar, faHashtag, faWandMagicSparkles
 } from '@fortawesome/free-solid-svg-icons'
 
-import StoryBookCreateForm from '@/components/back-office/story-book/StoryBookCreateForm.vue'
-
 import { formatDateTime } from '@/composables/useDateTime'
 import { itemListFilterParameters } from '@/composables/useDataTable'
 
@@ -37,7 +35,6 @@ const deletingRow = ref(null)
 const showDeleteModal = ref(false)
 const deleteProcessing = ref(false)
 
-const showCreateForm = ref(false)
 const showFloatingButton = ref(false)
 
 const { storyBooks } = defineProps({
@@ -142,18 +139,6 @@ const getStepStatusColor = (status) => {
     return colors[status] || 'bg-gray-100 text-gray-600'
 }
 
-const openCreateForm = () => {
-    showCreateForm.value = true
-}
-
-const handleFormClose = () => {
-    showCreateForm.value = false
-}
-
-const handleFormSuccess = () => {
-    showCreateForm.value = false
-}
-
 const handleScroll = () => {
     showFloatingButton.value = window.scrollY > 200
 }
@@ -196,11 +181,11 @@ onUnmounted(() => {
                 Story Books
             </h2>
 
-            <button v-if="canCreate()" type="button" @click="openCreateForm"
+            <a v-if="canCreate()" :href="route('back-office.story-books.create')"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition">
                 <FontAwesomeIcon icon="plus" />
                 Create
-            </button>
+            </a>
         </div>
 
         <form @submit.prevent="applyFilter" class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 space-y-4">
@@ -280,11 +265,11 @@ onUnmounted(() => {
                     </div>
 
                     <div class="flex items-center gap-2 md:flex-shrink-0">
-                        <button v-if="canUpdate(item)" type="button" @click="openCreateForm"
+                        <a v-if="canUpdate(item)" :href="route('back-office.story-books.create')"
                             class="p-2 rounded-md text-yellow-600 hover:bg-yellow-50 border transition"
                             title="Edit">
                             <FontAwesomeIcon icon="pen" />
-                        </button>
+                        </a>
 
                         <button v-if="canDelete(item)" type="button" @click="confirmDelete(item)"
                             class="p-2 rounded-md text-red-600 hover:bg-red-50 border transition"
@@ -299,7 +284,7 @@ onUnmounted(() => {
                 class="bg-white border border-gray-200 rounded-xl shadow-sm p-12 text-center">
                 <FontAwesomeIcon icon="wand-magic-sparkles" class="text-4xl text-gray-300 mb-3" />
                 <p class="text-gray-500 text-sm">
-                    No story book found
+                    No story books found
                 </p>
             </div>
         </div>
@@ -321,7 +306,7 @@ onUnmounted(() => {
                         leave-to-class="opacity-0 scale-95 translate-y-4">
                         <div v-if="showDeleteModal" class="bg-white rounded-xl shadow-lg w-[380px] p-6 space-y-4">
                             <h3 class="text-lg font-semibold text-red-600">
-                                Delete Story Book
+                                Delete story book
                             </h3>
 
                             <p class="text-sm font-medium">
@@ -351,49 +336,19 @@ onUnmounted(() => {
             </Transition>
         </Teleport>
 
-        <Teleport to="body">
-            <Transition enter-active-class="transition ease-out duration-300" enter-from-class="opacity-0"
-                enter-to-class="opacity-100" leave-active-class="transition ease-in duration-200"
-                leave-from-class="opacity-100" leave-to-class="opacity-0">
-                <div v-if="showCreateForm"
-                    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 overflow-y-auto py-8">
-
-                    <Transition enter-active-class="transition ease-out duration-300"
-                        enter-from-class="opacity-0 scale-95 translate-y-4"
-                        enter-to-class="opacity-100 scale-100 translate-y-0"
-                        leave-active-class="transition ease-in duration-200"
-                        leave-from-class="opacity-100 scale-100 translate-y-0"
-                        leave-to-class="opacity-0 scale-95 translate-y-4">
-                        <div v-if="showCreateForm"
-                            class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 my-auto">
-
-                            <StoryBookCreateForm
-                                @close="handleFormClose"
-                                @success="handleFormSuccess"
-                            />
-
-                        </div>
-                    </Transition>
-
-                </div>
-            </Transition>
-        </Teleport>
-
         <Transition enter-active-class="transition-all duration-300 ease-out"
             enter-from-class="opacity-0 translate-y-4 scale-95"
             enter-to-class="opacity-100 translate-y-0 scale-100"
             leave-active-class="transition-all duration-200 ease-in"
             leave-from-class="opacity-100 translate-y-0 scale-100"
             leave-to-class="opacity-0 translate-y-4 scale-95">
-            <button v-if="canCreate() && showFloatingButton && !showCreateForm" type="button"
-                @click="openCreateForm"
+            <a v-if="canCreate() && showFloatingButton" :href="route('back-office.story-books.create')"
                 class="fixed bottom-6 right-6 z-40 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-full shadow-lg flex items-center gap-2 transition"
-                title="Create Story Book">
+                title="Create story book">
                 <FontAwesomeIcon icon="wand-magic-sparkles" />
                 <span class="hidden sm:inline text-sm font-medium">New Generator</span>
-            </button>
+            </a>
         </Transition>
 
     </div>
 </template>
-
