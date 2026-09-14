@@ -43,13 +43,18 @@ class DeleteStoryBookRelationsJob implements ShouldQueue, ShouldBeUnique
     {
         $storyBook = StoryBook::find($this->storyBookId);
 
-        if ($storyBook && ($storyBook->activityLogs()->exists() )) {
+        if ($storyBook && ( $storyBook->activityLogs()->exists() || $storyBook->genres()->exists() )) {
 
             try {
                 DB::transaction(function () use ($storyBook) {
                     if ($storyBook->activityLogs()->exists()) {
                         $storyBook->activityLogs()->delete();
                     }
+
+                    if ($storyBook->genres()->exists()) {
+                        $storyBook->genres()->detach();
+                    }
+
                 });
 
             } catch (Exception $ex) {

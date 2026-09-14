@@ -3,7 +3,7 @@
 namespace App\Services\BackOffice;
 
 use App\Helpers\StoryBookHelper;
-use App\Http\Requests\StoryBookRequest;
+use App\Http\Requests\StoryBookPlotRequest;
 use App\Models\StoryBook;
 use App\Services\BackOffice\AiBrainService;
 use App\Services\BackOffice\AiPromptService;
@@ -78,7 +78,8 @@ class StoryBookService
             $likeSearch = "%{$search}%";
 
             $query->whereAny([
-                'name',
+                'title',
+                'sub_title',
             ], 'like', $likeSearch);
         }
 
@@ -97,7 +98,7 @@ class StoryBookService
             ->appends($request->all());
     }
 
-    public function save(StoryBookRequest $request, StoryBook $storyBook): array
+    public function savePlot(StoryBookPlotRequest $request, StoryBook $storyBook): array
     {
         $isNew       = empty($storyBook->id);
         $statusEvent = $isNew ? "save" : "update";
@@ -173,11 +174,11 @@ class StoryBookService
             Log::info("Story AI Response", ["apiResponse" => $apiResponse]);
 
             $storyBook = DB::transaction(function () use ($request, $apiResponse, $receivedInputs, $prompt, $storyBook, $isNew) {
-                $apiResponseFormated = $this->extractStoryResponse($apiResponse);
+                $storyObject = $this->extractStoryFromResponse($apiResponse);
 
-                $storyBook->title     = $apiResponseFormated['title'];
-                $storyBook->sub_title = $apiResponseFormated['subtitle'];
-                $storyBook->plot      = $apiResponseFormated['plot'];
+                $storyBook->title     = $storyObject->title;
+                $storyBook->sub_title = $storyObject->subtitle;
+                $storyBook->plot      = $storyObject->plot;
 
                 $storyBook->received_inputs      = $receivedInputs;
                 $storyBook->ai_prompt      = $prompt;
@@ -246,7 +247,7 @@ class StoryBookService
         }
     }
 
-    private function extractStoryResponse($apiResponse): array
+    private function extractStoryFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -277,7 +278,7 @@ class StoryBookService
             throw new Exception("AI response is not valid JSON.");
         }
 
-        return [
+        return (object) [
             'title'    => $decoded['story_title'] ?? null,
             'subtitle' => $decoded['story_subtitle'] ?? null,
             'plot'     => $decoded['story_plot'] ?? null,

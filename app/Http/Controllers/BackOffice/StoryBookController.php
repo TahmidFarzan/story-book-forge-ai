@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoryBookRequest;
+use App\Http\Requests\StoryBookPlotRequest;
 use App\Services\BackOffice\StoryBookService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,12 +40,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function save(StoryBookRequest $request): RedirectResponse
+    public function savePlot(StoryBookPlotRequest $request): RedirectResponse
     {
         $storyBook = $this->storyBookService->new();
         Gate::authorize('create', $storyBook);
 
-        $result = $this->storyBookService->save($request, $storyBook);
+        $result = $this->storyBookService->savePlot($request, $storyBook);
 
         return to_route('back-office.story-books.index')->with('flash_message', [
             'message' => $result['message'],

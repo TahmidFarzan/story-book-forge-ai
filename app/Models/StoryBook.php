@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
@@ -85,7 +85,7 @@ class StoryBook extends Model
     {
         return SlugOptions::create()
             ->saveSlugsTo('slug')
-            ->generateSlugsFrom("name")
+            ->generateSlugsFrom("title")
             ->doNotGenerateSlugsOnUpdate()
             ->slugsShouldBeNoLongerThan(255)
             ->usingSuffixGenerator(fn() => Str::lower(Str::random(5)));
@@ -116,8 +116,9 @@ class StoryBook extends Model
         return $this->morphOne(Activity::class, 'subject')->latestOfMany();
     }
 
-    public function storyBook(): BelongsTo
+    public function storyBookType(): BelongsTo
     {
-        return $this->belongsTo(StoryBook::class);
+        return $this->belongsTo(StoryBookType::class);
+    }
     }
 }

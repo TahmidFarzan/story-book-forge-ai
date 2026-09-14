@@ -165,7 +165,7 @@ function submitStep1() {
     if (plotGeneratorSaveForm.processing) return
     if (!validateStep(1)) return
 
-    plotGeneratorSaveForm.post(route('back-office.story-books.save'), {
+    plotGeneratorSaveForm.post(route('back-office.story-books.save.plot'), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {
