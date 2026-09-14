@@ -4,6 +4,9 @@ namespace App\Helpers;
 
 class AiPromptGeneratorHelper
 {
+    public const AI_PROMPT_NAME_PLOT_GENERATOR = 'Plot Generator';
+    public const AI_PROMPT_NAME_BLUEPRIENT_GENERATOR = 'Blueprint Generator';
+
     public static function plotGenerator(): string
     {
         $prompt = "

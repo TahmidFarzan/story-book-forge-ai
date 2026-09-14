@@ -2,6 +2,7 @@
 
 namespace App\Services\BackOffice;
 
+use App\Helpers\AiPromptGeneratorHelper;
 use App\Helpers\StoryBookHelper;
 use App\Http\Requests\StoryBookPlotRequest;
 use App\Models\StoryBook;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class StoryBookService
 {
@@ -104,7 +106,7 @@ class StoryBookService
         $statusEvent = $isNew ? "save" : "update";
 
         try {
-            $aiPrompt = $this->aiPromptService->findByCode("PlotGenerator");
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_PLOT_GENERATOR));
             $aiBrain  = $this->aiBrainService->findById($request->input("ai_brain_id"));
 
             $language  = $this->languageService->findByIdsOrEnglish($request->input("language_id"));
