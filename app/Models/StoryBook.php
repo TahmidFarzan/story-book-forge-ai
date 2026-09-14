@@ -34,6 +34,18 @@ use Spatie\Sluggable\SlugOptions;
     'ai_prompt',
     'received_inputs',
     'plot',
+    'characters',
+    'world_bible',
+    'locations',
+    'factions',
+    'creatures',
+    'systems',
+    'timeline',
+    'story_structure',
+    'twists_and_foreshadowing',
+    'scene_plans',
+    'dialogue_plans',
+    'page_plan',
     'created_by_id',
 ])]
 #[UsePolicy(StoryBookPolicy::class)]
@@ -49,6 +61,21 @@ class StoryBook extends Model
         return [
             'received_inputs'   => 'array',
             'datetime'   => 'datetime',
+
+            'plot' => 'array',
+            'characters' => 'array',
+            'world_bible' => 'array',
+            'locations' => 'array',
+            'factions' => 'array',
+            'creatures' => 'array',
+            'systems' => 'array',
+            'timeline' => 'array',
+            'story_structure' => 'array',
+            'twists_and_foreshadowing' => 'array',
+            'scene_plans' => 'array',
+            'dialogue_plans' => 'array',
+            'page_plan' => 'array',
+
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
@@ -69,6 +96,19 @@ class StoryBook extends Model
                 'ai_prompt',
                 'received_inputs',
                 'plot',
+                'characters',
+                'world_bible',
+                'locations',
+                'factions',
+                'creatures',
+                'systems',
+                'timeline',
+                'story_structure',
+                'twists_and_foreshadowing',
+                'scene_plans',
+                'dialogue_plans',
+                'page_plan',
+                'chapter_plan',
             ])
             ->useLogName('StoryBook')
             ->setDescriptionForEvent(fn(string $eventName) => "The record has been {$eventName}.")
@@ -85,7 +125,7 @@ class StoryBook extends Model
     {
         return SlugOptions::create()
             ->saveSlugsTo('slug')
-            ->generateSlugsFrom(["title","sub_title"])
+            ->generateSlugsFrom(["title", "sub_title"])
             ->doNotGenerateSlugsOnUpdate()
             ->slugsShouldBeNoLongerThan(255)
             ->usingSuffixGenerator(fn() => Str::lower(Str::random(5)));
@@ -119,6 +159,5 @@ class StoryBook extends Model
     public function storyBookType(): BelongsTo
     {
         return $this->belongsTo(StoryBookType::class);
-    }
     }
 }

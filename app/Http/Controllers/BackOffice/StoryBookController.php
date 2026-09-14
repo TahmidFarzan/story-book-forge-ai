@@ -40,6 +40,16 @@ class StoryBookController extends Controller
         ]);
     }
 
+    public function edit(string $slug): InertiaResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        return Inertia::render('back-office/story-books/Create', [
+            'storyBook' => $storyBook,
+        ]);
+    }
+
     public function savePlot(StoryBookPlotRequest $request): RedirectResponse
     {
         $storyBook = $this->storyBookService->new();
@@ -47,7 +57,7 @@ class StoryBookController extends Controller
 
         $result = $this->storyBookService->savePlot($request, $storyBook);
 
-        return to_route('back-office.story-books.index')->with('flash_message', [
+        return to_route('back-office.story-books.edit',["slug" => $result['story_book']->slug])->with('flash_message', [
             'message' => $result['message'],
             'status'  => $result['status'],
         ]);

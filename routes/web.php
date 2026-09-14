@@ -214,6 +214,8 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::get('/', [StoryBookController::class, 'index'])->name('index');
         Route::get('create', [StoryBookController::class, 'create'])->name('create');
 
+        Route::get('{slug}/edit', [StoryBookController::class, 'edit'])->name('edit');
+
         Route::prefix('save')->name('save.')->group(function () {
             Route::post('plot', [StoryBookController::class, 'savePlot'])->name('plot');
         });

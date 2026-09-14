@@ -147,43 +147,22 @@ class StoryBookService
                 "story_book_type_instruction" => $storyBookType->prompt_instruction,
             ];
 
-            $prompt = str_replace(
-                [
-                    '{{is_18_plus}}',
-                    '{{enable_mature_content}}',
-                    '{{language}}',
-                    '{{story_continuity}}',
-                    '{{additional_information}}',
-                    '{{genre_instructions}}',
-                    '{{audience_instruction}}',
-                    '{{story_book_type_instruction}}',
-                ],
-                [
-                    $is18Plus,
-                    $enableMatureContent,
-                    $language?->name,
-                    $storyContinuity,
-                    $additionalInformation,
-                    $genrePromptInstruction,
-                    $audience->prompt_instruction,
-                    $storyBookType->prompt_instruction,
-                ],
-                $aiPrompt->prompt
-            );
+            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $receivedInputs);
+
+            // json_encode($storyBook->plot, JSON_PRETTY_PRINT)
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             Log::info("Story AI Response", ["apiResponse" => $apiResponse]);
 
-            $storyBook = DB::transaction(function () use ($request, $apiResponse, $receivedInputs, $prompt, $storyBook, $isNew) {
-                $storyObject = $this->extractStoryFromResponse($apiResponse);
+            $storyBook = DB::transaction(function () use ($request, $apiResponse, $receivedInputs, $storyBook, $isNew) {
+                $storyObject = $this->extractStoryPlotFromResponse($apiResponse);
 
                 $storyBook->title     = $storyObject->title;
                 $storyBook->sub_title = $storyObject->subtitle;
                 $storyBook->plot      = $storyObject->plot;
 
                 $storyBook->received_inputs      = $receivedInputs;
-                $storyBook->ai_prompt      = $prompt;
 
                 $storyBook->audience_id   = $request->input("audience_id");
                 $storyBook->story_book_type_id = $request->input("story_book_type_id");
@@ -205,6 +184,7 @@ class StoryBookService
             });
 
             return [
+                "story_book" => $storyBook,
                 'status'  => 'success',
                 'message' => $isNew
                     ? 'Story created successfully.'
@@ -249,7 +229,7 @@ class StoryBookService
         }
     }
 
-    private function extractStoryFromResponse($apiResponse): object
+    private function extractStoryPlotFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,

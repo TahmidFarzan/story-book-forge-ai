@@ -21,9 +21,21 @@ return new class extends Migration
             $table->foreignId('language_id')->constrained('languages')->cascadeOnDelete();
 
             $table->jsonb('received_inputs')->nullable();
-            $table->longText('ai_prompt')->nullable();
 
-            $table->longText('plot')->nullable();
+            $table->jsonb('plot')->nullable();
+
+            $table->jsonb('characters')->nullable();
+            $table->jsonb('world_bible')->nullable();
+            $table->jsonb('locations')->nullable();
+            $table->jsonb('factions')->nullable();
+            $table->jsonb('creatures')->nullable();
+            $table->jsonb('systems')->nullable();
+            $table->jsonb('timeline')->nullable();
+            $table->jsonb('story_structure')->nullable();
+            $table->jsonb('twists_and_foreshadowing')->nullable();
+            $table->jsonb('scene_plans')->nullable();
+            $table->jsonb('dialogue_plans')->nullable();
+            $table->jsonb('page_plan')->nullable();
 
             $table->string('status', 50)->nullable();
             $table->string('slug')->unique();
