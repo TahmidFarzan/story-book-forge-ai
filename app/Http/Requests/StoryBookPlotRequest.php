@@ -28,13 +28,12 @@ class StoryBookPlotRequest extends FormRequest
                 'string',
             ],
 
-            'novel_continuity'       => [
+            'story_book_continuity'       => [
                 'required',
                 'string',
             ],
             'language_id'            => [
                 'required',
-                'string',
             ],
 
             'genre_ids'              => [
@@ -47,21 +46,18 @@ class StoryBookPlotRequest extends FormRequest
                 'exists:genres,id',
             ],
 
-            'novel_type_id'         => [
+            'story_book_type_id'         => [
                 'required',
-                'integer',
-                'exists:novel_types,id',
+                'exists:story_book_types,id',
             ],
 
             'audience_id'           => [
                 'required',
-                'integer',
                 'exists:audiences,id',
             ],
 
             'ai_brain_id'            => [
                 'required',
-                'integer',
                 'exists:ai_brains,id',
             ],
         ];
@@ -72,7 +68,7 @@ class StoryBookPlotRequest extends FormRequest
         return [
 
 
-            'novel_continuity.required'      => 'Please select a novel continuity.',
+            'story_book_continuity.required'      => 'Please select a story book continuity.',
             'language_id.required'           => 'Please select a language.',
 
             'genre_ids.required'             => 'Genres must be required.',
@@ -80,8 +76,8 @@ class StoryBookPlotRequest extends FormRequest
 
             'genre_ids.*.exists'             => 'Selected genre does not exist.',
 
-            'novel_type_id.required'        => 'Novel types must be required.',
-            'novel_type_id.exists'        => 'Selected novel type does not exist.',
+            'story_book_type_id.required'        => 'Story book types must be required.',
+            'story_book_type_id.exists'        => 'Selected story book type does not exist.',
 
             'audience_id.exists'          => 'Selected audience does not exist.',
 

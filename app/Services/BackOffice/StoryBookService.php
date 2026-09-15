@@ -49,6 +49,11 @@ class StoryBookService
     public function find(string $slug): StoryBook
     {
         return StoryBook::with([
+            'language',
+            'storyBookType',
+            'audience',
+            'genres',
+
             'createdBy',
 
             'activityLogs' => fn($query) => $query->latest()->limit(10),
@@ -119,7 +124,7 @@ class StoryBookService
             $enableMatureContent    = $request->boolean("enable_mature_content", false) ? "True" : "False";
 
             $additionalInformation = $request->input("additional_information", "Auto");
-            $storyContinuity       = $request->input("story_continuity", StoryBookHelper::CONTINUITY_STANDALONE);
+            $storyBookContinuity       = $request->input("story_book_continuity", StoryBookHelper::CONTINUITY_STANDALONE);
 
             foreach ($genres as $genre) {
 
@@ -140,7 +145,7 @@ class StoryBookService
                 "is_18_plus" => $is18Plus,
                 "enable_mature_content" => $enableMatureContent,
                 "language" => $language?->name,
-                "story_continuity" => $storyContinuity,
+                "story_book_continuity" => $storyBookContinuity,
                 "additional_information" => $additionalInformation,
                 "genre_prompt_instruction" => $genrePromptInstruction,
                 "audience_instruction" => $audience->prompt_instruction,
@@ -153,7 +158,7 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
-            Log::info("Story AI Response", ["apiResponse" => $apiResponse]);
+
 
             $storyBook = DB::transaction(function () use ($request, $apiResponse, $receivedInputs, $storyBook, $isNew) {
                 $storyObject = $this->extractStoryPlotFromResponse($apiResponse);
@@ -167,6 +172,12 @@ class StoryBookService
                 $storyBook->audience_id   = $request->input("audience_id");
                 $storyBook->story_book_type_id = $request->input("story_book_type_id");
                 $storyBook->language_id   = $request->input("language_id");
+
+                $storyBook->story_book_continuity = $request->input("story_book_continuity");
+                $storyBook->is_18_plus   = $request->input("is_18_plus");
+                $storyBook->enable_mature_content   = $request->input("enable_mature_content");
+                $storyBook->additional_information   = $request->input("additional_information");
+
                 $storyBook->status        = StoryBookHelper::STATUS_ONGOING;
 
                 if ($isNew) {
@@ -197,6 +208,7 @@ class StoryBookService
             ]);
 
             return [
+                "story_book" => null,
                 'status'  => 'error',
                 'message' => 'Failed to save story. Please try again.',
             ];
@@ -236,34 +248,38 @@ class StoryBookService
             'choices.0.message.content'
         );
 
-        if (! $content) {
-            throw new Exception("Invalid AI response structure.");
+        if (! is_string($content) || trim($content) === '') {
+            throw new Exception('Invalid AI response structure.');
         }
 
         $content = trim($content);
 
-        $content = str_replace(
-            [
-                '```json',
-                '```',
-            ],
+        $content = preg_replace(
+            '/^```(?:json)?\s*|\s*```$/i',
             '',
             $content
         );
 
+        $content = trim($content);
+
         $decoded = json_decode(
-            trim($content),
+            $content,
             true
         );
 
-        if (! is_array($decoded)) {
-            throw new Exception("AI response is not valid JSON.");
+        if (
+            json_last_error() !== JSON_ERROR_NONE ||
+            ! is_array($decoded)
+        ) {
+            throw new Exception(
+                'AI response is not valid JSON: ' . json_last_error_msg()
+            );
         }
 
         return (object) [
-            'title'    => $decoded['story_title'] ?? null,
-            'subtitle' => $decoded['story_subtitle'] ?? null,
-            'plot'     => $decoded['story_plot'] ?? null,
+            'title' => $decoded['story_book_title'] ?? null,
+            'subtitle' => $decoded['story_book_subtitle'] ?? null,
+            'plot' => $decoded['story_book_plot'] ?? null,
         ];
     }
 }

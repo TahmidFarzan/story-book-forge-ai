@@ -31,6 +31,7 @@ use Spatie\Sluggable\SlugOptions;
     "audience_id",
     "story_book_type_id",
     'language_id',
+    "story_book_continuity",
     'ai_prompt',
     'received_inputs',
     'plot',
@@ -141,6 +142,11 @@ class StoryBook extends Model
         return $this->morphMany(Activity::class, 'subject');
     }
 
+    public function audience(): BelongsTo
+    {
+        return $this->belongsTo(Audience::class);
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');
@@ -149,6 +155,11 @@ class StoryBook extends Model
     public function genres()
     {
         return $this->belongsToMany(Genre::class, 'genre_story_books');
+    }
+
+    public function language(): BelongsTo
+    {
+        return $this->belongsTo(Language::class);
     }
 
     public function latestActivityLog(): MorphOne

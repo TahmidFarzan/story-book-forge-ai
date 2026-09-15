@@ -15,10 +15,17 @@ return new class extends Migration
             $table->id();
             $table->string('title', 255);
             $table->string('sub_title', 255);
+
             $table->timestamp('datetime')->nullable();
+
             $table->foreignId('audience_id')->constrained('audiences')->cascadeOnDelete();
             $table->foreignId('story_book_type_id')->constrained('story_book_types')->cascadeOnDelete();
             $table->foreignId('language_id')->constrained('languages')->cascadeOnDelete();
+
+            $table->string('story_book_continuity', 255);
+            $table->boolean('is_18_plus')->default(false);
+            $table->boolean('enable_mature_content')->default(false);
+            $table->longText('additional_information')->nullable();
 
             $table->jsonb('received_inputs')->nullable();
 

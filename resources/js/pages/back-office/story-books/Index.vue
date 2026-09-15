@@ -223,7 +223,7 @@ onUnmounted(() => {
                     <div class="flex-1 space-y-2">
                         <div class="flex items-center gap-3">
                             <h3 class="text-base font-semibold text-gray-900">
-                                {{ item.name || 'N/A' }}
+                                {{ item.title || 'N/A' }}
                             </h3>
 
                             <span :class="getStatusColor(item.status)"
@@ -253,7 +253,7 @@ onUnmounted(() => {
                     </div>
 
                     <div class="flex items-center gap-2 md:flex-shrink-0">
-                        <a v-if="canUpdate(item)" :href="route('back-office.story-books.create')"
+                        <a v-if="canUpdate(item)" :href="route('back-office.story-books.edit',{slug:item?.slug})"
                             class="p-2 rounded-md text-yellow-600 hover:bg-yellow-50 border transition"
                             title="Edit">
                             <FontAwesomeIcon icon="pen" />

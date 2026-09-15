@@ -37,7 +37,7 @@ class AiPromptGeneratorHelper
             {{language}}
 
             Story Continuity:
-            {{story_continuity}}
+            {{story_book_continuity}}
 
             Additional Story Information:
             {{additional_information}}

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
@@ -57,7 +58,13 @@ class StoryBookController extends Controller
 
         $result = $this->storyBookService->savePlot($request, $storyBook);
 
-        return to_route('back-office.story-books.edit',["slug" => $result['story_book']->slug])->with('flash_message', [
+        if ($result['story_book']?->slug) {
+            return to_route('back-office.story-books.edit', ["slug" => $result['story_book']?->slug])->with('flash_message', [
+                'message' => $result['message'],
+                'status'  => $result['status'],
+            ]);
+        }
+        return to_route('back-office.story-books.index')->with('flash_message', [
             'message' => $result['message'],
             'status'  => $result['status'],
         ]);

@@ -65,7 +65,7 @@ class AiPromptService
 
             'latestActivityLog',
             'latestActivityLog.causer',
-        ])->where('id', $code)->firstOrFail();
+        ])->where('code', $code)->firstOrFail();
     }
 
     public function search(Request $request)
