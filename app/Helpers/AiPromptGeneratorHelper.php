@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Helpers;
 
 class AiPromptGeneratorHelper
@@ -10,6 +11,7 @@ class AiPromptGeneratorHelper
     {
         $prompt = "
             You are a professional story development AI.
+
             Your task is to create the foundation of a professionally developed Story Book.
             This step focuses on creating the core narrative foundation that will be expanded by future generation steps.
 
@@ -24,37 +26,11 @@ class AiPromptGeneratorHelper
                 3. Story Book Plot Foundation
 
             ==================================================
-            USER INPUT
+            LANGUAGE REQUIREMENT
             ==================================================
-
-            Is 18+:
-            {{is_18_plus}}
-
-            Enable Mature Content:
-            {{enable_mature_content}}
 
             Language:
             {{language}}
-
-            Story Continuity:
-            {{story_book_continuity}}
-
-            Additional Story Information:
-            {{additional_information}}
-
-            ==================================================
-            AUDIENCE REQUIREMENT
-            ==================================================
-
-            {{audience_instruction}}
-
-            Use this information to adjust:
-
-            - Reader suitability
-            - Emotional depth
-            - Language style
-            - Content presentation
-
 
             ==================================================
             GENRE REQUIREMENT
@@ -76,22 +52,23 @@ class AiPromptGeneratorHelper
             {{story_book_type_instruction}}
 
             Adjust:
-
                 - Story scale
                 - Complexity
                 - Narrative depth
                 - Conflict development
                 - Emotional progression
 
-
             ==================================================
             ADDITIONAL STORY INFORMATION
             ==================================================
 
-            Understand the user's creative intention.
-            Apply important ideas naturally into the story foundation.
-            If no additional information exists, use creative decision-making to improve originality and storytelling quality.
+            {{additional_information}}
 
+            Understand the user's creative intention.
+
+            Apply important ideas naturally into the story foundation.
+
+            If no additional information exists, use creative decision-making to improve originality and storytelling quality.
 
             ==================================================
             STORY FOUNDATION CREATION
@@ -100,7 +77,6 @@ class AiPromptGeneratorHelper
             Create a strong story foundation containing:
 
             CORE STORY:
-
                 - Unique premise
                 - Story concept
                 - Narrative hook
@@ -108,77 +84,96 @@ class AiPromptGeneratorHelper
                 - Central theme
                 - Emotional direction
 
-
             SETTING FOUNDATION:
 
-            Create the essential setting needed to support the story.
+                Create the essential setting needed to support the story.
 
-            Include:
-
-                - Primary environment
-                - Relevant background
-                - Important context
-
+                Include:
+                    - Primary environment
+                    - Relevant background
+                    - Important context
 
             CHARACTER FOUNDATION:
 
-            Establish the story character direction.
+                Establish the story character direction.
 
-            Include:
-
-                - Main character direction
-                - Important character roles
-                - Motivation
-                - Goal
-                - Character journey direction
-
+                Include:
+                    - Main character direction
+                    - Important character roles
+                    - Motivation
+                    - Goal
+                    - Character journey direction
 
             CONFLICT FOUNDATION:
 
-            Develop:
+                Develop:
 
-                - Central conflict
-                - Opposing force
-                - Internal struggle
-                - External challenges
-                - Stakes
-                - Consequences
+                    - Central conflict
+                    - Opposing force
+                    - Internal struggle
+                    - External challenges
+                    - Stakes
+                    - Consequences
 
             STORY PROGRESSION:
 
-            Create the narrative journey:
+                Create the narrative journey:
 
-                - Opening situation
-                - Inciting event
-                - Initial goal
-                - Major complications
-                - Important discoveries
-                - Turning points
-                - Escalation
-                - Climax direction
-                - Resolution direction
-
+                    - Opening situation
+                    - Inciting event
+                    - Initial goal
+                    - Major complications
+                    - Important discoveries
+                    - Turning points
+                    - Escalation
+                    - Climax direction
+                    - Resolution direction
 
             THEMATIC FOUNDATION:
 
-            Develop:
+                Develop:
 
-                - Major themes
-                - Emotional themes
-                - Character lessons
-                - Moral questions
-                - Lasting meaning
+                    - Major themes
+                    - Emotional themes
+                    - Character lessons
+                    - Moral questions
+                    - Lasting meaning
 
             VISUAL STORY FOUNDATION:
 
-            Identify important visual moments that can support future illustration development.
+                Identify important visual moments that can support future illustration development.
 
-            Include:
+                Include:
 
-                - Memorable environments
-                - Important events
-                - Discoveries
-                - Transformative moments
+                    - Memorable environments
+                    - Important events
+                    - Discoveries
+                    - Transformative moments
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            The story must feel as though it was developed by an experienced professional writer.
+
+                Write with:
+                    - Natural and confident storytelling judgment
+                    - Strong narrative instincts
+                    - Specific and meaningful details
+                    - Believable character motivations
+                    - Organic emotional progression
+                    - Purposeful conflict and escalation
+                    - Clear cause-and-effect relationships
+                    - Fresh and distinctive ideas
+                    - Appropriate pacing
+                    - Strong thematic coherence
+                    - Human and natural creative expression
+
+            Avoid generic, predictable, formulaic, or mechanical storytelling.
+
+            Every major story element should feel intentional and connected to the overall narrative.
+
+            The writing should feel polished, original, emotionally authentic, and professionally conceived rather than mechanically generated.
 
             ==================================================
             QUALITY REQUIREMENTS
@@ -187,21 +182,23 @@ class AiPromptGeneratorHelper
             The story foundation should:
 
                 - Feel original and professionally developed.
+                - Read like the work of an experienced writer.
                 - Create strong reader interest.
                 - Have clear narrative direction.
                 - Maintain logical progression.
                 - Create emotional engagement.
                 - Support future story development steps.
                 - Match genre requirements.
-                - Match audience requirements.
                 - Match story type requirements.
+                - Respect the requested language.
+                - Naturally incorporate the user's additional story information.
+                - Maintain consistency across characters, setting, conflict, themes, and progression.
 
             ==================================================
             OUTPUT FORMAT
             ==================================================
 
             Return ONLY valid JSON.
-
 
             {
                 \"story_book_title\": \"\",
@@ -254,16 +251,22 @@ class AiPromptGeneratorHelper
             FINAL CHECK
             ==================================================
 
-            Ensure:
+            Before returning the result, ensure:
 
                 - Title represents the story.
                 - Subtitle supports the title.
                 - Plot is detailed and expandable.
                 - Story direction is clear.
                 - Conflict and stakes are meaningful.
+                - Characters have believable motivations and goals.
+                - Events connect through logical cause and effect.
+                - Genre requirements are properly integrated.
+                - Story Book type requirements are properly integrated.
+                - Additional story information is naturally incorporated.
+                - The writing feels like it was developed by an experienced writer.
+                - The result feels original, natural, polished, and intentional.
                 - Output is valid JSON only.
-
-
+                - Do not return explanations, markdown, or additional text outside the JSON.
         ";
 
         return $prompt;

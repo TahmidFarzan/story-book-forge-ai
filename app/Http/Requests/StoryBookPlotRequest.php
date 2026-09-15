@@ -13,25 +13,11 @@ class StoryBookPlotRequest extends FormRequest
     public function rules()
     {
         return [
-            'is_18_plus'             => [
-                'nullable',
-                'boolean',
-            ],
-
-            'enable_mature_content'  => [
-                'nullable',
-                'boolean',
-            ],
-
             'additional_information' => [
                 'nullable',
                 'string',
             ],
 
-            'story_book_continuity'       => [
-                'required',
-                'string',
-            ],
             'language_id'            => [
                 'required',
             ],
@@ -66,9 +52,6 @@ class StoryBookPlotRequest extends FormRequest
     public function messages()
     {
         return [
-
-
-            'story_book_continuity.required'      => 'Please select a story book continuity.',
             'language_id.required'           => 'Please select a language.',
 
             'genre_ids.required'             => 'Genres must be required.',
@@ -84,24 +67,5 @@ class StoryBookPlotRequest extends FormRequest
             'ai_brain_id.required'           => 'Please select a ai brain.',
             'ai_brain_id.exists'             => 'Selected ai brain does not exist.',
         ];
-    }
-
-    public function withValidator($validator)
-    {
-
-        $validator->after(function ($validator) {
-            $aVData = $validator->getData();
-
-            if (isset($aVData['enable_mature_content']) && ($aVData['enable_mature_content'] == true)) {
-
-                if (! isset($aVData['is_18_plus']) || (isset($aVData['is_18_plus']) && ($aVData['is_18_plus'] == false))) {
-
-                    $validator->errors()->add(
-                        'enable_mature_content',
-                        'Enable mature content can not true as is 18+ is false'
-                    );
-                }
-            }
-        });
     }
 }

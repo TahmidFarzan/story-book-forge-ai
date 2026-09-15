@@ -120,11 +120,8 @@ class StoryBookService
             $genres    = $this->genreService->findByIdsOrRandom($request->input("genre_ids"));
 
             $genrePromptInstruction = '';
-            $is18Plus               = $request->boolean("is_18_plus", false) ? "True" : "False";
-            $enableMatureContent    = $request->boolean("enable_mature_content", false) ? "True" : "False";
 
             $additionalInformation = $request->input("additional_information", "Auto");
-            $storyBookContinuity       = $request->input("story_book_continuity", StoryBookHelper::CONTINUITY_STANDALONE);
 
             foreach ($genres as $genre) {
 
@@ -142,10 +139,7 @@ class StoryBookService
             }
 
             $receivedInputs = [
-                "is_18_plus" => $is18Plus,
-                "enable_mature_content" => $enableMatureContent,
                 "language" => $language?->name,
-                "story_book_continuity" => $storyBookContinuity,
                 "additional_information" => $additionalInformation,
                 "genre_prompt_instruction" => $genrePromptInstruction,
                 "audience_instruction" => $audience->prompt_instruction,
@@ -173,9 +167,6 @@ class StoryBookService
                 $storyBook->story_book_type_id = $request->input("story_book_type_id");
                 $storyBook->language_id   = $request->input("language_id");
 
-                $storyBook->story_book_continuity = $request->input("story_book_continuity");
-                $storyBook->is_18_plus   = $request->input("is_18_plus");
-                $storyBook->enable_mature_content   = $request->input("enable_mature_content");
                 $storyBook->additional_information   = $request->input("additional_information");
 
                 $storyBook->status        = StoryBookHelper::STATUS_ONGOING;

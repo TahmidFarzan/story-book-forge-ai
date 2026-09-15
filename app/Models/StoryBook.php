@@ -31,7 +31,6 @@ use Spatie\Sluggable\SlugOptions;
     "audience_id",
     "story_book_type_id",
     'language_id',
-    "story_book_continuity",
     'ai_prompt',
     'received_inputs',
     'plot',
