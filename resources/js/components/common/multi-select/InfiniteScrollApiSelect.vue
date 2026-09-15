@@ -141,19 +141,35 @@ const normalizeItem = async item => {
     return await fetchItemByValue(item)
 }
 
+const formatItem = item => ({
+    label: item?.[selectedLabelKey] ?? item?.[apiLabelKey] ?? defaultLabel,
+    value: item?.[selectedValueKey] ?? item?.[apiValueKey] ?? null,
+    raw: item,
+})
+
 const fetchItemByValue = async value => {
+    if (value === null || value === undefined || value === '') {
+        return multiple ? [] : null
+    }
+
+    const loadedMatch = options.value.find(item => item?.[apiValueKey] == value)
+
+    if (loadedMatch) {
+        return formatItem(loadedMatch)
+    }
+
     let found = null
     let p = 1
     let totalPages = 1
 
     do {
-        const params = { search: value, page: p }
+        const params = { page: p }
         const data = await fetchFromApi(apiUrl, params, getMultiSelectCacheOptions(params))
 
         const items = normalizeItems(data?.items)
 
         totalPages = data?.last_page || 1
-        found = items.find(i => i?.[apiValueKey] == value)
+        found = items.find(item => item?.[apiValueKey] == value)
 
         if (found) break
 
@@ -162,11 +178,7 @@ const fetchItemByValue = async value => {
 
     if (!found) return multiple ? [] : null
 
-    return {
-        label: found?.[selectedLabelKey] ?? found?.[apiLabelKey] ?? defaultLabel,
-        value: found?.[selectedValueKey] ?? found?.[apiValueKey] ?? null,
-        raw: found,
-    }
+    return formatItem(found)
 }
 
 const fetchPage = async (pageNumber = 1, reset = false) => {
@@ -227,14 +239,36 @@ watch(
     }
 )
 
+const applySelectedItem = async newValue => {
+    const current = !multiple
+        ? proxyModel.value?.value ?? null
+        : Array.isArray(proxyModel.value)
+            ? proxyModel.value.map(item => item?.value ?? null)
+            : []
+
+    if (!valuesDiffer(current, newValue)) return
+
+    const normalized = await normalizeItem(newValue)
+
+    const sourceEmpty = multiple
+        ? !Array.isArray(newValue) || newValue.length === 0
+        : newValue === null || newValue === undefined || newValue === ''
+
+    const resolvedEmpty = multiple
+        ? !Array.isArray(normalized) || normalized.length === 0
+        : normalized === null
+
+    if (!sourceEmpty && resolvedEmpty) return
+
+    proxyModel.value = normalized
+
+    updateForm(proxyModel.value)
+}
+
 watch(
     () => selectedItem,
-    async newValue => {
-        const normalized = await normalizeItem(newValue)
-
-        proxyModel.value = normalized
-
-        updateForm(proxyModel.value)
+    newValue => {
+        applySelectedItem(newValue)
     },
     { deep: true }
 )
@@ -288,11 +322,7 @@ const onDropdownOpen = () => {
 }
 
 onMounted(async () => {
-    const normalized = await normalizeItem(selectedItem)
-
-    proxyModel.value = normalized
-
-    updateForm(proxyModel.value)
+    await applySelectedItem(selectedItem)
 
     await fetchPage(1, true)
 })
