@@ -114,54 +114,19 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_PLOT_GENERATOR));
             $aiBrain  = $this->aiBrainService->findById($request->input("ai_brain_id"));
 
-            $language  = $this->languageService->findByIdsOrEnglish($request->input("language_id"));
-            $audience  = $this->audienceService->findById($request->input("audience_id"));
-            $storyBookType = $this->audienceService->findById($request->input("story_book_type_id"));
-            $genres    = $this->genreService->findByIdsOrRandom($request->input("genre_ids"));
-
-            $genrePromptInstruction = '';
-
-            $additionalInformation = $request->input("additional_information", "Auto");
-
-            foreach ($genres as $genre) {
-
-                $gInstruction = trim($genre->prompt_instruction);
-
-                if (! str_ends_with($gInstruction, '.')) {
-                    $gInstruction .= '.';
-                }
-
-                if ($genrePromptInstruction !== '') {
-                    $genrePromptInstruction .= ' ';
-                }
-
-                $genrePromptInstruction .= $gInstruction;
-            }
-
-            $receivedInputs = [
-                "language" => $language?->name,
-                "additional_information" => $additionalInformation,
-                "genre_prompt_instruction" => $genrePromptInstruction,
-                "audience_instruction" => $audience->prompt_instruction,
-                "story_book_type_instruction" => $storyBookType->prompt_instruction,
-            ];
-
+            $receivedInputs = $this->receivedInputsFormatter($request->input("language_id"), $request->input("audience_id"), $request->input("story_book_type_id"), $request->input("genre_ids"), $request->input("additional_information", "Auto"));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $receivedInputs);
 
             // json_encode($storyBook->plot, JSON_PRETTY_PRINT)
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
-
-
-            $storyBook = DB::transaction(function () use ($request, $apiResponse, $receivedInputs, $storyBook, $isNew) {
+            $storyBook = DB::transaction(function () use ($request, $apiResponse, $storyBook, $isNew) {
                 $storyObject = $this->extractStoryPlotFromResponse($apiResponse);
 
                 $storyBook->title     = $storyObject->title;
                 $storyBook->sub_title = $storyObject->subtitle;
                 $storyBook->plot      = $storyObject->plot;
-
-                $storyBook->received_inputs      = $receivedInputs;
 
                 $storyBook->audience_id   = $request->input("audience_id");
                 $storyBook->story_book_type_id = $request->input("story_book_type_id");
@@ -272,5 +237,41 @@ class StoryBookService
             'subtitle' => $decoded['story_book_subtitle'] ?? null,
             'plot' => $decoded['story_book_plot'] ?? null,
         ];
+    }
+
+    private function receivedInputsFormatter(int|string $languageId, int|string $audienceId, int|string $storyBookTypeId, array $genreIds, string $additionalInformation): array
+    {
+        $receivedInputs = array();
+
+        $language  = $this->languageService->findByIdsOrEnglish($languageId);
+        $audience  = $this->audienceService->findById($audienceId);
+        $storyBookType = $this->audienceService->findById($storyBookTypeId);
+        $genres    = $this->genreService->findByIdsOrRandom($genreIds);
+
+        $genrePromptInstruction = '';
+        foreach ($genres as $genre) {
+
+            $gInstruction = trim($genre->prompt_instruction);
+
+            if (! str_ends_with($gInstruction, '.')) {
+                $gInstruction .= '.';
+            }
+
+            if ($genrePromptInstruction !== '') {
+                $genrePromptInstruction .= ' ';
+            }
+
+            $genrePromptInstruction .= $gInstruction;
+        }
+
+        $receivedInputs = [
+            "language" => $language?->name,
+            "additional_information" => $additionalInformation,
+            "genre_prompt_instruction" => $genrePromptInstruction,
+            "audience_instruction" => $audience->prompt_instruction,
+            "story_book_type_instruction" => $storyBookType->prompt_instruction,
+        ];
+
+        return $receivedInputs;
     }
 }

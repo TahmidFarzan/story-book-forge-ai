@@ -32,7 +32,6 @@ use Spatie\Sluggable\SlugOptions;
     "story_book_type_id",
     'language_id',
     'ai_prompt',
-    'received_inputs',
     'plot',
     'characters',
     'world_bible',
@@ -59,7 +58,6 @@ class StoryBook extends Model
     protected function casts(): array
     {
         return [
-            'received_inputs'   => 'array',
             'datetime'   => 'datetime',
 
             'plot' => 'array',
@@ -94,7 +92,7 @@ class StoryBook extends Model
                 "story_book_type_id",
                 'language_id',
                 'ai_prompt',
-                'received_inputs',
+
                 'plot',
                 'characters',
                 'world_bible',

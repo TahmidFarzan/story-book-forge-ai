@@ -27,7 +27,7 @@ return new class extends Migration
             $table->boolean('enable_mature_content')->default(false);
             $table->longText('additional_information')->nullable();
 
-            $table->jsonb('received_inputs')->nullable();
+
 
             $table->jsonb('plot')->nullable();
 
