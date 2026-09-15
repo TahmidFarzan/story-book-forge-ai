@@ -7,7 +7,6 @@ import { Head, useForm } from "@inertiajs/vue3";
 
 import {
     AiBrainOutputTypes,
-    buildAiBrainSearchUrl,
 } from "@/composables/useAiBrain";
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -217,6 +216,14 @@ const getStepState = (stepId) => {
 
     return "locked";
 };
+
+function buildAiBrainSearchUrl(outputTypeCode) {
+    if (!outputTypeCode) {
+        return route('search.ai-brains')
+    }
+
+    return route('search.ai-brains', { ai_brain_output_type_code: outputTypeCode })
+}
 
 const validateStep = (stepId) => {
     const step = getStepDefinition(stepId);
