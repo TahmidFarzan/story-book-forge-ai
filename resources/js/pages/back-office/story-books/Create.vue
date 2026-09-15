@@ -5,54 +5,91 @@ import InfiniteScrollApiSelect from "@/components/common/multi-select/InfiniteSc
 import { ref, computed, onMounted, nextTick, watch } from "vue";
 import { Head, useForm } from "@inertiajs/vue3";
 
-import {
-    AiBrainOutputTypes,
-} from "@/composables/useAiBrain";
-
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library as FontAwesomeLibrary } from "@fortawesome/fontawesome-svg-core";
 import {
-    faSave,
     faSpinner,
     faCheck,
     faLock,
-    faArrowRight,
     faArrowLeft,
     faWandMagicSparkles,
     faBrain,
+    faLightbulb,
     faUser,
     faGlobe,
-    faBook,
-    faCog,
+    faLocationDot,
+    faFlag,
+    faFilm,
+    faGear,
+    faClock,
+    faDiagramProject,
+    faShuffle,
+    faList,
+    faComments,
+    faFileLines,
+    faBookOpen,
 } from "@fortawesome/free-solid-svg-icons";
 
 FontAwesomeLibrary.add(
-    faSave,
     faSpinner,
     faCheck,
     faLock,
-    faArrowRight,
     faArrowLeft,
     faWandMagicSparkles,
     faBrain,
+    faLightbulb,
     faUser,
     faGlobe,
-    faBook,
-    faCog,
+    faLocationDot,
+    faFlag,
+    faFilm,
+    faGear,
+    faClock,
+    faDiagramProject,
+    faShuffle,
+    faList,
+    faComments,
+    faFileLines,
+    faBookOpen,
 );
 
 defineOptions({ layout: Layout });
 
 const createPageTitle = "Create Story Book";
 
-const { storyBook = null } = defineProps({
-    storyBook: Object,
+const { novel, storyBook } = defineProps({
+    novel: {
+        type: Object,
+        default: null,
+    },
+    storyBook: {
+        type: Object,
+        default: null,
+    },
 });
 
-const isUpdate = computed(() => !!storyBook?.title);
+const sourceNovel = novel ?? storyBook;
+const initialInput =
+    novel?.input && typeof novel.input === "object"
+        ? novel.input
+        : storyBook?.input && typeof storyBook.input === "object"
+          ? storyBook.input
+          : sourceNovel ?? {};
+
+const initialValue = (field) => {
+    const value = initialInput[field];
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return typeof value === "string" ? value : JSON.stringify(value, null, 2);
+};
+
+const isUpdate = computed(() => !!sourceNovel?.title);
 
 const pageTitle = computed(() => {
-    return isUpdate.value ? `Edit ${storyBook?.title}` : "New Story Book";
+    return isUpdate.value ? `Edit ${sourceNovel?.title}` : "New Story Book";
 });
 
 onMounted(async () => {
@@ -73,74 +110,173 @@ onMounted(async () => {
 
 const STEP_DEFINITIONS = [
     {
-        id: 1,
-        name: "Plot Generator",
-        icon: "cog",
-        description: "Basic generation settings",
-        aiBrainOutputTypeCode: AiBrainOutputTypes.Text,
+        number: "01",
+        title: "Foundation",
+        text: "Create the core story foundation with its title, subtitle, plot, theme, genre, and tone.",
+        icon: ["fas", "lightbulb"],
     },
     {
-        id: 2,
-        name: "World Building",
-        icon: "globe",
-        description: "World and setting details",
-        aiBrainOutputTypeCode: AiBrainOutputTypes.Text,
+        number: "02",
+        title: "Character",
+        text: "Create protagonists, supporting characters, antagonists, relationships, and character arcs.",
+        icon: ["fas", "user"],
     },
     {
-        id: 3,
-        name: "Characters",
-        icon: "user",
-        description: "Character development",
-        aiBrainOutputTypeCode: null,
+        number: "03",
+        title: "World Vibe",
+        text: "Create the story world through its overview, culture, history, environment, rules, and lore.",
+        icon: ["fas", "globe"],
     },
     {
-        id: 4,
-        name: "Plot & Outline",
-        icon: "book",
-        description: "Story structure",
-        aiBrainOutputTypeCode: null,
+        number: "04",
+        title: "Location",
+        text: "Create important places, regions, cities, and special story locations.",
+        icon: ["fas", "location-dot"],
     },
     {
-        id: 5,
-        name: "Review & Generate",
-        icon: "wand-magic-sparkles",
-        description: "Final review",
-        aiBrainOutputTypeCode: null,
+        number: "05",
+        title: "Faction",
+        text: "Create organizations, kingdoms, rival groups, goals, and conflicts.",
+        icon: ["fas", "flag"],
+    },
+    {
+        number: "06",
+        title: "Creature",
+        text: "Create short cinematic story moments, special entities, and important scenes.",
+        icon: ["fas", "film"],
+    },
+    {
+        number: "07",
+        title: "System",
+        text: "Create magic, technology, world mechanics, and the limitations that shape the story.",
+        icon: ["fas", "gear"],
+    },
+    {
+        number: "08",
+        title: "Timeline",
+        text: "Create chronological story history with past events, present events, future events, and milestones.",
+        icon: ["fas", "clock"],
+    },
+    {
+        number: "09",
+        title: "Story Structure",
+        text: "Create the overall narrative through its beginning, middle, ending, acts, and turning points.",
+        icon: ["fas", "diagram-project"],
+    },
+    {
+        number: "10",
+        title: "Twists & Foreshadowing",
+        text: "Create hidden narrative elements with twists, clues, reveals, and future connections.",
+        icon: ["fas", "shuffle"],
+    },
+    {
+        number: "11",
+        title: "Scene Plan",
+        text: "Create scene progression with objectives, events, locations, and purpose.",
+        icon: ["fas", "list"],
+    },
+    {
+        number: "12",
+        title: "Dialogue Plan",
+        text: "Create dialogue planning with dialogue points, emotional beats, and conversation flow.",
+        icon: ["fas", "comments"],
+    },
+    {
+        number: "13",
+        title: "Page Plan",
+        text: "Create page-by-page story planning with page sequence, descriptions, and illustration notes.",
+        icon: ["fas", "file-lines"],
     },
 ];
 
-const getStepDefinition = (stepId) => {
-    return STEP_DEFINITIONS.find((item) => item.id === stepId);
+const STEP_FIELDS = {
+    1: ["title", "sub_title", "plot", "theme", "genre", "tone"],
+    2: ["characters"],
+    3: ["world_bible"],
+    4: ["locations"],
+    5: ["factions"],
+    6: ["creatures"],
+    7: ["systems"],
+    8: ["timeline"],
+    9: ["story_structure"],
+    10: ["twists_and_foreshadowing"],
+    11: ["scene_plans"],
+    12: ["dialogue_plans"],
+    13: ["page_plan"],
 };
+
+const FIELD_LABELS = {
+    title: "Title",
+    sub_title: "Subtitle",
+    plot: "Plot",
+    theme: "Theme",
+    genre: "Genre",
+    tone: "Tone",
+    characters: "Characters",
+    world_bible: "World Vibe",
+    locations: "Locations",
+    factions: "Factions",
+    creatures: "Creature",
+    systems: "System",
+    timeline: "Timeline",
+    story_structure: "Story Structure",
+    twists_and_foreshadowing: "Twists & Foreshadowing",
+    scene_plans: "Scene Plan",
+    dialogue_plans: "Dialogue Plan",
+    page_plan: "Page Plan",
+};
+
+const novelForm = useForm({
+    title: initialValue("title"),
+    sub_title: initialValue("sub_title"),
+    plot: initialValue("plot"),
+    theme: initialValue("theme"),
+    genre: initialValue("genre"),
+    tone: initialValue("tone"),
+    characters: initialValue("characters"),
+    world_bible: initialValue("world_bible"),
+    locations: initialValue("locations"),
+    factions: initialValue("factions"),
+    creatures: initialValue("creatures"),
+    systems: initialValue("systems"),
+    timeline: initialValue("timeline"),
+    story_structure: initialValue("story_structure"),
+    twists_and_foreshadowing: initialValue("twists_and_foreshadowing"),
+    scene_plans: initialValue("scene_plans"),
+    dialogue_plans: initialValue("dialogue_plans"),
+    page_plan: initialValue("page_plan"),
+    additional_information: initialValue("additional_information"),
+    language_id: sourceNovel?.language_id ?? initialInput.language_id ?? null,
+    genre_ids: sourceNovel?.genre_ids ?? initialInput.genre_ids ?? [],
+    story_book_type_id:
+        sourceNovel?.story_book_type_id ?? initialInput.story_book_type_id ?? null,
+    audience_id: sourceNovel?.audience_id ?? initialInput.audience_id ?? null,
+    ai_brain_id: sourceNovel?.ai_brain_id ?? initialInput.ai_brain_id ?? null,
+});
 
 const activeStep = ref(1);
 const completedSteps = ref(new Set());
+const isStoryBookComplete = ref(false);
+const isInitialAudienceLoad = ref(true);
 
-const plotGeneratorSaveForm = useForm({
-    additional_information: storyBook?.additional_information ?? null,
-    language_id: storyBook?.language_id ?? null,
-    genre_ids: [],
-    story_book_type_id: storyBook?.story_book_type_id ?? null,
-    audience_id: storyBook?.audience_id ?? null,
-    ai_brain_id: storyBook?.ai_brain_id ?? null,
-});
+const activeStepDefinition = computed(
+    () => STEP_DEFINITIONS[activeStep.value - 1],
+);
+
+const activeStepFields = computed(() => STEP_FIELDS[activeStep.value] ?? []);
 
 const genresApiUrl = computed(() => {
-    const audienceId = plotGeneratorSaveForm.audience_id;
-
-    if (!audienceId) {
+    if (!novelForm.audience_id) {
         return route("search.genres");
     }
 
     return `${route("search.genres")}?audience_id=${encodeURIComponent(
-        audienceId,
+        novelForm.audience_id,
     )}`;
 });
 
-const isInitialAudienceLoad = ref(true);
-
 watch(
-    () => plotGeneratorSaveForm.audience_id,
+    () => novelForm.audience_id,
     (newAudienceId, oldAudienceId) => {
         if (isInitialAudienceLoad.value) {
             isInitialAudienceLoad.value = false;
@@ -151,12 +287,12 @@ watch(
             return;
         }
 
-        plotGeneratorSaveForm.language_id = null;
-        plotGeneratorSaveForm.genre_ids = [];
-        plotGeneratorSaveForm.story_book_type_id = null;
-        plotGeneratorSaveForm.additional_information = null;
+        novelForm.language_id = null;
+        novelForm.genre_ids = [];
+        novelForm.story_book_type_id = null;
+        novelForm.additional_information = "";
 
-        plotGeneratorSaveForm.clearErrors(
+        novelForm.clearErrors(
             "language_id",
             "genre_ids",
             "story_book_type_id",
@@ -164,30 +300,6 @@ watch(
         );
     },
 );
-
-const worldBuildingSaveForm = useForm({
-    ai_brain_id: null,
-});
-
-const charactersSaveForm = useForm({
-    ai_brain_id: null,
-});
-
-const plotOutlineSaveForm = useForm({
-    ai_brain_id: null,
-});
-
-const reviewGenerateSaveForm = useForm({
-    ai_brain_id: null,
-});
-
-const STEP_FORMS = {
-    1: plotGeneratorSaveForm,
-    2: worldBuildingSaveForm,
-    3: charactersSaveForm,
-    4: plotOutlineSaveForm,
-    5: reviewGenerateSaveForm,
-};
 
 const isStepAccessible = (stepId) => {
     if (stepId === 1) {
@@ -197,9 +309,7 @@ const isStepAccessible = (stepId) => {
     return completedSteps.value.has(stepId - 1);
 };
 
-const isStepCompleted = (stepId) => {
-    return completedSteps.value.has(stepId);
-};
+const isStepCompleted = (stepId) => completedSteps.value.has(stepId);
 
 const getStepState = (stepId) => {
     if (isStepCompleted(stepId)) {
@@ -217,105 +327,85 @@ const getStepState = (stepId) => {
     return "locked";
 };
 
-function buildAiBrainSearchUrl(outputTypeCode) {
-    if (!outputTypeCode) {
-        return route('search.ai-brains')
-    }
-
-    return route('search.ai-brains', { ai_brain_output_type_code: outputTypeCode })
-}
-
 const validateStep = (stepId) => {
-    const step = getStepDefinition(stepId);
-    const stepForm = STEP_FORMS[stepId];
+    novelForm.clearErrors();
 
-    stepForm.clearErrors();
+    if (stepId !== 1) {
+        return true;
+    }
 
     let valid = true;
 
-    if (step?.aiBrainOutputTypeCode && !stepForm.ai_brain_id) {
-        stepForm.setError("ai_brain_id", "AI Brain selection is required");
+    if (!novelForm.language_id) {
+        novelForm.setError("language_id", "Language is required");
         valid = false;
     }
 
-    if (stepId === 1) {
-        if (!stepForm.language_id) {
-            stepForm.setError("language_id", "Language is required");
-            valid = false;
-        }
+    if (!Array.isArray(novelForm.genre_ids) || novelForm.genre_ids.length === 0) {
+        novelForm.setError("genre_ids", "Genres is required");
+        valid = false;
+    }
 
-        if (
-            !Array.isArray(stepForm.genre_ids) ||
-            stepForm.genre_ids.length === 0
-        ) {
-            stepForm.setError("genre_ids", "Genres is required");
-            valid = false;
-        }
+    if (!novelForm.story_book_type_id) {
+        novelForm.setError("story_book_type_id", "Story Book type is required");
+        valid = false;
+    }
 
-        if (!stepForm.story_book_type_id) {
-            stepForm.setError(
-                "story_book_type_id",
-                "Story Book type is required",
-            );
-            valid = false;
-        }
+    if (!novelForm.audience_id) {
+        novelForm.setError("audience_id", "Audience is required");
+        valid = false;
+    }
 
-        if (!stepForm.audience_id) {
-            stepForm.setError("audience_id", "Audience is required");
-            valid = false;
-        }
+    if (!novelForm.ai_brain_id) {
+        novelForm.setError("ai_brain_id", "AI Brain selection is required");
+        valid = false;
     }
 
     return valid;
 };
 
-function submitStep1() {
-    if (plotGeneratorSaveForm.processing) {
+const buildAiBrainSearchUrl = () => route("search.ai-brains");
+
+const markStepComplete = (stepId) => {
+    completedSteps.value = new Set([...completedSteps.value, stepId]);
+
+    if (stepId < STEP_DEFINITIONS.length) {
+        activeStep.value = stepId + 1;
+    }
+};
+
+const generateActiveStep = () => {
+    const stepId = activeStep.value;
+
+    if (novelForm.processing || !validateStep(stepId)) {
         return;
     }
 
-    if (!validateStep(1)) {
+    if (stepId === 1) {
+        novelForm.post(route("back-office.story-books.generate.foundation"), {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                markStepComplete(stepId);
+                novelForm.clearErrors();
+            },
+        });
+
         return;
     }
 
-    plotGeneratorSaveForm.post(route("back-office.story-books.save.plot"), {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => {
-            completedSteps.value.add(1);
-            activeStep.value = 2;
-            plotGeneratorSaveForm.clearErrors();
-        },
-        onError: (errors) => {
-            plotGeneratorSaveForm.clearErrors();
-            plotGeneratorSaveForm.setError(errors);
-        },
-    });
-}
+    markStepComplete(stepId);
+};
 
-const submitStep2 = () => {
-    if (worldBuildingSaveForm.processing) {
-        return;
+const completeStoryBook = () => {
+    if (isStepCompleted(STEP_DEFINITIONS.length)) {
+        isStoryBookComplete.value = true;
     }
-
-    if (!validateStep(2)) {
-        return;
-    }
-
-    completedSteps.value.add(2);
-    activeStep.value = 3;
-    worldBuildingSaveForm.clearErrors();
 };
 
 const goToStep = (stepId) => {
     if (isStepAccessible(stepId) || isStepCompleted(stepId)) {
         activeStep.value = stepId;
-    }
-};
-
-const goNext = () => {
-    if (activeStep.value < 5 && isStepAccessible(activeStep.value + 1)) {
-        activeStep.value++;
     }
 };
 
@@ -330,499 +420,203 @@ const goPrev = () => {
     <Head :title="createPageTitle" />
 
     <div class="w-full">
-        <div
-            class="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6"
-        >
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6">
             <div class="flex flex-col">
-                <div
-                    class="flex items-center px-0 py-4 border-b border-gray-200"
-                >
+                <div class="flex items-center px-0 py-4 border-b border-gray-200">
                     <h2 class="text-lg font-semibold flex items-center gap-2">
-                        <FontAwesomeIcon
-                            icon="wand-magic-sparkles"
-                            class="text-purple-600"
-                        />
+                        <FontAwesomeIcon icon="wand-magic-sparkles" class="text-purple-600" />
                         {{ pageTitle }}
                     </h2>
                 </div>
 
                 <div class="px-0 pt-4 border-b border-gray-200">
-                    <nav class="hidden md:flex overflow-x-auto pb-px">
+                    <nav class="hidden md:grid md:grid-cols-4 gap-2 pb-4">
                         <button
-                            v-for="step in STEP_DEFINITIONS"
-                            :key="step.id"
+                            v-for="(step, index) in STEP_DEFINITIONS"
+                            :key="step.number"
                             type="button"
-                            @click="goToStep(step.id)"
-                            :disabled="
-                                !isStepAccessible(step.id) &&
-                                !isStepCompleted(step.id)
-                            "
-                            class="flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition disabled:opacity-40 disabled:cursor-not-allowed"
+                            @click="goToStep(index + 1)"
+                            :disabled="!isStepAccessible(index + 1) && !isStepCompleted(index + 1)"
+                            class="flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
                             :class="{
-                                'border-blue-600 text-blue-600':
-                                    getStepState(step.id) === 'active',
-                                'border-green-500 text-green-600':
-                                    getStepState(step.id) === 'completed',
-                                'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
-                                    getStepState(step.id) === 'accessible',
-                                'border-transparent text-gray-300':
-                                    getStepState(step.id) === 'locked',
+                                'border-blue-200 bg-blue-50 text-blue-700': getStepState(index + 1) === 'active',
+                                'border-green-200 bg-green-50 text-green-700': getStepState(index + 1) === 'completed',
+                                'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50': getStepState(index + 1) === 'accessible',
+                                'border-gray-100 text-gray-300': getStepState(index + 1) === 'locked',
                             }"
                         >
-                            <span
-                                class="flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold"
-                                :class="{
-                                    'bg-blue-600 text-white':
-                                        getStepState(step.id) === 'active',
-                                    'bg-green-500 text-white':
-                                        getStepState(step.id) === 'completed',
-                                    'bg-gray-200 text-gray-600':
-                                        getStepState(step.id) === 'accessible',
-                                    'bg-gray-100 text-gray-400':
-                                        getStepState(step.id) === 'locked',
-                                }"
-                            >
-                                <FontAwesomeIcon
-                                    v-if="isStepCompleted(step.id)"
-                                    icon="check"
-                                    class="text-xs"
-                                />
-                                <span v-else>{{ step.id }}</span>
+                            <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold" :class="{
+                                'bg-blue-600 text-white': getStepState(index + 1) === 'active',
+                                'bg-green-500 text-white': getStepState(index + 1) === 'completed',
+                                'bg-gray-200 text-gray-600': getStepState(index + 1) === 'accessible',
+                                'bg-gray-100 text-gray-400': getStepState(index + 1) === 'locked',
+                            }">
+                                <FontAwesomeIcon v-if="isStepCompleted(index + 1)" icon="check" class="text-xs" />
+                                <span v-else>{{ step.number }}</span>
                             </span>
-
-                            <span>{{ step.name }}</span>
-
-                            <FontAwesomeIcon
-                                v-if="
-                                    !isStepAccessible(step.id) &&
-                                    !isStepCompleted(step.id)
-                                "
-                                icon="lock"
-                                class="text-xs text-gray-300"
-                            />
+                            <FontAwesomeIcon :icon="step.icon" class="flex-shrink-0 text-xs" />
+                            <span class="min-w-0 flex-1 break-words">{{ step.title }}</span>
+                            <FontAwesomeIcon v-if="getStepState(index + 1) === 'locked'" icon="lock" class="flex-shrink-0 text-xs" />
                         </button>
                     </nav>
 
-                    <nav class="md:hidden -mx-2 px-2">
+                    <nav class="md:hidden -mx-2 px-2 pb-3">
                         <button
-                            v-for="step in STEP_DEFINITIONS"
-                            :key="step.id"
+                            v-for="(step, index) in STEP_DEFINITIONS"
+                            :key="step.number"
                             type="button"
-                            @click="goToStep(step.id)"
-                            :disabled="
-                                !isStepAccessible(step.id) &&
-                                !isStepCompleted(step.id)
-                            "
-                            class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed text-left"
+                            @click="goToStep(index + 1)"
+                            :disabled="!isStepAccessible(index + 1) && !isStepCompleted(index + 1)"
+                            class="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition disabled:opacity-40 disabled:cursor-not-allowed"
                             :class="{
-                                'bg-blue-50 text-blue-700':
-                                    getStepState(step.id) === 'active' ||
-                                    getStepState(step.id) === 'completed',
-                                'text-gray-600 hover:bg-gray-50':
-                                    getStepState(step.id) === 'accessible',
-                                'text-gray-300':
-                                    getStepState(step.id) === 'locked',
+                                'bg-blue-50 text-blue-700': getStepState(index + 1) === 'active' || getStepState(index + 1) === 'completed',
+                                'text-gray-600 hover:bg-gray-50': getStepState(index + 1) === 'accessible',
+                                'text-gray-300': getStepState(index + 1) === 'locked',
                             }"
                         >
-                            <span
-                                class="flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold flex-shrink-0"
-                                :class="{
-                                    'bg-blue-600 text-white':
-                                        getStepState(step.id) === 'active',
-                                    'bg-green-500 text-white':
-                                        getStepState(step.id) === 'completed',
-                                    'bg-gray-200 text-gray-600':
-                                        getStepState(step.id) === 'accessible',
-                                    'bg-gray-100 text-gray-400':
-                                        getStepState(step.id) === 'locked',
-                                }"
-                            >
-                                <FontAwesomeIcon
-                                    v-if="isStepCompleted(step.id)"
-                                    icon="check"
-                                    class="text-xs"
-                                />
-                                <span v-else>{{ step.id }}</span>
+                            <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold" :class="{
+                                'bg-blue-600 text-white': getStepState(index + 1) === 'active',
+                                'bg-green-500 text-white': getStepState(index + 1) === 'completed',
+                                'bg-gray-200 text-gray-600': getStepState(index + 1) === 'accessible',
+                                'bg-gray-100 text-gray-400': getStepState(index + 1) === 'locked',
+                            }">
+                                <FontAwesomeIcon v-if="isStepCompleted(index + 1)" icon="check" class="text-xs" />
+                                <span v-else>{{ step.number }}</span>
                             </span>
-
-                            <span class="flex-1">{{ step.name }}</span>
-
-                            <FontAwesomeIcon
-                                v-if="
-                                    !isStepAccessible(step.id) &&
-                                    !isStepCompleted(step.id)
-                                "
-                                icon="lock"
-                                class="text-xs text-gray-300 flex-shrink-0"
-                            />
+                            <FontAwesomeIcon :icon="step.icon" class="flex-shrink-0 text-xs" />
+                            <span class="flex-1 break-words">{{ step.title }}</span>
+                            <FontAwesomeIcon v-if="getStepState(index + 1) === 'locked'" icon="lock" class="flex-shrink-0 text-xs" />
                         </button>
                     </nav>
                 </div>
 
                 <div class="px-0 py-6">
-                    <div v-if="activeStep === 1" class="space-y-6">
-                        <div
-                            class="bg-white border rounded-xl p-5 shadow-sm space-y-4"
-                        >
-                            <h3
-                                class="text-base font-semibold flex items-center gap-2"
-                            >
-                                <FontAwesomeIcon
-                                    icon="cog"
-                                    class="text-blue-600"
-                                />
-                                Generation Configuration
-                            </h3>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <section class="space-y-6">
+                        <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                            <div class="flex items-start gap-3">
+                                <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                                    <FontAwesomeIcon :icon="activeStepDefinition.icon" />
+                                </span>
                                 <div>
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                    >
-                                        Audience
-                                        <span class="text-red-500">*</span>
-                                    </label>
+                                    <h3 class="text-base font-semibold">{{ activeStepDefinition.title }}</h3>
+                                    <p class="mt-1 text-sm text-gray-500">{{ activeStepDefinition.text }}</p>
+                                </div>
+                            </div>
 
+                            <div v-if="activeStep === 1" class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Audience <span class="text-red-500">*</span></label>
                                     <InfiniteScrollApiSelect
-                                        :form="plotGeneratorSaveForm"
+                                        :form="novelForm"
                                         fieldName="audience_id"
-                                        :selectedItem="storyBook?.audience"
+                                        :selectedItem="sourceNovel?.audience"
                                         :apiUrl="route('search.audiences')"
                                         :multiple="false"
-                                        placeholder="Select audiences"
+                                        placeholder="Select audience"
                                     />
-
-                                    <p
-                                        v-if="
-                                            plotGeneratorSaveForm.errors
-                                                .audience_id
-                                        "
-                                        class="text-red-500 text-sm mt-1"
-                                    >
-                                        {{
-                                            plotGeneratorSaveForm.errors
-                                                .audience_id
-                                        }}
-                                    </p>
+                                    <p v-if="novelForm.errors.audience_id" class="text-red-500 text-sm mt-1">{{ novelForm.errors.audience_id }}</p>
                                 </div>
 
                                 <div>
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                    >
-                                        Language
-                                        <span class="text-red-500">*</span>
-                                    </label>
-
+                                    <label class="block text-sm font-medium mb-1">Language <span class="text-red-500">*</span></label>
                                     <InfiniteScrollApiSelect
-                                        :form="plotGeneratorSaveForm"
+                                        :form="novelForm"
                                         fieldName="language_id"
-                                        :selectedItem="storyBook?.language"
+                                        :selectedItem="sourceNovel?.language"
                                         :apiUrl="route('search.languages')"
                                         :multiple="false"
-                                        placeholder="Select languages"
+                                        placeholder="Select language"
                                     />
-
-                                    <p
-                                        v-if="
-                                            plotGeneratorSaveForm.errors
-                                                .language_id
-                                        "
-                                        class="text-red-500 text-sm mt-1"
-                                    >
-                                        {{
-                                            plotGeneratorSaveForm.errors
-                                                .language_id
-                                        }}
-                                    </p>
+                                    <p v-if="novelForm.errors.language_id" class="text-red-500 text-sm mt-1">{{ novelForm.errors.language_id }}</p>
                                 </div>
 
                                 <div>
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                    >
-                                        Genres
-                                        <span class="text-red-500">*</span>
-                                    </label>
-
+                                    <label class="block text-sm font-medium mb-1">Genres <span class="text-red-500">*</span></label>
                                     <InfiniteScrollApiSelect
-                                        :form="plotGeneratorSaveForm"
+                                        :form="novelForm"
                                         fieldName="genre_ids"
-                                        :selectedItem="storyBook?.genres"
+                                        :selectedItem="sourceNovel?.genres"
                                         :apiUrl="genresApiUrl"
                                         :multiple="true"
                                         placeholder="Select genres"
                                     />
-
-                                    <p
-                                        v-if="
-                                            plotGeneratorSaveForm.errors
-                                                .genre_ids
-                                        "
-                                        class="text-red-500 text-sm mt-1"
-                                    >
-                                        {{
-                                            plotGeneratorSaveForm.errors
-                                                .genre_ids
-                                        }}
-                                    </p>
+                                    <p v-if="novelForm.errors.genre_ids" class="text-red-500 text-sm mt-1">{{ novelForm.errors.genre_ids }}</p>
                                 </div>
 
                                 <div>
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                    >
-                                        Story Book Type
-                                        <span class="text-red-500">*</span>
-                                    </label>
-
+                                    <label class="block text-sm font-medium mb-1">Story Book Type <span class="text-red-500">*</span></label>
                                     <InfiniteScrollApiSelect
-                                        :form="plotGeneratorSaveForm"
+                                        :form="novelForm"
                                         fieldName="story_book_type_id"
-                                        :selectedItem="
-                                            storyBook?.story_book_type
-                                        "
-                                        :apiUrl="
-                                            route('search.story-book-types')
-                                        "
+                                        :selectedItem="sourceNovel?.story_book_type"
+                                        :apiUrl="route('search.story-book-types')"
                                         :multiple="false"
-                                        placeholder="Select story book types"
+                                        placeholder="Select story book type"
                                     />
+                                    <p v-if="novelForm.errors.story_book_type_id" class="text-red-500 text-sm mt-1">{{ novelForm.errors.story_book_type_id }}</p>
                                 </div>
 
                                 <div class="md:col-span-2">
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                    >
-                                        Additional Information
-                                    </label>
-
-                                    <textarea
-                                        v-model="
-                                            plotGeneratorSaveForm.additional_information
-                                        "
-                                        rows="3"
-                                        placeholder="Any additional context or instructions for the AI..."
-                                        class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
-                                    ></textarea>
+                                    <label class="block text-sm font-medium mb-1">Additional Information</label>
+                                    <textarea v-model="novelForm.additional_information" rows="3" placeholder="Any additional context or instructions for the AI..." class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"></textarea>
                                 </div>
                             </div>
 
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+                                <div v-for="field in activeStepFields" :key="field" :class="{ 'md:col-span-2': field === 'plot' || activeStep !== 1 }">
+                                    <label class="block text-sm font-medium mb-1">{{ FIELD_LABELS[field] }}</label>
+                                    <textarea v-model="novelForm[field]" :rows="activeStep === 1 ? field === 'plot' ? 7 : 3 : 10" :placeholder="`Enter ${FIELD_LABELS[field].toLowerCase()} details...`" class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"></textarea>
+                                    <p v-if="novelForm.errors[field]" class="text-red-500 text-sm mt-1">{{ novelForm.errors[field] }}</p>
+                                </div>
+                            </div>
                         </div>
 
-                        <div
-                            class="bg-white border rounded-xl p-5 shadow-sm space-y-4"
-                        >
-                            <h3
-                                class="text-base font-semibold flex items-center gap-2"
-                            >
-                                <FontAwesomeIcon
-                                    icon="brain"
-                                    class="text-purple-600"
-                                />
-                                AI Brain Configuration
-                            </h3>
-
-                            <p class="text-sm text-gray-500">
-                                Select the AI model that will be used for
-                                generating your story book's plot.
-                            </p>
-
-                            <div
-                                class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
-                            >
+                        <div v-if="activeStep === 1" class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                            <div class="flex items-center gap-2">
+                                <FontAwesomeIcon icon="brain" class="text-purple-600" />
+                                <h3 class="text-base font-semibold">AI Brain Configuration</h3>
+                            </div>
+                            <p class="text-sm text-gray-500">Select the AI model that will generate the story foundation.</p>
+                            <div class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50">
                                 <InfiniteScrollApiSelect
-                                    :form="plotGeneratorSaveForm"
+                                    :form="novelForm"
                                     fieldName="ai_brain_id"
-                                    :selectedItem="
-                                        plotGeneratorSaveForm.ai_brain_id
-                                    "
-                                    :apiUrl="
-                                        buildAiBrainSearchUrl(
-                                            getStepDefinition(1)
-                                                .aiBrainOutputTypeCode,
-                                        )
-                                    "
+                                    :selectedItem="sourceNovel?.ai_brain"
+                                    :apiUrl="buildAiBrainSearchUrl()"
                                     :multiple="false"
                                     placeholder="Select AI Brain"
-                                    :error="
-                                        plotGeneratorSaveForm.errors.ai_brain_id
-                                    "
+                                    :error="novelForm.errors.ai_brain_id"
                                     class="ai-brain-select"
                                 />
                             </div>
-
-                            <p
-                                v-if="plotGeneratorSaveForm.errors.ai_brain_id"
-                                class="text-red-500 text-sm"
-                            >
-                                {{ plotGeneratorSaveForm.errors.ai_brain_id }}
-                            </p>
+                            <p v-if="novelForm.errors.ai_brain_id" class="text-red-500 text-sm">{{ novelForm.errors.ai_brain_id }}</p>
                         </div>
-                    </div>
+                    </section>
 
-                    <div v-if="activeStep === 2" class="space-y-6">
-                        <div
-                            class="bg-white border rounded-xl p-5 shadow-sm space-y-4"
-                        >
-                            <h3
-                                class="text-base font-semibold flex items-center gap-2"
-                            >
-                                <FontAwesomeIcon
-                                    icon="globe"
-                                    class="text-blue-600"
-                                />
-                                World Building
-                            </h3>
-
-                            <p class="text-sm text-gray-500">
-                                Define the world, setting, and rules that will
-                                shape your story.
-                            </p>
-
-                            <div
-                                class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
-                            >
-                                <InfiniteScrollApiSelect
-                                    :form="worldBuildingSaveForm"
-                                    fieldName="ai_brain_id"
-                                    :selectedItem="
-                                        worldBuildingSaveForm.ai_brain_id
-                                    "
-                                    :apiUrl="
-                                        buildAiBrainSearchUrl(
-                                            getStepDefinition(2)
-                                                .aiBrainOutputTypeCode,
-                                        )
-                                    "
-                                    :multiple="false"
-                                    placeholder="Select AI Brain"
-                                    :error="
-                                        worldBuildingSaveForm.errors.ai_brain_id
-                                    "
-                                    class="ai-brain-select"
-                                />
-                            </div>
-
-                            <p
-                                v-if="worldBuildingSaveForm.errors.ai_brain_id"
-                                class="text-red-500 text-sm"
-                            >
-                                {{ worldBuildingSaveForm.errors.ai_brain_id }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div
-                        v-if="activeStep === 3"
-                        class="flex items-center justify-center h-64"
-                    >
-                        <div class="text-center space-y-3">
-                            <FontAwesomeIcon
-                                icon="user"
-                                class="text-4xl text-gray-300"
-                            />
-                            <p class="text-gray-400 text-sm">
-                                Characters - Coming Soon
-                            </p>
-                        </div>
-                    </div>
-
-                    <div
-                        v-if="activeStep === 4"
-                        class="flex items-center justify-center h-64"
-                    >
-                        <div class="text-center space-y-3">
-                            <FontAwesomeIcon
-                                icon="book"
-                                class="text-4xl text-gray-300"
-                            />
-                            <p class="text-gray-400 text-sm">
-                                Plot & Outline - Coming Soon
-                            </p>
-                        </div>
-                    </div>
-
-                    <div
-                        v-if="activeStep === 5"
-                        class="flex items-center justify-center h-64"
-                    >
-                        <div class="text-center space-y-3">
-                            <FontAwesomeIcon
-                                icon="wand-magic-sparkles"
-                                class="text-4xl text-gray-300"
-                            />
-                            <p class="text-gray-400 text-sm">
-                                Review & Generate - Coming Soon
-                            </p>
-                        </div>
+                    <div v-if="isStoryBookComplete" class="mt-6 rounded-xl border border-green-200 bg-green-50 p-5 text-center">
+                        <FontAwesomeIcon icon="check" class="text-2xl text-green-600" />
+                        <h3 class="mt-2 text-lg font-semibold text-green-800">Story Book Complete</h3>
+                        <p class="mt-1 text-sm text-green-700">All story modules are ready for the final story book.</p>
                     </div>
                 </div>
 
-                <div
-                    class="px-0 py-4 border-t border-gray-200 flex justify-between items-center"
-                >
-                    <button
-                        type="button"
-                        @click="goPrev"
-                        :disabled="activeStep === 1"
-                        class="px-4 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
+                <div class="px-0 py-4 border-t border-gray-200 flex justify-between items-center gap-3">
+                    <button type="button" @click="goPrev" :disabled="activeStep === 1" class="px-4 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
                         <FontAwesomeIcon icon="arrow-left" />
                         Previous
                     </button>
 
+                    <span class="hidden sm:inline text-xs text-gray-400">Step {{ activeStep }} of {{ STEP_DEFINITIONS.length }}</span>
+
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-gray-400">
-                            Step {{ activeStep }} of
-                            {{ STEP_DEFINITIONS.length }}
-                        </span>
-                    </div>
-
-                    <div>
-                        <button
-                            v-if="activeStep === 1"
-                            type="button"
-                            @click="submitStep1"
-                            :disabled="plotGeneratorSaveForm.processing"
-                            class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
-                        >
-                            <FontAwesomeIcon
-                                v-if="plotGeneratorSaveForm.processing"
-                                icon="spinner"
-                                spin
-                            />
-                            <FontAwesomeIcon v-else icon="save" />
-                            {{
-                                plotGeneratorSaveForm.processing
-                                    ? "Saving..."
-                                    : "Save & Continue"
-                            }}
+                        <button v-if="activeStep === STEP_DEFINITIONS.length && isStepCompleted(activeStep)" type="button" @click="completeStoryBook" :disabled="isStoryBookComplete" class="px-5 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed">
+                            <FontAwesomeIcon icon="book-open" />
+                            {{ isStoryBookComplete ? "Completed" : "Complete Story Book" }}
                         </button>
-
-                        <button
-                            v-else-if="activeStep === 2"
-                            type="button"
-                            @click="submitStep2"
-                            :disabled="worldBuildingSaveForm.processing"
-                            class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
-                        >
-                            <FontAwesomeIcon icon="check" />
-                            Continue
-                        </button>
-
-                        <button
-                            v-else
-                            type="button"
-                            @click="goNext"
-                            :disabled="
-                                !isStepAccessible(activeStep + 1) ||
-                                activeStep === 5
-                            "
-                            class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed"
-                        >
-                            Next
-                            <FontAwesomeIcon icon="arrow-right" />
+                        <button v-else type="button" @click="generateActiveStep" :disabled="novelForm.processing" class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed">
+                            <FontAwesomeIcon v-if="novelForm.processing" icon="spinner" spin />
+                            <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
+                            {{ novelForm.processing ? "Generating..." : `Generate ${activeStepDefinition.title}` }}
                         </button>
                     </div>
                 </div>

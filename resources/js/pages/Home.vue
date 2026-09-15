@@ -9,11 +9,22 @@ import {
     faArrowRight,
     faBook,
     faBookOpen,
+    faCheck,
     faFeather,
     faFilm,
     faHeart,
     faImage,
     faLightbulb,
+    faLocationDot,
+    faFlag,
+    faGear,
+    faClock,
+    faDiagramProject,
+    faShuffle,
+    faList,
+    faComments,
+    faFileLines,
+    faGlobe,
     faMicrophone,
     faPalette,
     faPenNib,
@@ -28,11 +39,22 @@ library.add(
     faArrowRight,
     faBook,
     faBookOpen,
+    faCheck,
     faFeather,
     faFilm,
     faHeart,
     faImage,
     faLightbulb,
+    faLocationDot,
+    faFlag,
+    faGear,
+    faClock,
+    faDiagramProject,
+    faShuffle,
+    faList,
+    faComments,
+    faFileLines,
+    faGlobe,
     faMicrophone,
     faPalette,
     faPenNib,
@@ -58,33 +80,81 @@ const pipeline = [
 const steps = [
     {
         number: '01',
-        title: 'Imagine',
-        text: 'Give the AI your story idea — a world, a character, or just a spark of a scene.',
+        title: 'Foundation',
+        text: 'Create the core story foundation with a title, subtitle, plot, theme, genre, and tone.',
         icon: ['fas', 'lightbulb'],
     },
     {
         number: '02',
-        title: 'Create',
-        text: 'AI develops the story, characters, and narrative arc around your idea.',
-        icon: ['fas', 'feather'],
+        title: 'Character',
+        text: 'Create protagonists, supporting characters, antagonists, relationships, and character arcs.',
+        icon: ['fas', 'user'],
     },
     {
         number: '03',
-        title: 'Illustrate',
-        text: 'Each scene is transformed into a rich, consistent illustration.',
-        icon: ['fas', 'palette'],
+        title: 'World Vibe',
+        text: 'Create the story world through its overview, culture, history, environment, rules, and lore.',
+        icon: ['fas', 'globe'],
     },
     {
         number: '04',
-        title: 'Narrate',
-        text: 'Warm narration is generated for every page of your storybook.',
-        icon: ['fas', 'microphone'],
+        title: 'Location',
+        text: 'Create important places, regions, cities, and special story locations.',
+        icon: ['fas', 'location-dot'],
     },
     {
         number: '05',
-        title: 'Storybook',
-        text: 'Everything comes together into a complete, illustrated storybook.',
-        icon: ['fas', 'book-open'],
+        title: 'Faction',
+        text: 'Create organizations, kingdoms, rival groups, goals, and conflicts.',
+        icon: ['fas', 'flag'],
+    },
+    {
+        number: '06',
+        title: 'Creature',
+        text: 'Create short cinematic story moments, special entities, and important scenes.',
+        icon: ['fas', 'film'],
+    },
+    {
+        number: '07',
+        title: 'System',
+        text: 'Create magic, technology, world mechanics, and the limitations that shape the story.',
+        icon: ['fas', 'gear'],
+    },
+    {
+        number: '08',
+        title: 'Timeline',
+        text: 'Create chronological story history with past events, present events, future events, and milestones.',
+        icon: ['fas', 'clock'],
+    },
+    {
+        number: '09',
+        title: 'Story Structure',
+        text: 'Create the overall narrative through its beginning, middle, ending, acts, and turning points.',
+        icon: ['fas', 'diagram-project'],
+    },
+    {
+        number: '10',
+        title: 'Twists & Foreshadowing',
+        text: 'Create hidden narrative elements with twists, clues, reveals, and future connections.',
+        icon: ['fas', 'shuffle'],
+    },
+    {
+        number: '11',
+        title: 'Scene Plan',
+        text: 'Create scene progression with objectives, events, locations, and purpose.',
+        icon: ['fas', 'list'],
+    },
+    {
+        number: '12',
+        title: 'Dialogue Plan',
+        text: 'Create dialogue planning with dialogue points, emotional beats, and conversation flow.',
+        icon: ['fas', 'comments'],
+    },
+    {
+        number: '13',
+        title: 'Page Plan',
+        text: 'Create page-by-page story planning with page sequence, descriptions, and illustration notes.',
+        icon: ['fas', 'file-lines'],
     },
 ]
 
@@ -235,7 +305,7 @@ const seeHowUrl = '#how-it-works'
                 <p class="sbfa-section-kicker">How It Works</p>
                 <h2 class="sbfa-section-title">From idea to illustrated storybook</h2>
                 <p class="sbfa-section-sub">
-                    Five simple steps carry your idea through the whole creative journey.
+                    Thirteen focused modules carry your idea through the whole creative journey.
                 </p>
             </div>
 
@@ -247,6 +317,14 @@ const seeHowUrl = '#how-it-works'
                     </div>
                     <h3 class="sbfa-step-title">{{ step.title }}</h3>
                     <p class="sbfa-step-text">{{ step.text }}</p>
+                </article>
+                <article class="sbfa-step-card sbfa-complete-card">
+                    <div class="sbfa-step-top">
+                        <span class="sbfa-step-icon"><FontAwesomeIcon :icon="['fas', 'book-open']" /></span>
+                        <span class="sbfa-step-number"><FontAwesomeIcon :icon="['fas', 'check']" /></span>
+                    </div>
+                    <h3 class="sbfa-step-title">Complete Story Book</h3>
+                    <p class="sbfa-step-text">Bring every generated module together into one complete story book.</p>
                 </article>
             </div>
         </div>
@@ -709,11 +787,12 @@ const seeHowUrl = '#how-it-works'
 }
 .sbfa-steps {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17.5rem), 1fr));
     gap: 1.25rem;
 }
 
 .sbfa-step-card {
+    min-width: 0;
     padding: 1.75rem 1.25rem;
     border-radius: var(--story-book-forge-ai-radius);
     background: var(--story-book-forge-ai-surface);
@@ -758,6 +837,7 @@ const seeHowUrl = '#how-it-works'
     font-weight: 700;
     letter-spacing: -0.01em;
     color: var(--story-book-forge-ai-heading);
+    overflow-wrap: anywhere;
 }
 
 .sbfa-step-text {
@@ -765,6 +845,10 @@ const seeHowUrl = '#how-it-works'
     font-size: 0.9rem;
     line-height: 1.55;
     color: var(--story-book-forge-ai-text-muted);
+}
+
+.sbfa-complete-card {
+    grid-column: span 3;
 }
 .sbfa-features {
     display: grid;
@@ -1051,9 +1135,8 @@ const seeHowUrl = '#how-it-works'
         grid-template-columns: repeat(3, 1fr);
     }
 
-    .sbfa-step-card:nth-child(4),
-    .sbfa-step-card:nth-child(5) {
-        grid-column: span 1;
+    .sbfa-complete-card {
+        grid-column: span 2;
     }
 }
 
@@ -1065,6 +1148,16 @@ const seeHowUrl = '#how-it-works'
 
     .sbfa-hero-stats {
         gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sbfa-steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sbfa-complete-card {
+        grid-column: span 1;
     }
 }
 

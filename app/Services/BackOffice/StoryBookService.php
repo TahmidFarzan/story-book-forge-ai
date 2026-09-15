@@ -105,7 +105,7 @@ class StoryBookService
             ->appends($request->all());
     }
 
-    public function savePlot(StoryBookPlotRequest $request, StoryBook $storyBook): array
+    public function generateFoundation(StoryBookPlotRequest $request, StoryBook $storyBook): array
     {
         $isNew       = empty($storyBook->id);
         $statusEvent = $isNew ? "save" : "update";

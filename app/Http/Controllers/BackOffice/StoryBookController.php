@@ -51,12 +51,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function savePlot(StoryBookPlotRequest $request): RedirectResponse
+    public function generateFoundation(StoryBookPlotRequest $request): RedirectResponse
     {
         $storyBook = $this->storyBookService->new();
         Gate::authorize('create', $storyBook);
 
-        $result = $this->storyBookService->savePlot($request, $storyBook);
+        $result = $this->storyBookService->generateFoundation($request, $storyBook);
 
         if ($result['story_book']?->slug) {
             return to_route('back-office.story-books.edit', ["slug" => $result['story_book']?->slug])->with('flash_message', [

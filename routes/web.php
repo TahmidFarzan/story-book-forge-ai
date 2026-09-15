@@ -3,23 +3,23 @@
 use App\Http\Controllers\AuthController;
 
 // Backoffice
-use App\Http\Controllers\BackOffice\MediaController;
-use App\Http\Controllers\BackOffice\UserController;
-use App\Http\Controllers\BackOffice\GenreController;
-use App\Http\Controllers\BackOffice\AudienceController;
-use App\Http\Controllers\BackOffice\LanguageController;
-use App\Http\Controllers\BackOffice\StoryBookTypeController;
-use App\Http\Controllers\BackOffice\IllustrationTypeController;
-use App\Http\Controllers\BackOffice\AiBrainController;
-use App\Http\Controllers\BackOffice\AiPromptController;
-use App\Http\Controllers\BackOffice\AiBrainOutputTypeController;
-use App\Http\Controllers\BackOffice\StoryBookController;
-use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\ActivityLogController;
+use App\Http\Controllers\BackOffice\AiBrainController;
+use App\Http\Controllers\BackOffice\AiBrainOutputTypeController;
+use App\Http\Controllers\BackOffice\AiPromptController;
+use App\Http\Controllers\BackOffice\AudienceController;
+use App\Http\Controllers\BackOffice\GenreController;
+use App\Http\Controllers\BackOffice\IllustrationTypeController;
+use App\Http\Controllers\BackOffice\LanguageController;
+use App\Http\Controllers\BackOffice\MediaController;
+use App\Http\Controllers\BackOffice\SettingController;
+use App\Http\Controllers\BackOffice\StoryBookController;
+use App\Http\Controllers\BackOffice\StoryBookTypeController;
+use App\Http\Controllers\BackOffice\UserController;
 
 //
-use App\Http\Controllers\SearchController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 use romanzipp\QueueMonitor\Controllers\ShowQueueMonitorController;
 
@@ -191,7 +191,6 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::patch('{slug}/update', [AiPromptController::class, 'update'])->name('update');
     });
 
-
     Route::prefix('ai-brains')->name('ai-brains.')->group(function () {
         Route::get('/', [AiBrainController::class, 'index'])->name('index');
         Route::get('{slug}/details', [AiBrainController::class, 'details'])->name('details');
@@ -215,8 +214,19 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
 
         Route::get('{slug}/edit', [StoryBookController::class, 'edit'])->name('edit');
 
-        Route::prefix('save')->name('save.')->group(function () {
-            Route::post('plot', [StoryBookController::class, 'savePlot'])->name('plot');
+        Route::prefix('generate')->name('generate.')->group(function () {
+            Route::post('foundation', [StoryBookController::class, 'generateFoundation'])->name('foundation');
+            Route::post('characters', [StoryBookController::class, 'generateCharacters'])->name('characters');
+            Route::post('world-vibe', [StoryBookController::class, 'generateWorldVibe'])->name('world-vibe');
+            Route::post('locations', [StoryBookController::class, 'generateLocations'])->name('locations');
+            Route::post('factions', [StoryBookController::class, 'generateFactions'])->name('factions');
+            Route::post('creature', [StoryBookController::class, 'generateCreature'])->name('creature');
+            Route::post('system', [StoryBookController::class, 'generateSystem'])->name('system');
+            Route::post('timeline', [StoryBookController::class, 'generateTimeline'])->name('timeline');
+            Route::post('twists-and-foreshadowing', [StoryBookController::class, 'generateTwistsAndForeshadowing'])->name('twists-and-foreshadowing');
+            Route::post('scene-plan', [StoryBookController::class, 'generateScenePlan'])->name('scene-plan');
+            Route::post('dialogue-plan', [StoryBookController::class, 'generateDialoguePlan'])->name('dialogue-plan');
+            Route::post('page-plan', [StoryBookController::class, 'generatePagePlan'])->name('page-plan');
         });
 
         Route::delete('{slug}/delete', [StoryBookController::class, 'delete'])->name('delete');
