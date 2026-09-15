@@ -127,18 +127,6 @@ const getStatusColor = (status) => {
     return colors[status] || 'bg-gray-100 text-gray-600 border-gray-300'
 }
 
-const getStepStatusColor = (status) => {
-    const colors = {
-        'Draft': 'bg-gray-100 text-gray-600',
-        'Ongoing': 'bg-blue-50 text-blue-600',
-        'Pending': 'bg-yellow-50 text-yellow-600',
-        'Complete': 'bg-green-50 text-green-600',
-        'Failed': 'bg-red-50 text-red-600',
-        'Cancelled': 'bg-gray-100 text-gray-500',
-    }
-    return colors[status] || 'bg-gray-100 text-gray-600'
-}
-
 const handleScroll = () => {
     showFloatingButton.value = window.scrollY > 200
 }
