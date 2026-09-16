@@ -467,16 +467,16 @@ class SeederHelper
         return collect([
 
             (object) [
-                'name'                 => AiPromptGeneratorHelper::AI_PROMPT_NAME_PLOT_GENERATOR,
-                'code'                 => "PlotGenerator",
+                'name'                 => AiPromptGeneratorHelper::AI_PROMPT_NAME_FOUNDATION_GENERATOR,
+                'code'                 => "FoundationGenerator",
                 'step_number'          => 1,
                 'depend_on_prompt_ids' => null,
-                'prompt'               => AiPromptGeneratorHelper::plotGenerator()
+                'prompt'               => AiPromptGeneratorHelper::foundationGenerator()
             ],
 
             (object) [
                 'name'                 => AiPromptGeneratorHelper::AI_PROMPT_NAME_BLUEPRIENT_GENERATOR,
-                'code'                 => "PlotGenerator",
+                'code'                 => "FoundationGenerator",
                 'step_number'          => 1,
                 'depend_on_prompt_ids' => null,
                 'prompt'               => AiPromptGeneratorHelper::blueprintGenerator()

@@ -111,7 +111,7 @@ class StoryBookService
         $statusEvent = $isNew ? "save" : "update";
 
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_PLOT_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_FOUNDATION_GENERATOR));
             $aiBrain  = $this->aiBrainService->findById($request->input("ai_brain_id"));
 
             $receivedInputs = $this->receivedInputsFormatter($request->input("language_id"), $request->input("audience_id"), $request->input("story_book_type_id"), $request->input("genre_ids"), $request->input("additional_information", "Auto"));
