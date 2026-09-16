@@ -47,7 +47,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="sbfa-dashboard-layout flex min-h-screen flex-col">
+    <div class="auth-layout flex min-h-screen flex-col">
         <Transition
             enter-active-class="transition-opacity duration-200 ease-out motion-reduce:transition-none"
             enter-from-class="opacity-0"
@@ -62,19 +62,19 @@ onBeforeUnmount(() => {
                 aria-hidden="true"
             >
                 <div
-                    class="h-full w-2/5 animate-nav-progress rounded-full bg-gradient-to-r from-[var(--story-book-forge-ai-accent)] to-[var(--story-book-forge-ai-violet)] shadow-[0_0_10px_rgba(79,70,229,0.4)] motion-reduce:animate-none"
+                    class="h-full w-2/5 animate-nav-progress rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--violet)] shadow-[0_0_10px_rgba(79,70,229,0.4)] motion-reduce:animate-none"
                 ></div>
             </div>
         </Transition>
 
-        <header class="sbfa-dashboard-header">
+        <header class="header fixed inset-x-0 top-0 z-50 border-b border-white/10">
             <div class="mx-auto flex h-16 w-full max-w-[100rem] items-center justify-between gap-4 px-4 sm:px-6">
-                <a :href="route('home')" class="sbfa-dashboard-brand" :aria-label="appName">
-                    <span class="sbfa-dashboard-brand-mark" aria-hidden="true">
+                <a :href="route('home')" class="brand inline-flex min-w-0 items-center gap-3 no-underline" :aria-label="appName">
+                    <span class="brand-mark inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-base text-white" aria-hidden="true">
                         <FontAwesomeIcon :icon="['fas', 'book-open']" />
                     </span>
 
-                    <span v-if="appName" class="sbfa-dashboard-brand-name">{{ appName }}</span>
+                    <span v-if="appName" class="brand-name truncate text-[0.95rem] font-bold tracking-[-0.01em]">{{ appName }}</span>
                 </a>
 
                 <div class="flex items-center gap-3">
@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
                     <div :key="page.component" class="p-4 sm:p-6">
                         <Breadcrumbs />
 
-                        <div v-if="authUser && !authUser.email_verified_at" class="sbfa-verify-banner" role="note">
+                        <div v-if="authUser && !authUser.email_verified_at" class="verify-banner mb-4 rounded-lg px-4 py-3 text-sm leading-normal" role="note">
                             Please verify your email address.
                         </div>
 
@@ -109,19 +109,19 @@ onBeforeUnmount(() => {
             </div>
         </main>
 
-        <footer class="sbfa-dashboard-footer">
+        <footer class="footer">
             <div class="mx-auto flex w-full max-w-[100rem] flex-col items-center justify-between gap-2 px-4 py-5 text-sm sm:flex-row sm:px-6">
-                <span class="sbfa-dashboard-footer-text">
+                <span class="footer-text">
                     &copy; {{ new Date().getFullYear() }} {{ appName }}. All rights reserved.
                 </span>
 
-                <span class="sbfa-dashboard-footer-text">
+                <span class="footer-text">
                     Developed by
                     <a
                         href="https://www.linkedin.com/in/sk-md-tahmid-farzan/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="sbfa-dashboard-footer-link"
+                        class="footer-link font-semibold no-underline transition-colors"
                     >
                         Seikh Md Tahmid Farzan
                     </a>
@@ -134,95 +134,50 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.sbfa-dashboard-layout {
-    background: var(--story-book-forge-ai-background);
-    color: var(--story-book-forge-ai-text);
-    font-family: var(--story-book-forge-ai-font);
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-}
-
-.sbfa-dashboard-layout :deep(a:focus-visible),
-.sbfa-dashboard-layout :deep(button:focus-visible),
-.sbfa-dashboard-layout :deep(input:focus-visible),
-.sbfa-dashboard-layout :deep(select:focus-visible),
-.sbfa-dashboard-layout :deep(textarea:focus-visible) {
+.auth-layout :deep(a:focus-visible),
+.auth-layout :deep(button:focus-visible),
+.auth-layout :deep(input:focus-visible),
+.auth-layout :deep(select:focus-visible),
+.auth-layout :deep(textarea:focus-visible) {
     outline: 0;
-    box-shadow: var(--story-book-forge-ai-focus-ring);
-    border-radius: var(--story-book-forge-ai-radius-sm);
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-sm);
 }
 
-.sbfa-dashboard-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 50;
-    background: var(--story-book-forge-ai-header-bg);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.auth-layout .header {
+    background: var(--header-bg);
     box-shadow: 0 4px 24px rgb(43 38 51 / 18%);
 }
 
-.sbfa-dashboard-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-width: 0;
-    text-decoration: none;
-}
-
-.sbfa-dashboard-brand-mark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    flex-shrink: 0;
-    border-radius: 10px;
-    color: #fff;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent) 0%, var(--story-book-forge-ai-violet) 100%);
+.auth-layout .brand .brand-mark {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
     box-shadow: 0 6px 16px rgb(79 70 229 / 35%);
-    font-size: 1rem;
 }
 
-.sbfa-dashboard-brand-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--story-book-forge-ai-header-text);
+.auth-layout .brand .brand-name {
+    color: var(--header-text);
 }
 
-.sbfa-verify-banner {
-    margin-bottom: 1rem;
-    padding: 0.75rem 1rem;
+.auth-layout .verify-banner {
     border: 1px solid rgb(199 154 59 / 40%);
-    border-radius: var(--story-book-forge-ai-radius-sm);
-    background: var(--story-book-forge-ai-gold-soft);
-    color: var(--story-book-forge-ai-heading);
-    font-size: 0.875rem;
-    line-height: 1.5;
+    background: var(--gold-soft);
+    color: var(--heading);
 }
 
-.sbfa-dashboard-footer {
-    background: var(--story-book-forge-ai-surface-muted);
-    border-top: 1px solid var(--story-book-forge-ai-border);
+.auth-layout .footer {
+    background: var(--surface-muted);
+    border-top: 1px solid var(--border);
 }
 
-.sbfa-dashboard-footer-text {
-    color: var(--story-book-forge-ai-text-muted);
+.auth-layout .footer .footer-text {
+    color: var(--text-muted);
 }
 
-.sbfa-dashboard-footer-link {
-    color: var(--story-book-forge-ai-accent);
-    font-weight: 600;
-    text-decoration: none;
-    transition: color var(--story-book-forge-ai-transition);
+.auth-layout .footer .footer-link {
+    color: var(--accent);
 }
 
-.sbfa-dashboard-footer-link:hover {
-    color: var(--story-book-forge-ai-accent-hover);
+.auth-layout .footer .footer-link:hover {
+    color: var(--accent-hover);
 }
 </style>

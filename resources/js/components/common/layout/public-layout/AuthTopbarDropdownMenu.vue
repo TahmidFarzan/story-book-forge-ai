@@ -239,15 +239,15 @@ onBeforeUnmount(() => {
     height: 2.5rem;
     padding: 0 0.6rem 0 0.4rem;
     border-radius: 999px;
-    color: var(--story-book-forge-ai-header-text);
+    color: var(--header-text);
     background: rgb(255 255 255 / 8%);
     border: 1px solid rgb(255 255 255 / 16%);
     box-shadow: 0 2px 10px rgb(43 38 51 / 16%);
     cursor: pointer;
-    transition: background var(--story-book-forge-ai-transition),
-        border-color var(--story-book-forge-ai-transition),
-        box-shadow var(--story-book-forge-ai-transition),
-        transform var(--story-book-forge-ai-transition);
+    transition: background var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition),
+        transform var(--transition);
 }
 
 .sbfa-user-trigger:hover {
@@ -262,7 +262,7 @@ onBeforeUnmount(() => {
 
 .sbfa-user-trigger:focus-visible {
     outline: 0;
-    box-shadow: var(--story-book-forge-ai-focus-ring);
+    box-shadow: var(--focus-ring);
 }
 
 .sbfa-user-trigger-avatar {
@@ -274,7 +274,7 @@ onBeforeUnmount(() => {
     border-radius: 50%;
     color: #fff;
     font-size: 0.8rem;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent), var(--story-book-forge-ai-violet));
+    background: linear-gradient(135deg, var(--accent), var(--violet));
     flex-shrink: 0;
 }
 
@@ -285,17 +285,17 @@ onBeforeUnmount(() => {
     white-space: nowrap;
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--story-book-forge-ai-header-text);
+    color: var(--header-text);
 }
 
 .sbfa-user-trigger-chevron {
     font-size: 0.625rem;
-    color: var(--story-book-forge-ai-header-text-muted);
-    transition: color var(--story-book-forge-ai-transition);
+    color: var(--header-text-muted);
+    transition: color var(--transition);
 }
 
 .sbfa-user-trigger:hover .sbfa-user-trigger-chevron {
-    color: var(--story-book-forge-ai-header-text);
+    color: var(--header-text);
 }
 
 .sbfa-user-menu {
@@ -303,9 +303,9 @@ onBeforeUnmount(() => {
     width: 15.5rem;
     padding: 0.5rem;
     border-radius: 14px;
-    background: var(--story-book-forge-ai-surface);
-    border: 1px solid var(--story-book-forge-ai-border);
-    box-shadow: var(--story-book-forge-ai-shadow-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
     transform-origin: top right;
     z-index: 50;
 }
@@ -332,7 +332,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     color: #fff;
     font-size: 1rem;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent), var(--story-book-forge-ai-violet));
+    background: linear-gradient(135deg, var(--accent), var(--violet));
 }
 
 .sbfa-user-menu-name {
@@ -343,7 +343,7 @@ onBeforeUnmount(() => {
     font-size: 0.875rem;
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: var(--story-book-forge-ai-heading);
+    color: var(--heading);
 }
 
 .sbfa-user-menu-meta {
@@ -352,13 +352,13 @@ onBeforeUnmount(() => {
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 0.75rem;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 
 .sbfa-user-menu-divider {
     height: 1px;
     margin: 0.375rem 0;
-    background: var(--story-book-forge-ai-border);
+    background: var(--border);
 }
 
 .sbfa-user-menu-item {
@@ -372,47 +372,47 @@ onBeforeUnmount(() => {
     background: transparent;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--story-book-forge-ai-text);
+    color: var(--text);
     text-align: left;
     text-decoration: none;
     cursor: pointer;
-    transition: background var(--story-book-forge-ai-transition),
-        color var(--story-book-forge-ai-transition);
+    transition: background var(--transition),
+        color var(--transition);
 }
 
 .sbfa-user-menu-item:hover {
-    background: var(--story-book-forge-ai-accent-soft);
-    color: var(--story-book-forge-ai-accent);
+    background: var(--accent-soft);
+    color: var(--accent);
 }
 
 .sbfa-user-menu-item:focus-visible {
     outline: 0;
-    box-shadow: var(--story-book-forge-ai-focus-ring);
+    box-shadow: var(--focus-ring);
 }
 
 .sbfa-user-menu-item-icon {
     width: 1rem;
     flex-shrink: 0;
     font-size: 0.875rem;
-    color: var(--story-book-forge-ai-text-muted);
-    transition: color var(--story-book-forge-ai-transition);
+    color: var(--text-muted);
+    transition: color var(--transition);
 }
 
 .sbfa-user-menu-item:hover .sbfa-user-menu-item-icon {
-    color: var(--story-book-forge-ai-accent);
+    color: var(--accent);
 }
 
 .sbfa-user-menu-item.is-danger {
-    color: var(--story-book-forge-ai-danger);
+    color: var(--danger);
 }
 
 .sbfa-user-menu-item.is-danger:hover {
     background: rgb(220 76 100 / 10%);
-    color: var(--story-book-forge-ai-danger);
+    color: var(--danger);
 }
 
 .sbfa-user-menu-item.is-danger:hover .sbfa-user-menu-item-icon {
-    color: var(--story-book-forge-ai-danger);
+    color: var(--danger);
 }
 
 .user-modal-overlay {
@@ -430,9 +430,9 @@ onBeforeUnmount(() => {
     max-width: calc(100vw - 2.5rem);
     padding: 1.25rem;
     border-radius: 14px;
-    background: var(--story-book-forge-ai-surface);
-    border: 1px solid var(--story-book-forge-ai-border);
-    box-shadow: var(--story-book-forge-ai-shadow-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
 }
 
 .user-modal-title {
@@ -442,13 +442,13 @@ onBeforeUnmount(() => {
     margin-bottom: 0.75rem;
     font-size: 0.9375rem;
     font-weight: 700;
-    color: var(--story-book-forge-ai-danger);
+    color: var(--danger);
 }
 
 .user-modal-copy {
     margin-bottom: 1.25rem;
     font-size: 0.875rem;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 
 .user-modal-actions {
@@ -468,9 +468,9 @@ onBeforeUnmount(() => {
     font-size: 0.8125rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background var(--story-book-forge-ai-transition),
-        color var(--story-book-forge-ai-transition),
-        box-shadow var(--story-book-forge-ai-transition);
+    transition: background var(--transition),
+        color var(--transition),
+        box-shadow var(--transition);
 }
 
 .user-modal-cancel:disabled,
@@ -480,24 +480,24 @@ onBeforeUnmount(() => {
 }
 
 .user-modal-cancel {
-    color: var(--story-book-forge-ai-text);
-    background: var(--story-book-forge-ai-surface-muted);
-    border: 1px solid var(--story-book-forge-ai-border);
+    color: var(--text);
+    background: var(--surface-muted);
+    border: 1px solid var(--border);
 }
 
 .user-modal-cancel:hover {
-    background: var(--story-book-forge-ai-gold-soft);
+    background: var(--gold-soft);
 }
 
 .user-modal-cancel:focus-visible,
 .user-modal-confirm:focus-visible {
     outline: 0;
-    box-shadow: var(--story-book-forge-ai-focus-ring);
+    box-shadow: var(--focus-ring);
 }
 
 .user-modal-confirm {
     color: #fff;
-    background: var(--story-book-forge-ai-danger);
+    background: var(--danger);
 }
 
 .user-modal-confirm:hover {
@@ -505,8 +505,8 @@ onBeforeUnmount(() => {
 }
 
 .user-menu-enter-active {
-    transition: opacity var(--story-book-forge-ai-transition),
-        transform var(--story-book-forge-ai-transition);
+    transition: opacity var(--transition),
+        transform var(--transition);
 }
 
 .user-menu-enter-from,

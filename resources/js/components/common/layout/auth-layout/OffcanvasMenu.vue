@@ -191,10 +191,10 @@ onBeforeUnmount(() => {
     letter-spacing: 0.01em;
     cursor: pointer;
     transition:
-        background var(--story-book-forge-ai-transition),
-        border-color var(--story-book-forge-ai-transition),
-        box-shadow var(--story-book-forge-ai-transition),
-        transform var(--story-book-forge-ai-transition);
+        background var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition),
+        transform var(--transition);
 }
 
 .sbfa-offcanvas-toggle:hover {
@@ -210,7 +210,7 @@ onBeforeUnmount(() => {
 
 .sbfa-offcanvas-toggle:focus-visible {
     outline: 0;
-    box-shadow: var(--story-book-forge-ai-focus-ring);
+    box-shadow: var(--focus-ring);
 }
 
 .sbfa-offcanvas-toggle-icon {
@@ -220,10 +220,10 @@ onBeforeUnmount(() => {
 .sbfa-offcanvas-panel {
     display: flex;
     flex-direction: column;
-    background: var(--story-book-forge-ai-header-bg);
+    background: var(--header-bg);
     border-right: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow: 0 14px 40px rgb(43 38 51 / 32%);
-    color: var(--story-book-forge-ai-header-text);
+    color: var(--header-text);
 }
 
 .sbfa-offcanvas-sidebar {
@@ -273,7 +273,7 @@ onBeforeUnmount(() => {
     flex-shrink: 0;
     border-radius: 10px;
     color: #fff;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent) 0%, var(--story-book-forge-ai-violet) 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
     box-shadow: 0 5px 14px rgb(79 70 229 / 35%);
     font-size: 0.95rem;
 }
@@ -296,11 +296,11 @@ onBeforeUnmount(() => {
     height: 2.25rem;
     flex-shrink: 0;
     border-radius: 10px;
-    color: var(--story-book-forge-ai-header-text);
+    color: var(--header-text);
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.16);
     cursor: pointer;
-    transition: background var(--story-book-forge-ai-transition), color var(--story-book-forge-ai-transition);
+    transition: background var(--transition), color var(--transition);
 }
 
 .sbfa-offcanvas-close:hover {
@@ -309,7 +309,7 @@ onBeforeUnmount(() => {
 
 .sbfa-offcanvas-close:focus-visible {
     outline: 0;
-    box-shadow: var(--story-book-forge-ai-focus-ring);
+    box-shadow: var(--focus-ring);
 }
 
 .sbfa-offcanvas-nav {
@@ -322,7 +322,7 @@ onBeforeUnmount(() => {
 .sbfa-offcanvas-foot {
     padding: 0.9rem 1.1rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--story-book-forge-ai-header-text-muted);
+    color: var(--header-text-muted);
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.04em;

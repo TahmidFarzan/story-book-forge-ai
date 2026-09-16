@@ -437,15 +437,15 @@ const isSubMenuVisible = (key) => {
     font-size: 0.9rem;
     font-weight: 500;
     line-height: 1.3;
-    color: var(--story-book-forge-ai-header-text-muted);
+    color: var(--header-text-muted);
     background: transparent;
     text-align: left;
     text-decoration: none;
     cursor: pointer;
     transition:
-        color var(--story-book-forge-ai-transition),
-        background var(--story-book-forge-ai-transition),
-        border-color var(--story-book-forge-ai-transition);
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition);
 }
 
 .sbfa-nav-item:hover {
@@ -454,15 +454,15 @@ const isSubMenuVisible = (key) => {
 }
 
 .sbfa-nav-item.is-active {
-    color: var(--story-book-forge-ai-gold);
-    border-left-color: var(--story-book-forge-ai-gold);
+    color: var(--gold);
+    border-left-color: var(--gold);
     background: rgb(199 154 59 / 14%);
     font-weight: 600;
 }
 
 .sbfa-nav-item:focus-visible {
     outline: 0;
-    box-shadow: var(--story-book-forge-ai-focus-ring);
+    box-shadow: var(--focus-ring);
 }
 
 @media (prefers-reduced-motion: reduce) {

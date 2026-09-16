@@ -429,8 +429,8 @@ const seeHowUrl = '#how-it-works'
 }
 
 .sbfa-section-soft {
-    background: var(--story-book-forge-ai-surface-muted);
-    border-block: 1px solid var(--story-book-forge-ai-border);
+    background: var(--surface-muted);
+    border-block: 1px solid var(--border);
 }
 
 .sbfa-section-head {
@@ -444,7 +444,7 @@ const seeHowUrl = '#how-it-works'
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--story-book-forge-ai-accent);
+    color: var(--accent);
     margin-bottom: 0.75rem;
 }
 
@@ -453,14 +453,14 @@ const seeHowUrl = '#how-it-works'
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.15;
-    color: var(--story-book-forge-ai-heading);
+    color: var(--heading);
 }
 
 .sbfa-section-sub {
     margin-top: 1rem;
     font-size: 1.05rem;
     line-height: 1.6;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 .sbfa-btn {
     display: inline-flex;
@@ -473,12 +473,12 @@ const seeHowUrl = '#how-it-works'
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
-    transition: all var(--story-book-forge-ai-transition);
+    transition: all var(--transition);
 }
 
 .sbfa-btn-primary {
     color: #fff;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent) 0%, var(--story-book-forge-ai-violet) 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
     box-shadow: 0 8px 24px rgb(79 70 229 / 30%);
 }
 
@@ -488,20 +488,20 @@ const seeHowUrl = '#how-it-works'
 }
 
 .sbfa-btn-ghost {
-    color: var(--story-book-forge-ai-text);
-    background: var(--story-book-forge-ai-surface);
-    border: 1px solid var(--story-book-forge-ai-border);
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
     box-shadow: 0 2px 8px rgb(43 38 51 / 4%);
 }
 
 .sbfa-btn-ghost:hover {
-    border-color: var(--story-book-forge-ai-border-focus);
-    color: var(--story-book-forge-ai-accent);
+    border-color: var(--border-focus);
+    color: var(--accent);
     transform: translateY(-2px);
 }
 
 .sbfa-btn-light {
-    color: var(--story-book-forge-ai-heading);
+    color: var(--heading);
     background: #fff;
     box-shadow: 0 8px 24px rgb(43 38 51 / 18%);
 }
@@ -513,7 +513,7 @@ const seeHowUrl = '#how-it-works'
 .sbfa-hero {
     position: relative;
     overflow: hidden;
-    background: var(--story-book-forge-ai-background);
+    background: var(--background);
 }
 
 .sbfa-hero-glow {
@@ -533,11 +533,11 @@ const seeHowUrl = '#how-it-works'
     gap: 0.5rem;
     padding: 0.4rem 0.9rem;
     border-radius: 999px;
-    background: var(--story-book-forge-ai-gold-soft);
+    background: var(--gold-soft);
     border: 1px solid rgb(199 154 59 / 35%);
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--story-book-forge-ai-gold);
+    color: var(--gold);
     letter-spacing: 0.01em;
 }
 
@@ -545,7 +545,7 @@ const seeHowUrl = '#how-it-works'
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
-    background: var(--story-book-forge-ai-gold);
+    background: var(--gold);
 }
 
 .sbfa-hero-title {
@@ -554,11 +554,11 @@ const seeHowUrl = '#how-it-works'
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.05;
-    color: var(--story-book-forge-ai-heading);
+    color: var(--heading);
 }
 
 .sbfa-hero-title-accent {
-    color: var(--story-book-forge-ai-accent);
+    color: var(--accent);
     position: relative;
     white-space: nowrap;
 }
@@ -580,7 +580,7 @@ const seeHowUrl = '#how-it-works'
     max-width: 33rem;
     font-size: clamp(1.05rem, 1.8vw, 1.2rem);
     line-height: 1.65;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 
 .sbfa-hero-actions {
@@ -595,7 +595,7 @@ const seeHowUrl = '#how-it-works'
     gap: 2rem;
     margin-top: 2.75rem;
     padding-top: 1.75rem;
-    border-top: 1px solid var(--story-book-forge-ai-border);
+    border-top: 1px solid var(--border);
     list-style: none;
 }
 
@@ -604,14 +604,14 @@ const seeHowUrl = '#how-it-works'
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: var(--story-book-forge-ai-heading);
+    color: var(--heading);
 }
 
 .sbfa-stat-label {
     display: block;
     margin-top: 0.15rem;
     font-size: 0.8125rem;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 
 .sbfa-hero-scene {
@@ -681,8 +681,8 @@ const seeHowUrl = '#how-it-works'
     justify-content: center;
     height: 45%;
     border-radius: 10px;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent-soft) 0%, var(--story-book-forge-ai-gold-soft) 100%);
-    color: var(--story-book-forge-ai-accent);
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--gold-soft) 100%);
+    color: var(--accent);
     margin-bottom: 0.9rem;
 }
 
@@ -706,7 +706,7 @@ const seeHowUrl = '#how-it-works'
     font-family: Georgia, 'Times New Roman', serif;
     font-style: italic;
     font-size: 0.95rem;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
     margin-bottom: 0.9rem;
 }
 
@@ -724,14 +724,14 @@ const seeHowUrl = '#how-it-works'
     top: 2%;
     left: -2%;
     color: #fff;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent), var(--story-book-forge-ai-violet));
+    background: linear-gradient(135deg, var(--accent), var(--violet));
 }
 
 .chip-b {
     bottom: 6%;
     right: -2%;
-    color: var(--story-book-forge-ai-heading);
-    background: linear-gradient(135deg, var(--story-book-forge-ai-gold), #E7C77B);
+    color: var(--heading);
+    background: linear-gradient(135deg, var(--gold), #E7C77B);
     animation-delay: 1.4s;
 }
 
@@ -752,9 +752,9 @@ const seeHowUrl = '#how-it-works'
     max-width: 30rem;
     padding: 0.9rem 1.1rem;
     border-radius: 16px;
-    background: var(--story-book-forge-ai-surface);
-    border: 1px solid var(--story-book-forge-ai-border);
-    box-shadow: var(--story-book-forge-ai-shadow);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
 .sbfa-pipeline-step {
@@ -771,19 +771,19 @@ const seeHowUrl = '#how-it-works'
     height: 1.7rem;
     border-radius: 8px;
     font-size: 0.8rem;
-    color: var(--story-book-forge-ai-accent);
-    background: var(--story-book-forge-ai-accent-soft);
+    color: var(--accent);
+    background: var(--accent-soft);
 }
 
 .sbfa-pipeline-label {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--story-book-forge-ai-text);
+    color: var(--text);
 }
 
 .sbfa-pipeline-arrow {
     font-size: 0.7rem;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 .sbfa-steps {
     display: grid;
@@ -794,16 +794,16 @@ const seeHowUrl = '#how-it-works'
 .sbfa-step-card {
     min-width: 0;
     padding: 1.75rem 1.25rem;
-    border-radius: var(--story-book-forge-ai-radius);
-    background: var(--story-book-forge-ai-surface);
-    border: 1px solid var(--story-book-forge-ai-border);
-    box-shadow: var(--story-book-forge-ai-shadow);
-    transition: transform var(--story-book-forge-ai-transition), box-shadow var(--story-book-forge-ai-transition);
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .sbfa-step-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--story-book-forge-ai-shadow-lg);
+    box-shadow: var(--shadow-lg);
 }
 
 .sbfa-step-top {
@@ -822,21 +822,21 @@ const seeHowUrl = '#how-it-works'
     border-radius: 12px;
     font-size: 1.25rem;
     color: #fff;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent) 0%, var(--story-book-forge-ai-violet) 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
 }
 
 .sbfa-step-number {
     font-size: 1rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: var(--story-book-forge-ai-gold);
+    color: var(--gold);
 }
 
 .sbfa-step-title {
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: var(--story-book-forge-ai-heading);
+    color: var(--heading);
     overflow-wrap: anywhere;
 }
 
@@ -844,7 +844,7 @@ const seeHowUrl = '#how-it-works'
     margin-top: 0.5rem;
     font-size: 0.9rem;
     line-height: 1.55;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 
 .sbfa-complete-card {
@@ -858,16 +858,16 @@ const seeHowUrl = '#how-it-works'
 
 .sbfa-feature-card {
     padding: 2rem 1.75rem;
-    border-radius: var(--story-book-forge-ai-radius);
-    background: var(--story-book-forge-ai-surface);
-    border: 1px solid var(--story-book-forge-ai-border);
-    box-shadow: var(--story-book-forge-ai-shadow);
-    transition: transform var(--story-book-forge-ai-transition), box-shadow var(--story-book-forge-ai-transition);
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .sbfa-feature-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--story-book-forge-ai-shadow-lg);
+    box-shadow: var(--shadow-lg);
 }
 
 .sbfa-feature-icon {
@@ -878,8 +878,8 @@ const seeHowUrl = '#how-it-works'
     height: 3.25rem;
     border-radius: 14px;
     font-size: 1.3rem;
-    color: var(--story-book-forge-ai-accent);
-    background: var(--story-book-forge-ai-accent-soft);
+    color: var(--accent);
+    background: var(--accent-soft);
     margin-bottom: 1.25rem;
 }
 
@@ -887,14 +887,14 @@ const seeHowUrl = '#how-it-works'
     font-size: 1.15rem;
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: var(--story-book-forge-ai-heading);
+    color: var(--heading);
 }
 
 .sbfa-feature-text {
     margin-top: 0.6rem;
     font-size: 0.95rem;
     line-height: 1.6;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 .sbfa-preview-wrap {
     max-width: 56rem;
@@ -945,7 +945,7 @@ const seeHowUrl = '#how-it-works'
     bottom: 1.1rem;
     font-size: 0.8rem;
     font-weight: 700;
-    color: var(--story-book-forge-ai-gold);
+    color: var(--gold);
     letter-spacing: 0.08em;
 }
 
@@ -956,7 +956,7 @@ const seeHowUrl = '#how-it-works'
     position: relative;
     flex: 1;
     border-radius: 14px;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent-soft) 0%, var(--story-book-forge-ai-gold-soft) 100%);
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--gold-soft) 100%);
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -965,7 +965,7 @@ const seeHowUrl = '#how-it-works'
 
 .sbfa-preview-illus-icon {
     font-size: 3.5rem;
-    color: var(--story-book-forge-ai-violet);
+    color: var(--violet);
     position: relative;
     z-index: 1;
 }
@@ -986,7 +986,7 @@ const seeHowUrl = '#how-it-works'
     font-family: Georgia, 'Times New Roman', serif;
     font-style: italic;
     font-size: clamp(0.85rem, 1.6vw, 1.05rem);
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
     text-align: center;
 }
 
@@ -994,7 +994,7 @@ const seeHowUrl = '#how-it-works'
     font-family: Georgia, 'Times New Roman', serif;
     font-size: clamp(1.1rem, 2.2vw, 1.5rem);
     font-weight: 700;
-    color: var(--story-book-forge-ai-heading);
+    color: var(--heading);
     letter-spacing: -0.01em;
 }
 
@@ -1002,14 +1002,14 @@ const seeHowUrl = '#how-it-works'
     margin-top: 1rem;
     font-size: clamp(0.9rem, 1.7vw, 1.05rem);
     line-height: 1.7;
-    color: var(--story-book-forge-ai-text);
+    color: var(--text);
     font-family: Georgia, 'Times New Roman', serif;
 }
 
 .sbfa-preview-deco-line {
     margin-top: auto;
     height: 1px;
-    background: linear-gradient(90deg, var(--story-book-forge-ai-gold-soft), var(--story-book-forge-ai-gold));
+    background: linear-gradient(90deg, var(--gold-soft), var(--gold));
     width: 60%;
 }
 
@@ -1023,11 +1023,11 @@ const seeHowUrl = '#how-it-works'
     justify-content: center;
     font-size: 0.95rem;
     line-height: 1.6;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 
 .sbfa-preview-note-icon {
-    color: var(--story-book-forge-ai-gold);
+    color: var(--gold);
     flex-shrink: 0;
 }
 .sbfa-why {
@@ -1039,10 +1039,10 @@ const seeHowUrl = '#how-it-works'
 .sbfa-why-card {
     text-align: center;
     padding: 2.5rem 2rem;
-    border-radius: var(--story-book-forge-ai-radius);
-    background: var(--story-book-forge-ai-surface);
-    border: 1px solid var(--story-book-forge-ai-border);
-    box-shadow: var(--story-book-forge-ai-shadow);
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
 .sbfa-why-icon {
@@ -1054,7 +1054,7 @@ const seeHowUrl = '#how-it-works'
     border-radius: 50%;
     font-size: 1.4rem;
     color: #fff;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-gold) 0%, #E7C77B 100%);
+    background: linear-gradient(135deg, var(--gold) 0%, #E7C77B 100%);
     box-shadow: 0 8px 20px rgb(199 154 59 / 30%);
 }
 
@@ -1063,14 +1063,14 @@ const seeHowUrl = '#how-it-works'
     font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: var(--story-book-forge-ai-heading);
+    color: var(--heading);
 }
 
 .sbfa-why-text {
     margin-top: 0.6rem;
     font-size: 0.95rem;
     line-height: 1.6;
-    color: var(--story-book-forge-ai-text-muted);
+    color: var(--text-muted);
 }
 .sbfa-cta {
     position: relative;
@@ -1078,9 +1078,9 @@ const seeHowUrl = '#how-it-works'
     text-align: center;
     padding: 4rem 2rem;
     border-radius: 24px;
-    background: var(--story-book-forge-ai-header-bg);
-    color: var(--story-book-forge-ai-text-inverse);
-    box-shadow: var(--story-book-forge-ai-shadow-lg);
+    background: var(--header-bg);
+    color: var(--text-inverse);
+    box-shadow: var(--shadow-lg);
 }
 
 .sbfa-cta-glow {
@@ -1104,8 +1104,8 @@ const seeHowUrl = '#how-it-works'
     height: 3.25rem;
     border-radius: 50%;
     font-size: 1.3rem;
-    color: var(--story-book-forge-ai-heading);
-    background: linear-gradient(135deg, var(--story-book-forge-ai-gold) 0%, #E7C77B 100%);
+    color: var(--heading);
+    background: linear-gradient(135deg, var(--gold) 0%, #E7C77B 100%);
     margin-bottom: 1.5rem;
 }
 
@@ -1123,7 +1123,7 @@ const seeHowUrl = '#how-it-works'
     max-width: 34rem;
     font-size: 1.05rem;
     line-height: 1.6;
-    color: var(--story-book-forge-ai-header-text-muted);
+    color: var(--header-text-muted);
 }
 
 .sbfa-cta .sbfa-btn-light {

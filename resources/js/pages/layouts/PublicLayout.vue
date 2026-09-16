@@ -72,16 +72,16 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="sbfa-layout flex min-h-screen flex-col">
-        <header class="sbfa-header">
+    <div class="public-layout flex min-h-screen flex-col">
+        <header class="header sticky top-0 z-50 border-b border-white/10">
             <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:h-[4.5rem]">
-                <a :href="homeUrl" class="sbfa-logo group flex items-center gap-3" aria-label="Story Book Forge AI home">
-                    <span class="sbfa-logo-mark" aria-hidden="true">
+                <a :href="homeUrl" class="logo group flex items-center gap-3 no-underline" aria-label="Story Book Forge AI home">
+                    <span class="logo-mark inline-flex h-10 w-10 items-center justify-center rounded-xl text-[1.05rem] text-white" aria-hidden="true">
                         <FontAwesomeIcon :icon="['fas', 'book-open']" />
                     </span>
-                    <span v-if="appName" class="sbfa-brand">
-                        <span class="sbfa-brand-line-1">Story Book</span>
-                        <span class="sbfa-brand-line-2">Forge AI</span>
+                    <span v-if="appName" class="brand leading-[1.1] tracking-[-0.01em]">
+                        <span class="brand-line-1 block text-[0.8rem] font-semibold">Story Book</span>
+                        <span class="brand-line-2 block text-[1.05rem] font-bold text-white">Forge AI</span>
                     </span>
                 </a>
 
@@ -90,7 +90,7 @@ onBeforeUnmount(() => {
                         v-for="link in navLinks"
                         :key="link.label"
                         :href="link.href"
-                        class="sbfa-nav-link"
+                        class="nav-link inline-flex items-center rounded-lg py-2 px-[0.85rem] text-[0.9rem] font-medium no-underline transition-colors hover:bg-white/10 hover:text-white"
                     >
                         {{ link.label }}
                     </a>
@@ -104,7 +104,7 @@ onBeforeUnmount(() => {
                     <a
                         v-else-if="showLoginUrl"
                         :href="route('login')"
-                        class="sbfa-nav-btn"
+                        class="nav-btn inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-transparent bg-white px-4 py-2 text-sm font-semibold no-underline transition hover:-translate-y-px"
                     >
                         <FontAwesomeIcon icon="arrow-right-to-bracket" class="text-sm" />
                         <span>Login</span>
@@ -113,7 +113,7 @@ onBeforeUnmount(() => {
 
                 <button
                     type="button"
-                    class="sbfa-menu-toggle flex lg:hidden"
+                    class="menu-toggle flex h-10 w-10 cursor-pointer items-center justify-center rounded-[10px] border border-white/[0.12] bg-white/[0.08] text-[1.15rem] text-white transition-colors hover:bg-white/[0.16] lg:hidden"
                     :aria-expanded="mobileMenuOpen"
                     aria-controls="mobile-nav"
                     :aria-label="mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'"
@@ -125,7 +125,7 @@ onBeforeUnmount(() => {
 
             <div
                 id="mobile-nav"
-                class="sbfa-mobile-nav lg:hidden"
+                class="mobile-nav lg:hidden"
                 :class="{ 'is-open': mobileMenuOpen }"
             >
                 <template v-if="mobileMenuOpen">
@@ -133,13 +133,13 @@ onBeforeUnmount(() => {
                         v-for="link in navLinks"
                         :key="link.label"
                         :href="link.href"
-                        class="sbfa-mobile-link"
+                        class="mobile-link flex items-center px-5 py-[0.85rem] text-[0.95rem] font-medium no-underline transition-colors hover:bg-white/[0.08] hover:text-white"
                         @click="closeMobileMenu"
                     >
                         {{ link.label }}
                     </a>
 
-                    <div class="sbfa-mobile-actions">
+                    <div class="mobile-actions px-5 pb-5 pt-3">
                         <div v-if="authUser">
                             <AuthTopbarDropdownMenu :auth-user="authUser" />
                         </div>
@@ -147,7 +147,7 @@ onBeforeUnmount(() => {
                         <a
                             v-else-if="showLoginUrl"
                             :href="route('login')"
-                            class="sbfa-mobile-login"
+                            class="mobile-login inline-flex items-center gap-2 rounded-lg bg-white px-[1.1rem] py-[0.6rem] text-sm font-semibold no-underline"
                             @click="closeMobileMenu"
                         >
                             <FontAwesomeIcon icon="arrow-right-to-bracket" class="text-sm" />
@@ -158,59 +158,59 @@ onBeforeUnmount(() => {
             </div>
         </header>
 
-        <main class="sbfa-main flex-1">
+        <main class="main flex-1">
             <slot />
         </main>
 
-        <footer class="sbfa-footer">
+        <footer class="footer">
             <div class="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3">
                 <div class="md:col-span-1">
                     <div class="flex items-center gap-3">
-                        <span class="sbfa-footer-logo" aria-hidden="true">
+                        <span class="footer-logo inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-[0.95rem] text-white" aria-hidden="true">
                             <FontAwesomeIcon :icon="['fas', 'book-open']" />
                         </span>
-                        <span class="sbfa-footer-brand">
+                        <span class="footer-brand text-[0.95rem] font-bold leading-[1.2] tracking-[-0.01em]">
                             <span class="block">Story Book</span>
                             <span class="block">Forge AI</span>
                         </span>
                     </div>
-                    <p class="sbfa-footer-tagline mt-4 text-sm">
+                    <p class="footer-tagline mt-4 text-sm leading-[1.6]">
                         Turn your ideas into beautifully illustrated AI storybooks.
                     </p>
                 </div>
 
                 <nav class="md:col-span-1" aria-label="Footer navigation">
-                    <h3 class="sbfa-footer-heading">Explore</h3>
+                    <h3 class="footer-heading text-[0.8125rem] font-bold uppercase tracking-[0.06em]">Explore</h3>
                     <ul class="mt-3 space-y-2">
                         <li v-for="link in navLinks" :key="link.label">
-                            <a :href="link.href" class="sbfa-footer-link">{{ link.label }}</a>
+                            <a :href="link.href" class="footer-link text-[0.9rem] font-medium no-underline transition-colors">{{ link.label }}</a>
                         </li>
                     </ul>
                 </nav>
 
                 <div class="md:col-span-1">
-                    <h3 class="sbfa-footer-heading">Account</h3>
+                    <h3 class="footer-heading text-[0.8125rem] font-bold uppercase tracking-[0.06em]">Account</h3>
                     <ul class="mt-3 space-y-2">
                         <li v-if="showLoginUrl && !authUser">
-                            <a :href="route('login')" class="sbfa-footer-link">Login</a>
+                            <a :href="route('login')" class="footer-link text-[0.9rem] font-medium no-underline transition-colors">Login</a>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <div class="sbfa-footer-bottom">
+            <div class="footer-bottom">
                 <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-sm sm:flex-row sm:px-6">
-                    <span class="sbfa-footer-text">
+                    <span class="footer-text">
                         &copy; {{ year }} {{ appName }}. All rights reserved.
                     </span>
 
-                    <span class="sbfa-footer-text">
+                    <span class="footer-text">
                         Developed by
                         <a
                             href="https://www.linkedin.com/in/sk-md-tahmid-farzan/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="sbfa-footer-link"
+                            class="footer-link text-[0.9rem] font-medium no-underline transition-colors"
                         >
                             Sk. Md. Tahmid Farzan
                         </a>
@@ -224,239 +224,104 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.sbfa-layout {
-    font-family: var(--story-book-forge-ai-font);
-    background: var(--story-book-forge-ai-background);
-    color: var(--story-book-forge-ai-text);
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-}
-
-.sbfa-layout ::selection {
-    background: var(--story-book-forge-ai-accent-soft);
-    color: var(--story-book-forge-ai-accent-active);
-}
-
-.sbfa-layout :deep(a:focus-visible),
-.sbfa-layout :deep(button:focus-visible) {
+.public-layout :deep(a:focus-visible),
+.public-layout :deep(button:focus-visible) {
     outline: 0;
-    box-shadow: var(--story-book-forge-ai-focus-ring);
-    border-radius: var(--story-book-forge-ai-radius-sm);
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-sm);
 }
 
-.sbfa-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: var(--story-book-forge-ai-header-bg);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.public-layout .header {
+    background: var(--header-bg);
     box-shadow: 0 4px 24px rgb(43 38 51 / 18%);
 }
 
-.sbfa-logo {
-    text-decoration: none;
-}
-
-.sbfa-logo-mark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 12px;
-    color: #fff;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent) 0%, var(--story-book-forge-ai-violet) 100%);
+.public-layout .logo .logo-mark {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
     box-shadow: 0 6px 16px rgb(79 70 229 / 35%);
-    font-size: 1.05rem;
-    transition: transform var(--story-book-forge-ai-transition);
+    transition: transform var(--transition);
 }
 
-.sbfa-logo:hover .sbfa-logo-mark {
+.public-layout .logo:hover .logo-mark {
     transform: translateY(-1px);
 }
 
-.sbfa-brand {
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    color: var(--story-book-forge-ai-header-text);
+.public-layout .brand {
+    color: var(--header-text);
 }
 
-.sbfa-brand-line-1 {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--story-book-forge-ai-header-text-muted);
+.public-layout .brand .brand-line-1 {
+    color: var(--header-text-muted);
 }
 
-.sbfa-brand-line-2 {
-    display: block;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #fff;
+.public-layout .nav-link {
+    color: var(--header-text-muted);
 }
 
-.sbfa-nav-link {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 0.85rem;
-    border-radius: var(--story-book-forge-ai-radius-sm);
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--story-book-forge-ai-header-text-muted);
-    text-decoration: none;
-    transition: color var(--story-book-forge-ai-transition), background var(--story-book-forge-ai-transition);
-}
-
-.sbfa-nav-link:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.sbfa-nav-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: var(--story-book-forge-ai-radius-sm);
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--story-book-forge-ai-accent);
-    background: #fff;
-    border: 1px solid transparent;
+.public-layout .nav-btn {
+    color: var(--accent);
     box-shadow: 0 2px 10px rgb(43 38 51 / 12%);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: all var(--story-book-forge-ai-transition);
 }
 
-.sbfa-nav-btn:hover {
-    color: var(--story-book-forge-ai-accent-hover);
-    transform: translateY(-1px);
+.public-layout .nav-btn:hover {
+    color: var(--accent-hover);
     box-shadow: 0 4px 14px rgb(43 38 51 / 16%);
 }
 
-.sbfa-menu-toggle {
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 10px;
-    color: #fff;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    font-size: 1.15rem;
-    cursor: pointer;
-    transition: background var(--story-book-forge-ai-transition);
-}
-
-.sbfa-menu-toggle:hover {
-    background: rgba(255, 255, 255, 0.16);
-}
-
-.sbfa-mobile-nav {
+.public-layout .mobile-nav {
     max-height: 0;
     overflow: hidden;
     transition: max-height 220ms ease;
-    background: var(--story-book-forge-ai-header-bg);
+    background: var(--header-bg);
 }
 
-.sbfa-mobile-nav.is-open {
+.public-layout .mobile-nav.is-open {
     max-height: 30rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sbfa-mobile-link {
-    display: flex;
-    align-items: center;
-    padding: 0.85rem 1.25rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--story-book-forge-ai-header-text-muted);
-    text-decoration: none;
-    transition: color var(--story-book-forge-ai-transition), background var(--story-book-forge-ai-transition);
+.public-layout .mobile-link {
+    color: var(--header-text-muted);
 }
 
-.sbfa-mobile-link:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.08);
+.public-layout .mobile-login {
+    color: var(--accent);
 }
 
-.sbfa-mobile-actions {
-    padding: 0.75rem 1.25rem 1.25rem;
+.public-layout .footer {
+    background: var(--surface-muted);
+    border-top: 1px solid var(--border);
 }
 
-.sbfa-mobile-login {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.1rem;
-    border-radius: var(--story-book-forge-ai-radius-sm);
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--story-book-forge-ai-accent);
-    background: #fff;
-    text-decoration: none;
+.public-layout .footer .footer-logo {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--violet) 100%);
 }
 
-.sbfa-main {
-    flex: 1;
+.public-layout .footer .footer-brand {
+    color: var(--heading);
 }
 
-.sbfa-footer {
-    background: var(--story-book-forge-ai-surface-muted);
-    border-top: 1px solid var(--story-book-forge-ai-border);
+.public-layout .footer .footer-tagline {
+    color: var(--text-muted);
 }
 
-.sbfa-footer-logo {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 10px;
-    color: #fff;
-    background: linear-gradient(135deg, var(--story-book-forge-ai-accent) 0%, var(--story-book-forge-ai-violet) 100%);
-    font-size: 0.95rem;
+.public-layout .footer .footer-heading {
+    color: var(--text-muted);
 }
 
-.sbfa-footer-brand {
-    font-size: 0.95rem;
-    font-weight: 700;
-    line-height: 1.2;
-    color: var(--story-book-forge-ai-heading);
-    letter-spacing: -0.01em;
+.public-layout .footer .footer-link {
+    color: var(--text);
 }
 
-.sbfa-footer-tagline {
-    color: var(--story-book-forge-ai-text-muted);
-    line-height: 1.6;
+.public-layout .footer .footer-link:hover {
+    color: var(--accent);
 }
 
-.sbfa-footer-heading {
-    font-size: 0.8125rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--story-book-forge-ai-text-muted);
+.public-layout .footer .footer-bottom {
+    border-top: 1px solid var(--border);
 }
 
-.sbfa-footer-link {
-    color: var(--story-book-forge-ai-text);
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: color var(--story-book-forge-ai-transition);
-}
-
-.sbfa-footer-link:hover {
-    color: var(--story-book-forge-ai-accent);
-}
-
-.sbfa-footer-bottom {
-    border-top: 1px solid var(--story-book-forge-ai-border);
-}
-
-.sbfa-footer-text {
-    color: var(--story-book-forge-ai-text-muted);
+.public-layout .footer .footer-text {
+    color: var(--text-muted);
 }
 </style>
