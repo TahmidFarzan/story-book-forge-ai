@@ -26,15 +26,12 @@ const { storyBook } = defineProps({
 const isUpdate = computed(() => !!storyBook?.id);
 
 const foundationGeneratorForm = useForm({
-    title: storyBook?.title,
-    sub_title: storyBook?.sub_title,
-    plot: storyBook?.plot,
     additional_information: storyBook?.additional_information ?? "",
     language_id: storyBook?.language_id ?? null,
-    genre_ids: storyBook?.genre_ids ?? [],
+    genre_ids: novel?.genres?.map((genre) => genre.id) ?? [],
     story_book_type_id: storyBook?.story_book_type_id ?? null,
     audience_id: storyBook?.audience_id ?? null,
-    ai_brain_id: storyBook?.ai_brain_id ?? null,
+    ai_brain_id:  null,
 });
 
 let isInitialAudienceLoad = true;
@@ -132,7 +129,7 @@ const submit = () => {
 
     if (isUpdate.value) {
         inertiaRoute.patch(
-            route("back-office.story-books.regenerate.foundation", {
+            route("back-office.story-books.generate.foundation", {
                 slug: storyBook?.slug,
             }),
             { ...foundationGeneratorForm.data(), _method: "patch" },
@@ -140,7 +137,7 @@ const submit = () => {
         );
     } else {
         foundationGeneratorForm.post(
-            route("back-office.story-books.generate.foundation"),
+            route("back-office.story-books.create.foundation"),
             requestConfig,
         );
     }

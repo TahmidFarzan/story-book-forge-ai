@@ -230,37 +230,26 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::get('/', [StoryBookController::class, 'index'])->name('index');
         Route::get('create', [StoryBookController::class, 'create'])->name('create');
 
-        Route::prefix('generate')->name('generate.')->group(function () {
-            Route::post('foundation', [StoryBookController::class, 'generateFoundation'])->name('foundation');
-            Route::post('characters', [StoryBookController::class, 'generateCharacters'])->name('characters');
-            Route::post('world-vibe', [StoryBookController::class, 'generateWorldVibe'])->name('world-vibe');
-            Route::post('locations', [StoryBookController::class, 'generateLocations'])->name('locations');
-            Route::post('factions', [StoryBookController::class, 'generateFactions'])->name('factions');
-            Route::post('creature', [StoryBookController::class, 'generateCreature'])->name('creature');
-            Route::post('system', [StoryBookController::class, 'generateSystem'])->name('system');
-            Route::post('timeline', [StoryBookController::class, 'generateTimeline'])->name('timeline');
-            Route::post('twists-and-foreshadowing', [StoryBookController::class, 'generateTwistsAndForeshadowing'])->name('twists-and-foreshadowing');
-            Route::post('scene-plan', [StoryBookController::class, 'generateScenePlan'])->name('scene-plan');
-            Route::post('dialogue-plan', [StoryBookController::class, 'generateDialoguePlan'])->name('dialogue-plan');
-            Route::post('page-plan', [StoryBookController::class, 'generatePagePlan'])->name('page-plan');
+        Route::prefix('create')->name('create.')->group(function () {
+            Route::post('foundation', [StoryBookController::class, 'createFoundation'])->name('foundation');
         });
 
         Route::prefix('{slug}')->group(function () {
             Route::get('edit', [StoryBookController::class, 'edit'])->name('edit');
 
-            Route::prefix('regenerate')->name('regenerate.')->group(function () {
-                Route::patch('foundation', [StoryBookController::class, 'regenerateFoundation'])->name('foundation');
-                Route::patch('characters', [StoryBookController::class, 'regenerateCharacters'])->name('characters');
-                Route::patch('world-vibe', [StoryBookController::class, 'regenerateWorldVibe'])->name('world-vibe');
-                Route::patch('locations', [StoryBookController::class, 'regenerateLocations'])->name('locations');
-                Route::patch('factions', [StoryBookController::class, 'regenerateFactions'])->name('factions');
-                Route::patch('creature', [StoryBookController::class, 'regenerateCreature'])->name('creature');
-                Route::patch('system', [StoryBookController::class, 'regenerateSystem'])->name('system');
-                Route::patch('timeline', [StoryBookController::class, 'regenerateTimeline'])->name('timeline');
-                Route::patch('twists-and-foreshadowing', [StoryBookController::class, 'regenerateTwistsAndForeshadowing'])->name('twists-and-foreshadowing');
-                Route::patch('scene-plan', [StoryBookController::class, 'regenerateScenePlan'])->name('scene-plan');
-                Route::patch('dialogue-plan', [StoryBookController::class, 'regenerateDialoguePlan'])->name('dialogue-plan');
-                Route::patch('page-plan', [StoryBookController::class, 'regeneratePagePlan'])->name('page-plan');
+            Route::prefix('generate')->name('generate.')->group(function () {
+                Route::patch('foundation', [StoryBookController::class, 'generateFoundation'])->name('foundation');
+                Route::patch('characters', [StoryBookController::class, 'generateCharacters'])->name('characters');
+                Route::patch('world-vibe', [StoryBookController::class, 'generateWorldVibe'])->name('world-vibe');
+                Route::patch('locations', [StoryBookController::class, 'generateLocations'])->name('locations');
+                Route::patch('factions', [StoryBookController::class, 'generateFactions'])->name('factions');
+                Route::patch('creature', [StoryBookController::class, 'generateCreature'])->name('creature');
+                Route::patch('system', [StoryBookController::class, 'generateSystem'])->name('system');
+                Route::patch('timeline', [StoryBookController::class, 'generateTimeline'])->name('timeline');
+                Route::patch('twists-and-foreshadowing', [StoryBookController::class, 'generateTwistsAndForeshadowing'])->name('twists-and-foreshadowing');
+                Route::patch('scene-plan', [StoryBookController::class, 'generateScenePlan'])->name('scene-plan');
+                Route::patch('dialogue-plan', [StoryBookController::class, 'generateDialoguePlan'])->name('dialogue-plan');
+                Route::patch('page-plan', [StoryBookController::class, 'generatePagePlan'])->name('page-plan');
             });
 
             Route::delete('delete', [StoryBookController::class, 'delete'])->name('delete');
