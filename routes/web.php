@@ -212,8 +212,6 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::get('/', [StoryBookController::class, 'index'])->name('index');
         Route::get('create', [StoryBookController::class, 'create'])->name('create');
 
-        Route::get('{slug}/edit', [StoryBookController::class, 'edit'])->name('edit');
-
         Route::prefix('generate')->name('generate.')->group(function () {
             Route::post('foundation', [StoryBookController::class, 'generateFoundation'])->name('foundation');
             Route::post('characters', [StoryBookController::class, 'generateCharacters'])->name('characters');
@@ -229,7 +227,26 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
             Route::post('page-plan', [StoryBookController::class, 'generatePagePlan'])->name('page-plan');
         });
 
-        Route::delete('{slug}/delete', [StoryBookController::class, 'delete'])->name('delete');
+        Route::prefix('{slug}')->group(function () {
+            Route::get('edit', [StoryBookController::class, 'edit'])->name('edit');
+
+            Route::prefix('regenerate')->name('regenerate.')->group(function () {
+                Route::patch('foundation', [StoryBookController::class, 'regenerateFoundation'])->name('foundation');
+                Route::patch('characters', [StoryBookController::class, 'regenerateCharacters'])->name('characters');
+                Route::patch('world-vibe', [StoryBookController::class, 'regenerateWorldVibe'])->name('world-vibe');
+                Route::patch('locations', [StoryBookController::class, 'regenerateLocations'])->name('locations');
+                Route::patch('factions', [StoryBookController::class, 'regenerateFactions'])->name('factions');
+                Route::patch('creature', [StoryBookController::class, 'regenerateCreature'])->name('creature');
+                Route::patch('system', [StoryBookController::class, 'regenerateSystem'])->name('system');
+                Route::patch('timeline', [StoryBookController::class, 'regenerateTimeline'])->name('timeline');
+                Route::patch('twists-and-foreshadowing', [StoryBookController::class, 'regenerateTwistsAndForeshadowing'])->name('twists-and-foreshadowing');
+                Route::patch('scene-plan', [StoryBookController::class, 'regenerateScenePlan'])->name('scene-plan');
+                Route::patch('dialogue-plan', [StoryBookController::class, 'regenerateDialoguePlan'])->name('dialogue-plan');
+                Route::patch('page-plan', [StoryBookController::class, 'regeneratePagePlan'])->name('page-plan');
+            });
+
+            Route::delete('delete', [StoryBookController::class, 'delete'])->name('delete');
+        });
     });
 
     Route::prefix('users')->name('users.')->group(function () {

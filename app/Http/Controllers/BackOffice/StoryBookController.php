@@ -70,6 +70,19 @@ class StoryBookController extends Controller
         ]);
     }
 
+    public function regenerateFoundation(StoryBookFoundationRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateFoundation($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ["slug" => $slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status'  => $result['status'],
+        ]);
+    }
+
     public function delete(string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);

@@ -3,7 +3,7 @@ import Layout from "@/pages/layouts/AuthLayout.vue";
 import InfiniteScrollApiSelect from "@/components/common/multi-select/InfiniteScrollApiSelect.vue";
 
 import { ref, computed, onMounted, nextTick, watch } from "vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, useForm, router as intertiaJsRoute } from "@inertiajs/vue3";
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library as FontAwesomeLibrary } from "@fortawesome/fontawesome-svg-core";
@@ -74,7 +74,7 @@ const initialInput =
         ? novel.input
         : storyBook?.input && typeof storyBook.input === "object"
           ? storyBook.input
-          : sourceNovel ?? {};
+          : (sourceNovel ?? {});
 
 const initialValue = (field) => {
     const value = initialInput[field];
@@ -86,7 +86,7 @@ const initialValue = (field) => {
     return typeof value === "string" ? value : JSON.stringify(value, null, 2);
 };
 
-const isUpdate = computed(() => !!sourceNovel?.title);
+const isUpdate = computed(() => !!sourceNovel?.id);
 
 const pageTitle = computed(() => {
     return isUpdate.value ? `Edit ${sourceNovel?.title}` : "New Story Book";
@@ -249,7 +249,9 @@ const novelForm = useForm({
     language_id: sourceNovel?.language_id ?? initialInput.language_id ?? null,
     genre_ids: sourceNovel?.genre_ids ?? initialInput.genre_ids ?? [],
     story_book_type_id:
-        sourceNovel?.story_book_type_id ?? initialInput.story_book_type_id ?? null,
+        sourceNovel?.story_book_type_id ??
+        initialInput.story_book_type_id ??
+        null,
     audience_id: sourceNovel?.audience_id ?? initialInput.audience_id ?? null,
     ai_brain_id: sourceNovel?.ai_brain_id ?? initialInput.ai_brain_id ?? null,
 });
@@ -341,7 +343,10 @@ const validateStep = (stepId) => {
         valid = false;
     }
 
-    if (!Array.isArray(novelForm.genre_ids) || novelForm.genre_ids.length === 0) {
+    if (
+        !Array.isArray(novelForm.genre_ids) ||
+        novelForm.genre_ids.length === 0
+    ) {
         novelForm.setError("genre_ids", "Genres is required");
         valid = false;
     }
@@ -382,14 +387,24 @@ const generateActiveStep = () => {
     }
 
     if (stepId === 1) {
-        novelForm.post(route("back-office.story-books.generate.foundation"), {
+        const requestConfig = {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
                 markStepComplete(stepId);
                 novelForm.clearErrors();
             },
-        });
+        };
+
+        if (isUpdate.value) {
+            intertiaJsRoute.post(
+                route("back-office.story-books.regenerate.foundation", { slug: storyBook?.slug }),
+                { ...novelForm.data(), _method: "patch" },
+                requestConfig,
+            );
+        } else {
+            novelForm.post(route("back-office.story-books.generate.foundation"), requestConfig);
+        }
 
         return;
     }
@@ -420,11 +435,18 @@ const goPrev = () => {
     <Head :title="createPageTitle" />
 
     <div class="w-full">
-        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6">
+        <div
+            class="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6"
+        >
             <div class="flex flex-col">
-                <div class="flex items-center px-0 py-4 border-b border-gray-200">
+                <div
+                    class="flex items-center px-0 py-4 border-b border-gray-200"
+                >
                     <h2 class="text-lg font-semibold flex items-center gap-2">
-                        <FontAwesomeIcon icon="wand-magic-sparkles" class="text-purple-600" />
+                        <FontAwesomeIcon
+                            icon="wand-magic-sparkles"
+                            class="text-purple-600"
+                        />
                         {{ pageTitle }}
                     </h2>
                 </div>
@@ -436,27 +458,55 @@ const goPrev = () => {
                             :key="step.number"
                             type="button"
                             @click="goToStep(index + 1)"
-                            :disabled="!isStepAccessible(index + 1) && !isStepCompleted(index + 1)"
+                            :disabled="
+                                !isStepAccessible(index + 1) &&
+                                !isStepCompleted(index + 1)
+                            "
                             class="flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
                             :class="{
-                                'border-blue-200 bg-blue-50 text-blue-700': getStepState(index + 1) === 'active',
-                                'border-green-200 bg-green-50 text-green-700': getStepState(index + 1) === 'completed',
-                                'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50': getStepState(index + 1) === 'accessible',
-                                'border-gray-100 text-gray-300': getStepState(index + 1) === 'locked',
+                                'border-blue-200 bg-blue-50 text-blue-700':
+                                    getStepState(index + 1) === 'active',
+                                'border-green-200 bg-green-50 text-green-700':
+                                    getStepState(index + 1) === 'completed',
+                                'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50':
+                                    getStepState(index + 1) === 'accessible',
+                                'border-gray-100 text-gray-300':
+                                    getStepState(index + 1) === 'locked',
                             }"
                         >
-                            <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold" :class="{
-                                'bg-blue-600 text-white': getStepState(index + 1) === 'active',
-                                'bg-green-500 text-white': getStepState(index + 1) === 'completed',
-                                'bg-gray-200 text-gray-600': getStepState(index + 1) === 'accessible',
-                                'bg-gray-100 text-gray-400': getStepState(index + 1) === 'locked',
-                            }">
-                                <FontAwesomeIcon v-if="isStepCompleted(index + 1)" icon="check" class="text-xs" />
+                            <span
+                                class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                                :class="{
+                                    'bg-blue-600 text-white':
+                                        getStepState(index + 1) === 'active',
+                                    'bg-green-500 text-white':
+                                        getStepState(index + 1) === 'completed',
+                                    'bg-gray-200 text-gray-600':
+                                        getStepState(index + 1) ===
+                                        'accessible',
+                                    'bg-gray-100 text-gray-400':
+                                        getStepState(index + 1) === 'locked',
+                                }"
+                            >
+                                <FontAwesomeIcon
+                                    v-if="isStepCompleted(index + 1)"
+                                    icon="check"
+                                    class="text-xs"
+                                />
                                 <span v-else>{{ step.number }}</span>
                             </span>
-                            <FontAwesomeIcon :icon="step.icon" class="flex-shrink-0 text-xs" />
-                            <span class="min-w-0 flex-1 break-words">{{ step.title }}</span>
-                            <FontAwesomeIcon v-if="getStepState(index + 1) === 'locked'" icon="lock" class="flex-shrink-0 text-xs" />
+                            <FontAwesomeIcon
+                                :icon="step.icon"
+                                class="flex-shrink-0 text-xs"
+                            />
+                            <span class="min-w-0 flex-1 break-words">{{
+                                step.title
+                            }}</span>
+                            <FontAwesomeIcon
+                                v-if="getStepState(index + 1) === 'locked'"
+                                icon="lock"
+                                class="flex-shrink-0 text-xs"
+                            />
                         </button>
                     </nav>
 
@@ -466,46 +516,93 @@ const goPrev = () => {
                             :key="step.number"
                             type="button"
                             @click="goToStep(index + 1)"
-                            :disabled="!isStepAccessible(index + 1) && !isStepCompleted(index + 1)"
+                            :disabled="
+                                !isStepAccessible(index + 1) &&
+                                !isStepCompleted(index + 1)
+                            "
                             class="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition disabled:opacity-40 disabled:cursor-not-allowed"
                             :class="{
-                                'bg-blue-50 text-blue-700': getStepState(index + 1) === 'active' || getStepState(index + 1) === 'completed',
-                                'text-gray-600 hover:bg-gray-50': getStepState(index + 1) === 'accessible',
-                                'text-gray-300': getStepState(index + 1) === 'locked',
+                                'bg-blue-50 text-blue-700':
+                                    getStepState(index + 1) === 'active' ||
+                                    getStepState(index + 1) === 'completed',
+                                'text-gray-600 hover:bg-gray-50':
+                                    getStepState(index + 1) === 'accessible',
+                                'text-gray-300':
+                                    getStepState(index + 1) === 'locked',
                             }"
                         >
-                            <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold" :class="{
-                                'bg-blue-600 text-white': getStepState(index + 1) === 'active',
-                                'bg-green-500 text-white': getStepState(index + 1) === 'completed',
-                                'bg-gray-200 text-gray-600': getStepState(index + 1) === 'accessible',
-                                'bg-gray-100 text-gray-400': getStepState(index + 1) === 'locked',
-                            }">
-                                <FontAwesomeIcon v-if="isStepCompleted(index + 1)" icon="check" class="text-xs" />
+                            <span
+                                class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                                :class="{
+                                    'bg-blue-600 text-white':
+                                        getStepState(index + 1) === 'active',
+                                    'bg-green-500 text-white':
+                                        getStepState(index + 1) === 'completed',
+                                    'bg-gray-200 text-gray-600':
+                                        getStepState(index + 1) ===
+                                        'accessible',
+                                    'bg-gray-100 text-gray-400':
+                                        getStepState(index + 1) === 'locked',
+                                }"
+                            >
+                                <FontAwesomeIcon
+                                    v-if="isStepCompleted(index + 1)"
+                                    icon="check"
+                                    class="text-xs"
+                                />
                                 <span v-else>{{ step.number }}</span>
                             </span>
-                            <FontAwesomeIcon :icon="step.icon" class="flex-shrink-0 text-xs" />
-                            <span class="flex-1 break-words">{{ step.title }}</span>
-                            <FontAwesomeIcon v-if="getStepState(index + 1) === 'locked'" icon="lock" class="flex-shrink-0 text-xs" />
+                            <FontAwesomeIcon
+                                :icon="step.icon"
+                                class="flex-shrink-0 text-xs"
+                            />
+                            <span class="flex-1 break-words">{{
+                                step.title
+                            }}</span>
+                            <FontAwesomeIcon
+                                v-if="getStepState(index + 1) === 'locked'"
+                                icon="lock"
+                                class="flex-shrink-0 text-xs"
+                            />
                         </button>
                     </nav>
                 </div>
 
                 <div class="px-0 py-6">
                     <section class="space-y-6">
-                        <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                        <div
+                            class="bg-white border rounded-xl p-5 shadow-sm space-y-4"
+                        >
                             <div class="flex items-start gap-3">
-                                <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                                    <FontAwesomeIcon :icon="activeStepDefinition.icon" />
+                                <span
+                                    class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600"
+                                >
+                                    <FontAwesomeIcon
+                                        :icon="activeStepDefinition.icon"
+                                    />
                                 </span>
                                 <div>
-                                    <h3 class="text-base font-semibold">{{ activeStepDefinition.title }}</h3>
-                                    <p class="mt-1 text-sm text-gray-500">{{ activeStepDefinition.text }}</p>
+                                    <h3 class="text-base font-semibold">
+                                        {{ activeStepDefinition.title }}
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ activeStepDefinition.text }}
+                                    </p>
                                 </div>
                             </div>
 
-                            <div v-if="activeStep === 1" class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+                            <div
+                                v-if="activeStep === 1"
+                                class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4"
+                            >
                                 <div>
-                                    <label class="block text-sm font-medium mb-1">Audience <span class="text-red-500">*</span></label>
+                                    <label
+                                        class="block text-sm font-medium mb-1"
+                                        >Audience
+                                        <span class="text-red-500"
+                                            >*</span
+                                        ></label
+                                    >
                                     <InfiniteScrollApiSelect
                                         :form="novelForm"
                                         fieldName="audience_id"
@@ -514,11 +611,22 @@ const goPrev = () => {
                                         :multiple="false"
                                         placeholder="Select audience"
                                     />
-                                    <p v-if="novelForm.errors.audience_id" class="text-red-500 text-sm mt-1">{{ novelForm.errors.audience_id }}</p>
+                                    <p
+                                        v-if="novelForm.errors.audience_id"
+                                        class="text-red-500 text-sm mt-1"
+                                    >
+                                        {{ novelForm.errors.audience_id }}
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium mb-1">Language <span class="text-red-500">*</span></label>
+                                    <label
+                                        class="block text-sm font-medium mb-1"
+                                        >Language
+                                        <span class="text-red-500"
+                                            >*</span
+                                        ></label
+                                    >
                                     <InfiniteScrollApiSelect
                                         :form="novelForm"
                                         fieldName="language_id"
@@ -527,11 +635,22 @@ const goPrev = () => {
                                         :multiple="false"
                                         placeholder="Select language"
                                     />
-                                    <p v-if="novelForm.errors.language_id" class="text-red-500 text-sm mt-1">{{ novelForm.errors.language_id }}</p>
+                                    <p
+                                        v-if="novelForm.errors.language_id"
+                                        class="text-red-500 text-sm mt-1"
+                                    >
+                                        {{ novelForm.errors.language_id }}
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium mb-1">Genres <span class="text-red-500">*</span></label>
+                                    <label
+                                        class="block text-sm font-medium mb-1"
+                                        >Genres
+                                        <span class="text-red-500"
+                                            >*</span
+                                        ></label
+                                    >
                                     <InfiniteScrollApiSelect
                                         :form="novelForm"
                                         fieldName="genre_ids"
@@ -540,44 +659,120 @@ const goPrev = () => {
                                         :multiple="true"
                                         placeholder="Select genres"
                                     />
-                                    <p v-if="novelForm.errors.genre_ids" class="text-red-500 text-sm mt-1">{{ novelForm.errors.genre_ids }}</p>
+                                    <p
+                                        v-if="novelForm.errors.genre_ids"
+                                        class="text-red-500 text-sm mt-1"
+                                    >
+                                        {{ novelForm.errors.genre_ids }}
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium mb-1">Story Book Type <span class="text-red-500">*</span></label>
+                                    <label
+                                        class="block text-sm font-medium mb-1"
+                                        >Story Book Type
+                                        <span class="text-red-500"
+                                            >*</span
+                                        ></label
+                                    >
                                     <InfiniteScrollApiSelect
                                         :form="novelForm"
                                         fieldName="story_book_type_id"
-                                        :selectedItem="sourceNovel?.story_book_type"
-                                        :apiUrl="route('search.story-book-types')"
+                                        :selectedItem="
+                                            sourceNovel?.story_book_type
+                                        "
+                                        :apiUrl="
+                                            route('search.story-book-types')
+                                        "
                                         :multiple="false"
                                         placeholder="Select story book type"
                                     />
-                                    <p v-if="novelForm.errors.story_book_type_id" class="text-red-500 text-sm mt-1">{{ novelForm.errors.story_book_type_id }}</p>
+                                    <p
+                                        v-if="
+                                            novelForm.errors.story_book_type_id
+                                        "
+                                        class="text-red-500 text-sm mt-1"
+                                    >
+                                        {{
+                                            novelForm.errors.story_book_type_id
+                                        }}
+                                    </p>
                                 </div>
 
                                 <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-1">Additional Information</label>
-                                    <textarea v-model="novelForm.additional_information" rows="3" placeholder="Any additional context or instructions for the AI..." class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"></textarea>
+                                    <label
+                                        class="block text-sm font-medium mb-1"
+                                        >Additional Information</label
+                                    >
+                                    <textarea
+                                        v-model="
+                                            novelForm.additional_information
+                                        "
+                                        rows="3"
+                                        placeholder="Any additional context or instructions for the AI..."
+                                        class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
+                                    ></textarea>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4">
-                                <div v-for="field in activeStepFields" :key="field" :class="{ 'md:col-span-2': field === 'plot' || activeStep !== 1 }">
-                                    <label class="block text-sm font-medium mb-1">{{ FIELD_LABELS[field] }}</label>
-                                    <textarea v-model="novelForm[field]" :rows="activeStep === 1 ? field === 'plot' ? 7 : 3 : 10" :placeholder="`Enter ${FIELD_LABELS[field].toLowerCase()} details...`" class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"></textarea>
-                                    <p v-if="novelForm.errors[field]" class="text-red-500 text-sm mt-1">{{ novelForm.errors[field] }}</p>
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4"
+                            >
+                                <div
+                                    v-for="field in activeStepFields"
+                                    :key="field"
+                                    :class="{
+                                        'md:col-span-2':
+                                            field === 'plot' ||
+                                            activeStep !== 1,
+                                    }"
+                                >
+                                    <label
+                                        class="block text-sm font-medium mb-1"
+                                        >{{ FIELD_LABELS[field] }}</label
+                                    >
+                                    <textarea
+                                        v-model="novelForm[field]"
+                                        :rows="
+                                            activeStep === 1
+                                                ? field === 'plot'
+                                                    ? 7
+                                                    : 3
+                                                : 10
+                                        "
+                                        :placeholder="`Enter ${FIELD_LABELS[field].toLowerCase()} details...`"
+                                        class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
+                                    ></textarea>
+                                    <p
+                                        v-if="novelForm.errors[field]"
+                                        class="text-red-500 text-sm mt-1"
+                                    >
+                                        {{ novelForm.errors[field] }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div v-if="activeStep === 1" class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
+                        <div
+                            v-if="activeStep === 1"
+                            class="bg-white border rounded-xl p-5 shadow-sm space-y-4"
+                        >
                             <div class="flex items-center gap-2">
-                                <FontAwesomeIcon icon="brain" class="text-purple-600" />
-                                <h3 class="text-base font-semibold">AI Brain Configuration</h3>
+                                <FontAwesomeIcon
+                                    icon="brain"
+                                    class="text-purple-600"
+                                />
+                                <h3 class="text-base font-semibold">
+                                    AI Brain Configuration
+                                </h3>
                             </div>
-                            <p class="text-sm text-gray-500">Select the AI model that will generate the story foundation.</p>
-                            <div class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50">
+                            <p class="text-sm text-gray-500">
+                                Select the AI model that will generate the story
+                                foundation.
+                            </p>
+                            <div
+                                class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
+                            >
                                 <InfiniteScrollApiSelect
                                     :form="novelForm"
                                     fieldName="ai_brain_id"
@@ -589,34 +784,90 @@ const goPrev = () => {
                                     class="ai-brain-select"
                                 />
                             </div>
-                            <p v-if="novelForm.errors.ai_brain_id" class="text-red-500 text-sm">{{ novelForm.errors.ai_brain_id }}</p>
+                            <p
+                                v-if="novelForm.errors.ai_brain_id"
+                                class="text-red-500 text-sm"
+                            >
+                                {{ novelForm.errors.ai_brain_id }}
+                            </p>
                         </div>
                     </section>
 
-                    <div v-if="isStoryBookComplete" class="mt-6 rounded-xl border border-green-200 bg-green-50 p-5 text-center">
-                        <FontAwesomeIcon icon="check" class="text-2xl text-green-600" />
-                        <h3 class="mt-2 text-lg font-semibold text-green-800">Story Book Complete</h3>
-                        <p class="mt-1 text-sm text-green-700">All story modules are ready for the final story book.</p>
+                    <div
+                        v-if="isStoryBookComplete"
+                        class="mt-6 rounded-xl border border-green-200 bg-green-50 p-5 text-center"
+                    >
+                        <FontAwesomeIcon
+                            icon="check"
+                            class="text-2xl text-green-600"
+                        />
+                        <h3 class="mt-2 text-lg font-semibold text-green-800">
+                            Story Book Complete
+                        </h3>
+                        <p class="mt-1 text-sm text-green-700">
+                            All story modules are ready for the final story
+                            book.
+                        </p>
                     </div>
                 </div>
 
-                <div class="px-0 py-4 border-t border-gray-200 flex justify-between items-center gap-3">
-                    <button type="button" @click="goPrev" :disabled="activeStep === 1" class="px-4 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+                <div
+                    class="px-0 py-4 border-t border-gray-200 flex justify-between items-center gap-3"
+                >
+                    <button
+                        type="button"
+                        @click="goPrev"
+                        :disabled="activeStep === 1"
+                        class="px-4 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
                         <FontAwesomeIcon icon="arrow-left" />
                         Previous
                     </button>
 
-                    <span class="hidden sm:inline text-xs text-gray-400">Step {{ activeStep }} of {{ STEP_DEFINITIONS.length }}</span>
+                    <span class="hidden sm:inline text-xs text-gray-400"
+                        >Step {{ activeStep }} of
+                        {{ STEP_DEFINITIONS.length }}</span
+                    >
 
                     <div class="flex items-center gap-2">
-                        <button v-if="activeStep === STEP_DEFINITIONS.length && isStepCompleted(activeStep)" type="button" @click="completeStoryBook" :disabled="isStoryBookComplete" class="px-5 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed">
+                        <button
+                            v-if="
+                                activeStep === STEP_DEFINITIONS.length &&
+                                isStepCompleted(activeStep)
+                            "
+                            type="button"
+                            @click="completeStoryBook"
+                            :disabled="isStoryBookComplete"
+                            class="px-5 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
                             <FontAwesomeIcon icon="book-open" />
-                            {{ isStoryBookComplete ? "Completed" : "Complete Story Book" }}
+                            {{
+                                isStoryBookComplete
+                                    ? "Completed"
+                                    : "Complete Story Book"
+                            }}
                         </button>
-                        <button v-else type="button" @click="generateActiveStep" :disabled="novelForm.processing" class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed">
-                            <FontAwesomeIcon v-if="novelForm.processing" icon="spinner" spin />
-                            <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
-                            {{ novelForm.processing ? "Generating..." : `Generate ${activeStepDefinition.title}` }}
+                        <button
+                            v-else
+                            type="button"
+                            @click="generateActiveStep"
+                            :disabled="novelForm.processing"
+                            class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            <FontAwesomeIcon
+                                v-if="novelForm.processing"
+                                icon="spinner"
+                                spin
+                            />
+                            <FontAwesomeIcon
+                                v-else
+                                icon="wand-magic-sparkles"
+                            />
+                            {{
+                                novelForm.processing
+                                    ? "Generating..."
+                                    : `Generate ${activeStepDefinition.title}`
+                            }}
                         </button>
                     </div>
                 </div>
