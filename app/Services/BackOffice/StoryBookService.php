@@ -4,7 +4,7 @@ namespace App\Services\BackOffice;
 
 use App\Helpers\AiPromptGeneratorHelper;
 use App\Helpers\StoryBookHelper;
-use App\Http\Requests\StoryBookPlotRequest;
+use App\Http\Requests\StoryBookFoundationRequest;
 use App\Models\StoryBook;
 use App\Services\BackOffice\AiBrainService;
 use App\Services\BackOffice\AiPromptService;
@@ -105,7 +105,7 @@ class StoryBookService
             ->appends($request->all());
     }
 
-    public function generateFoundation(StoryBookPlotRequest $request, StoryBook $storyBook): array
+    public function generateFoundation(StoryBookFoundationRequest $request, StoryBook $storyBook): array
     {
         $isNew       = empty($storyBook->id);
         $statusEvent = $isNew ? "save" : "update";

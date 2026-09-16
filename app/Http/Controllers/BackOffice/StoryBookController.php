@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoryBookPlotRequest;
+use App\Http\Requests\StoryBookFoundationRequest;
 use App\Services\BackOffice\StoryBookService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -51,7 +51,7 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateFoundation(StoryBookPlotRequest $request): RedirectResponse
+    public function generateFoundation(StoryBookFoundationRequest $request): RedirectResponse
     {
         $storyBook = $this->storyBookService->new();
         Gate::authorize('create', $storyBook);
