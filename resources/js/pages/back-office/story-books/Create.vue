@@ -1,95 +1,78 @@
 <script setup>
 import Layout from "@/pages/layouts/AuthLayout.vue";
-import InfiniteScrollApiSelect from "@/components/common/multi-select/InfiniteScrollApiSelect.vue";
 
-import { ref, computed, onMounted, nextTick, watch } from "vue";
-import { Head, useForm, router as intertiaJsRoute } from "@inertiajs/vue3";
+import StoryBookStep2CharactersForm from "@/components/back-office/story-book/StoryBookStep2CharactersForm.vue";
+import StoryBookStep6CreatureForm from "@/components/back-office/story-book/StoryBookStep6CreatureForm.vue";
+import StoryBookStep11DialoguePlanForm from "@/components/back-office/story-book/StoryBookStep11DialoguePlanForm.vue";
+import StoryBookStep5FactionsForm from "@/components/back-office/story-book/StoryBookStep5FactionsForm.vue";
+import StoryBookStep1FoundationForm from "@/components/back-office/story-book/StoryBookStep1FoundationForm.vue";
+import StoryBookStep4LocationsForm from "@/components/back-office/story-book/StoryBookStep4LocationsForm.vue";
+import StoryBookStep12PagePlanForm from "@/components/back-office/story-book/StoryBookStep12PagePlanForm.vue";
+import StoryBookStep10ScenePlanForm from "@/components/back-office/story-book/StoryBookStep10ScenePlanForm.vue";
+import StoryBookStep7SystemForm from "@/components/back-office/story-book/StoryBookStep7SystemForm.vue";
+import StoryBookStep8TimelineForm from "@/components/back-office/story-book/StoryBookStep8TimelineForm.vue";
+import StoryBookStep9TwistsAndForeshadowingForm from "@/components/back-office/story-book/StoryBookStep9TwistsAndForeshadowingForm.vue";
+import StoryBookStep3WorldVibeForm from "@/components/back-office/story-book/StoryBookStep3WorldVibeForm.vue";
+
+import { computed, nextTick, onMounted, ref } from "vue";
+import { Head } from "@inertiajs/vue3";
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library as FontAwesomeLibrary } from "@fortawesome/fontawesome-svg-core";
 import {
-    faSpinner,
-    faCheck,
-    faLock,
     faArrowLeft,
-    faWandMagicSparkles,
-    faBrain,
-    faLightbulb,
-    faUser,
-    faGlobe,
-    faLocationDot,
-    faFlag,
-    faFilm,
-    faGear,
+    faBookOpen,
+    faCheck,
     faClock,
-    faDiagramProject,
-    faShuffle,
-    faList,
     faComments,
     faFileLines,
-    faBookOpen,
+    faFilm,
+    faFlag,
+    faGear,
+    faGlobe,
+    faLightbulb,
+    faList,
+    faLocationDot,
+    faLock,
+    faShuffle,
+    faUser,
+    faWandMagicSparkles,
 } from "@fortawesome/free-solid-svg-icons";
 
 FontAwesomeLibrary.add(
-    faSpinner,
-    faCheck,
-    faLock,
     faArrowLeft,
-    faWandMagicSparkles,
-    faBrain,
-    faLightbulb,
-    faUser,
-    faGlobe,
-    faLocationDot,
-    faFlag,
-    faFilm,
-    faGear,
+    faBookOpen,
+    faCheck,
     faClock,
-    faDiagramProject,
-    faShuffle,
-    faList,
     faComments,
     faFileLines,
-    faBookOpen,
+    faFilm,
+    faFlag,
+    faGear,
+    faGlobe,
+    faLightbulb,
+    faList,
+    faLocationDot,
+    faLock,
+    faShuffle,
+    faUser,
+    faWandMagicSparkles,
 );
 
 defineOptions({ layout: Layout });
 
 const createPageTitle = "Create Story Book";
 
-const { novel, storyBook } = defineProps({
-    novel: {
-        type: Object,
-        default: null,
-    },
+const { storyBook } = defineProps({
     storyBook: {
         type: Object,
         default: null,
     },
 });
-
-const sourceNovel = novel ?? storyBook;
-const initialInput =
-    novel?.input && typeof novel.input === "object"
-        ? novel.input
-        : storyBook?.input && typeof storyBook.input === "object"
-          ? storyBook.input
-          : (sourceNovel ?? {});
-
-const initialValue = (field) => {
-    const value = initialInput[field];
-
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return typeof value === "string" ? value : JSON.stringify(value, null, 2);
-};
-
-const isUpdate = computed(() => !!sourceNovel?.id);
+const isUpdate = computed(() => !!storyBook?.id);
 
 const pageTitle = computed(() => {
-    return isUpdate.value ? `Edit ${sourceNovel?.title}` : "New Story Book";
+    return isUpdate.value ? `Edit ${storyBook?.title}` : "New Story Book";
 });
 
 onMounted(async () => {
@@ -159,148 +142,36 @@ const STEP_DEFINITIONS = [
     },
     {
         number: "09",
-        title: "Story Structure",
-        text: "Create the overall narrative through its beginning, middle, ending, acts, and turning points.",
-        icon: ["fas", "diagram-project"],
-    },
-    {
-        number: "10",
         title: "Twists & Foreshadowing",
         text: "Create hidden narrative elements with twists, clues, reveals, and future connections.",
         icon: ["fas", "shuffle"],
     },
     {
-        number: "11",
+        number: "10",
         title: "Scene Plan",
         text: "Create scene progression with objectives, events, locations, and purpose.",
         icon: ["fas", "list"],
     },
     {
-        number: "12",
+        number: "11",
         title: "Dialogue Plan",
         text: "Create dialogue planning with dialogue points, emotional beats, and conversation flow.",
         icon: ["fas", "comments"],
     },
     {
-        number: "13",
+        number: "12",
         title: "Page Plan",
         text: "Create page-by-page story planning with page sequence, descriptions, and illustration notes.",
         icon: ["fas", "file-lines"],
     },
 ];
 
-const STEP_FIELDS = {
-    1: ["title", "sub_title", "plot", "theme", "genre", "tone"],
-    2: ["characters"],
-    3: ["world_bible"],
-    4: ["locations"],
-    5: ["factions"],
-    6: ["creatures"],
-    7: ["systems"],
-    8: ["timeline"],
-    9: ["story_structure"],
-    10: ["twists_and_foreshadowing"],
-    11: ["scene_plans"],
-    12: ["dialogue_plans"],
-    13: ["page_plan"],
-};
-
-const FIELD_LABELS = {
-    title: "Title",
-    sub_title: "Subtitle",
-    plot: "Plot",
-    theme: "Theme",
-    genre: "Genre",
-    tone: "Tone",
-    characters: "Characters",
-    world_bible: "World Vibe",
-    locations: "Locations",
-    factions: "Factions",
-    creatures: "Creature",
-    systems: "System",
-    timeline: "Timeline",
-    story_structure: "Story Structure",
-    twists_and_foreshadowing: "Twists & Foreshadowing",
-    scene_plans: "Scene Plan",
-    dialogue_plans: "Dialogue Plan",
-    page_plan: "Page Plan",
-};
-
-const novelForm = useForm({
-    title: initialValue("title"),
-    sub_title: initialValue("sub_title"),
-    plot: initialValue("plot"),
-    theme: initialValue("theme"),
-    genre: initialValue("genre"),
-    tone: initialValue("tone"),
-    characters: initialValue("characters"),
-    world_bible: initialValue("world_bible"),
-    locations: initialValue("locations"),
-    factions: initialValue("factions"),
-    creatures: initialValue("creatures"),
-    systems: initialValue("systems"),
-    timeline: initialValue("timeline"),
-    story_structure: initialValue("story_structure"),
-    twists_and_foreshadowing: initialValue("twists_and_foreshadowing"),
-    scene_plans: initialValue("scene_plans"),
-    dialogue_plans: initialValue("dialogue_plans"),
-    page_plan: initialValue("page_plan"),
-    additional_information: initialValue("additional_information"),
-    language_id: sourceNovel?.language_id ?? initialInput.language_id ?? null,
-    genre_ids: sourceNovel?.genre_ids ?? initialInput.genre_ids ?? [],
-    story_book_type_id:
-        sourceNovel?.story_book_type_id ??
-        initialInput.story_book_type_id ??
-        null,
-    audience_id: sourceNovel?.audience_id ?? initialInput.audience_id ?? null,
-    ai_brain_id: sourceNovel?.ai_brain_id ?? initialInput.ai_brain_id ?? null,
-});
-
 const activeStep = ref(1);
 const completedSteps = ref(new Set());
 const isStoryBookComplete = ref(false);
-const isInitialAudienceLoad = ref(true);
 
 const activeStepDefinition = computed(
     () => STEP_DEFINITIONS[activeStep.value - 1],
-);
-
-const activeStepFields = computed(() => STEP_FIELDS[activeStep.value] ?? []);
-
-const genresApiUrl = computed(() => {
-    if (!novelForm.audience_id) {
-        return route("search.genres");
-    }
-
-    return `${route("search.genres")}?audience_id=${encodeURIComponent(
-        novelForm.audience_id,
-    )}`;
-});
-
-watch(
-    () => novelForm.audience_id,
-    (newAudienceId, oldAudienceId) => {
-        if (isInitialAudienceLoad.value) {
-            isInitialAudienceLoad.value = false;
-            return;
-        }
-
-        if (newAudienceId === oldAudienceId) {
-            return;
-        }
-
-        novelForm.language_id = null;
-        novelForm.genre_ids = [];
-        novelForm.story_book_type_id = null;
-        novelForm.additional_information = "";
-
-        novelForm.clearErrors(
-            "language_id",
-            "genre_ids",
-            "story_book_type_id",
-            "additional_information",
-        );
-    },
 );
 
 const isStepAccessible = (stepId) => {
@@ -329,87 +200,14 @@ const getStepState = (stepId) => {
     return "locked";
 };
 
-const validateStep = (stepId) => {
-    novelForm.clearErrors();
+const handleStepCompleted = () => {
+    const stepId = activeStep.value;
 
-    if (stepId !== 1) {
-        return true;
-    }
-
-    let valid = true;
-
-    if (!novelForm.language_id) {
-        novelForm.setError("language_id", "Language is required");
-        valid = false;
-    }
-
-    if (
-        !Array.isArray(novelForm.genre_ids) ||
-        novelForm.genre_ids.length === 0
-    ) {
-        novelForm.setError("genre_ids", "Genres is required");
-        valid = false;
-    }
-
-    if (!novelForm.story_book_type_id) {
-        novelForm.setError("story_book_type_id", "Story Book type is required");
-        valid = false;
-    }
-
-    if (!novelForm.audience_id) {
-        novelForm.setError("audience_id", "Audience is required");
-        valid = false;
-    }
-
-    if (!novelForm.ai_brain_id) {
-        novelForm.setError("ai_brain_id", "AI Brain selection is required");
-        valid = false;
-    }
-
-    return valid;
-};
-
-const buildAiBrainSearchUrl = () => route("search.ai-brains");
-
-const markStepComplete = (stepId) => {
     completedSteps.value = new Set([...completedSteps.value, stepId]);
 
     if (stepId < STEP_DEFINITIONS.length) {
         activeStep.value = stepId + 1;
     }
-};
-
-const generateActiveStep = () => {
-    const stepId = activeStep.value;
-
-    if (novelForm.processing || !validateStep(stepId)) {
-        return;
-    }
-
-    if (stepId === 1) {
-        const requestConfig = {
-            preserveScroll: true,
-            preserveState: true,
-            onSuccess: () => {
-                markStepComplete(stepId);
-                novelForm.clearErrors();
-            },
-        };
-
-        if (isUpdate.value) {
-            intertiaJsRoute.post(
-                route("back-office.story-books.regenerate.foundation", { slug: storyBook?.slug }),
-                { ...novelForm.data(), _method: "patch" },
-                requestConfig,
-            );
-        } else {
-            novelForm.post(route("back-office.story-books.generate.foundation"), requestConfig);
-        }
-
-        return;
-    }
-
-    markStepComplete(stepId);
 };
 
 const completeStoryBook = () => {
@@ -570,9 +368,7 @@ const goPrev = () => {
 
                 <div class="px-0 py-6">
                     <section class="space-y-6">
-                        <div
-                            class="bg-white border rounded-xl p-5 shadow-sm space-y-4"
-                        >
+                        <div class="bg-white border rounded-xl p-5 shadow-sm">
                             <div class="flex items-start gap-3">
                                 <span
                                     class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600"
@@ -590,207 +386,79 @@ const goPrev = () => {
                                     </p>
                                 </div>
                             </div>
-
-                            <div
-                                v-if="activeStep === 1"
-                                class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4"
-                            >
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                        >Audience
-                                        <span class="text-red-500"
-                                            >*</span
-                                        ></label
-                                    >
-                                    <InfiniteScrollApiSelect
-                                        :form="novelForm"
-                                        fieldName="audience_id"
-                                        :selectedItem="sourceNovel?.audience"
-                                        :apiUrl="route('search.audiences')"
-                                        :multiple="false"
-                                        placeholder="Select audience"
-                                    />
-                                    <p
-                                        v-if="novelForm.errors.audience_id"
-                                        class="text-red-500 text-sm mt-1"
-                                    >
-                                        {{ novelForm.errors.audience_id }}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                        >Language
-                                        <span class="text-red-500"
-                                            >*</span
-                                        ></label
-                                    >
-                                    <InfiniteScrollApiSelect
-                                        :form="novelForm"
-                                        fieldName="language_id"
-                                        :selectedItem="sourceNovel?.language"
-                                        :apiUrl="route('search.languages')"
-                                        :multiple="false"
-                                        placeholder="Select language"
-                                    />
-                                    <p
-                                        v-if="novelForm.errors.language_id"
-                                        class="text-red-500 text-sm mt-1"
-                                    >
-                                        {{ novelForm.errors.language_id }}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                        >Genres
-                                        <span class="text-red-500"
-                                            >*</span
-                                        ></label
-                                    >
-                                    <InfiniteScrollApiSelect
-                                        :form="novelForm"
-                                        fieldName="genre_ids"
-                                        :selectedItem="sourceNovel?.genres"
-                                        :apiUrl="genresApiUrl"
-                                        :multiple="true"
-                                        placeholder="Select genres"
-                                    />
-                                    <p
-                                        v-if="novelForm.errors.genre_ids"
-                                        class="text-red-500 text-sm mt-1"
-                                    >
-                                        {{ novelForm.errors.genre_ids }}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                        >Story Book Type
-                                        <span class="text-red-500"
-                                            >*</span
-                                        ></label
-                                    >
-                                    <InfiniteScrollApiSelect
-                                        :form="novelForm"
-                                        fieldName="story_book_type_id"
-                                        :selectedItem="
-                                            sourceNovel?.story_book_type
-                                        "
-                                        :apiUrl="
-                                            route('search.story-book-types')
-                                        "
-                                        :multiple="false"
-                                        placeholder="Select story book type"
-                                    />
-                                    <p
-                                        v-if="
-                                            novelForm.errors.story_book_type_id
-                                        "
-                                        class="text-red-500 text-sm mt-1"
-                                    >
-                                        {{
-                                            novelForm.errors.story_book_type_id
-                                        }}
-                                    </p>
-                                </div>
-
-                                <div class="md:col-span-2">
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                        >Additional Information</label
-                                    >
-                                    <textarea
-                                        v-model="
-                                            novelForm.additional_information
-                                        "
-                                        rows="3"
-                                        placeholder="Any additional context or instructions for the AI..."
-                                        class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
-                                    ></textarea>
-                                </div>
-                            </div>
-
-                            <div
-                                class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4"
-                            >
-                                <div
-                                    v-for="field in activeStepFields"
-                                    :key="field"
-                                    :class="{
-                                        'md:col-span-2':
-                                            field === 'plot' ||
-                                            activeStep !== 1,
-                                    }"
-                                >
-                                    <label
-                                        class="block text-sm font-medium mb-1"
-                                        >{{ FIELD_LABELS[field] }}</label
-                                    >
-                                    <textarea
-                                        v-model="novelForm[field]"
-                                        :rows="
-                                            activeStep === 1
-                                                ? field === 'plot'
-                                                    ? 7
-                                                    : 3
-                                                : 10
-                                        "
-                                        :placeholder="`Enter ${FIELD_LABELS[field].toLowerCase()} details...`"
-                                        class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
-                                    ></textarea>
-                                    <p
-                                        v-if="novelForm.errors[field]"
-                                        class="text-red-500 text-sm mt-1"
-                                    >
-                                        {{ novelForm.errors[field] }}
-                                    </p>
-                                </div>
-                            </div>
                         </div>
 
-                        <div
+                        <StoryBookStep1FoundationForm
                             v-if="activeStep === 1"
-                            class="bg-white border rounded-xl p-5 shadow-sm space-y-4"
-                        >
-                            <div class="flex items-center gap-2">
-                                <FontAwesomeIcon
-                                    icon="brain"
-                                    class="text-purple-600"
-                                />
-                                <h3 class="text-base font-semibold">
-                                    AI Brain Configuration
-                                </h3>
-                            </div>
-                            <p class="text-sm text-gray-500">
-                                Select the AI model that will generate the story
-                                foundation.
-                            </p>
-                            <div
-                                class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
-                            >
-                                <InfiniteScrollApiSelect
-                                    :form="novelForm"
-                                    fieldName="ai_brain_id"
-                                    :selectedItem="sourceNovel?.ai_brain"
-                                    :apiUrl="buildAiBrainSearchUrl()"
-                                    :multiple="false"
-                                    placeholder="Select AI Brain"
-                                    :error="novelForm.errors.ai_brain_id"
-                                    class="ai-brain-select"
-                                />
-                            </div>
-                            <p
-                                v-if="novelForm.errors.ai_brain_id"
-                                class="text-red-500 text-sm"
-                            >
-                                {{ novelForm.errors.ai_brain_id }}
-                            </p>
-                        </div>
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep2CharactersForm
+                            v-else-if="activeStep === 2"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep3WorldVibeForm
+                            v-else-if="activeStep === 3"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep4LocationsForm
+                            v-else-if="activeStep === 4"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep5FactionsForm
+                            v-else-if="activeStep === 5"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep6CreatureForm
+                            v-else-if="activeStep === 6"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep7SystemForm
+                            v-else-if="activeStep === 7"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep8TimelineForm
+                            v-else-if="activeStep === 8"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep9TwistsAndForeshadowingForm
+                            v-else-if="activeStep === 9"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep10ScenePlanForm
+                            v-else-if="activeStep === 10"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep11DialoguePlanForm
+                            v-else-if="activeStep === 11"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep12PagePlanForm
+                            v-else-if="activeStep === 12"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
                     </section>
 
                     <div
@@ -847,28 +515,6 @@ const goPrev = () => {
                                     : "Complete Story Book"
                             }}
                         </button>
-                        <button
-                            v-else
-                            type="button"
-                            @click="generateActiveStep"
-                            :disabled="novelForm.processing"
-                            class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
-                        >
-                            <FontAwesomeIcon
-                                v-if="novelForm.processing"
-                                icon="spinner"
-                                spin
-                            />
-                            <FontAwesomeIcon
-                                v-else
-                                icon="wand-magic-sparkles"
-                            />
-                            {{
-                                novelForm.processing
-                                    ? "Generating..."
-                                    : `Generate ${activeStepDefinition.title}`
-                            }}
-                        </button>
                     </div>
                 </div>
             </div>
@@ -877,11 +523,11 @@ const goPrev = () => {
 </template>
 
 <style scoped>
-.ai-brain-select :deep(.multiselect) {
+.ai-brain-select .multiselect {
     min-height: 44px;
 }
 
-.ai-brain-select :deep(.multiselect__tags) {
+.ai-brain-select .multiselect__tags {
     min-height: 44px;
     padding: 8px 40px 0 12px;
     border-color: #a78bfa;
@@ -890,22 +536,22 @@ const goPrev = () => {
     background: white;
 }
 
-.ai-brain-select :deep(.multiselect__single) {
+.ai-brain-select .multiselect__single {
     padding: 4px 0 0 0;
     margin-bottom: 0;
     color: #1f2937;
 }
 
-.ai-brain-select :deep(.multiselect__placeholder) {
+.ai-brain-select .multiselect__placeholder {
     padding: 4px 0 0 0;
     color: #9ca3af;
 }
 
-.ai-brain-select :deep(.multiselect__select) {
+.ai-brain-select .multiselect__select {
     height: 44px;
 }
 
-.ai-brain-select :deep(.multiselect__content-wrapper) {
+.ai-brain-select .multiselect__content-wrapper {
     border-color: #a78bfa;
 }
 </style>
