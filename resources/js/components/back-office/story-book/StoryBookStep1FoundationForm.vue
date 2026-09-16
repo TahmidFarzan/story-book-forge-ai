@@ -25,7 +25,7 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const storyBookFoundationForm = useForm({
+const foundationGeneratorForm = useForm({
     title: storyBook?.title,
     sub_title: storyBook?.sub_title,
     plot: storyBook?.plot,
@@ -40,17 +40,17 @@ const storyBookFoundationForm = useForm({
 let isInitialAudienceLoad = true;
 
 const genresApiUrl = computed(() => {
-    if (!storyBookFoundationForm.audience_id) {
+    if (!foundationGeneratorForm.audience_id) {
         return route("search.genres");
     }
 
     return `${route("search.genres")}?audience_id=${encodeURIComponent(
-        storyBookFoundationForm.audience_id,
+        foundationGeneratorForm.audience_id,
     )}`;
 });
 
 watch(
-    () => storyBookFoundationForm.audience_id,
+    () => foundationGeneratorForm.audience_id,
     (newAudienceId, oldAudienceId) => {
         if (isInitialAudienceLoad) {
             isInitialAudienceLoad = false;
@@ -61,12 +61,12 @@ watch(
             return;
         }
 
-        storyBookFoundationForm.language_id = null;
-        storyBookFoundationForm.genre_ids = [];
-        storyBookFoundationForm.story_book_type_id = null;
-        storyBookFoundationForm.additional_information = "";
+        foundationGeneratorForm.language_id = null;
+        foundationGeneratorForm.genre_ids = [];
+        foundationGeneratorForm.story_book_type_id = null;
+        foundationGeneratorForm.additional_information = "";
 
-        storyBookFoundationForm.clearErrors(
+        foundationGeneratorForm.clearErrors(
             "language_id",
             "genre_ids",
             "story_book_type_id",
@@ -76,38 +76,38 @@ watch(
 );
 
 const validate = () => {
-    storyBookFoundationForm.clearErrors();
+    foundationGeneratorForm.clearErrors();
 
     let valid = true;
 
-    if (!storyBookFoundationForm.language_id) {
-        storyBookFoundationForm.setError("language_id", "Language is required");
+    if (!foundationGeneratorForm.language_id) {
+        foundationGeneratorForm.setError("language_id", "Language is required");
         valid = false;
     }
 
     if (
-        !Array.isArray(storyBookFoundationForm.genre_ids) ||
-        storyBookFoundationForm.genre_ids.length === 0
+        !Array.isArray(foundationGeneratorForm.genre_ids) ||
+        foundationGeneratorForm.genre_ids.length === 0
     ) {
-        storyBookFoundationForm.setError("genre_ids", "Genres is required");
+        foundationGeneratorForm.setError("genre_ids", "Genres is required");
         valid = false;
     }
 
-    if (!storyBookFoundationForm.story_book_type_id) {
-        storyBookFoundationForm.setError(
+    if (!foundationGeneratorForm.story_book_type_id) {
+        foundationGeneratorForm.setError(
             "story_book_type_id",
             "Story Book type is required",
         );
         valid = false;
     }
 
-    if (!storyBookFoundationForm.audience_id) {
-        storyBookFoundationForm.setError("audience_id", "Audience is required");
+    if (!foundationGeneratorForm.audience_id) {
+        foundationGeneratorForm.setError("audience_id", "Audience is required");
         valid = false;
     }
 
-    if (!storyBookFoundationForm.ai_brain_id) {
-        storyBookFoundationForm.setError("ai_brain_id", "AI Brain selection is required");
+    if (!foundationGeneratorForm.ai_brain_id) {
+        foundationGeneratorForm.setError("ai_brain_id", "AI Brain selection is required");
         valid = false;
     }
 
@@ -115,12 +115,12 @@ const validate = () => {
 };
 
 const handleSuccess = () => {
-    storyBookFoundationForm.clearErrors();
+    foundationGeneratorForm.clearErrors();
     emit("completed", storyBook);
 };
 
 const submit = () => {
-    if (storyBookFoundationForm.processing || !validate()) {
+    if (foundationGeneratorForm.processing || !validate()) {
         return;
     }
 
@@ -135,11 +135,11 @@ const submit = () => {
             route("back-office.story-books.regenerate.foundation", {
                 slug: storyBook?.slug,
             }),
-            { ...storyBookFoundationForm.data(), _method: "patch" },
+            { ...foundationGeneratorForm.data(), _method: "patch" },
             requestConfig,
         );
     } else {
-        storyBookFoundationForm.post(
+        foundationGeneratorForm.post(
             route("back-office.story-books.generate.foundation"),
             requestConfig,
         );
@@ -156,7 +156,7 @@ const submit = () => {
                         >Audience <span class="text-red-500">*</span></label
                     >
                     <InfiniteScrollApiSelect
-                        :form="storyBookFoundationForm"
+                        :form="foundationGeneratorForm"
                         fieldName="audience_id"
                         :selectedItem="storyBook?.audience"
                         :apiUrl="route('search.audiences')"
@@ -164,10 +164,10 @@ const submit = () => {
                         placeholder="Select audience"
                     />
                     <p
-                        v-if="storyBookFoundationForm.errors.audience_id"
+                        v-if="foundationGeneratorForm.errors.audience_id"
                         class="text-red-500 text-sm mt-1"
                     >
-                        {{ storyBookFoundationForm.errors.audience_id }}
+                        {{ foundationGeneratorForm.errors.audience_id }}
                     </p>
                 </div>
 
@@ -176,7 +176,7 @@ const submit = () => {
                         >Language <span class="text-red-500">*</span></label
                     >
                     <InfiniteScrollApiSelect
-                        :form="storyBookFoundationForm"
+                        :form="foundationGeneratorForm"
                         fieldName="language_id"
                         :selectedItem="storyBook?.language"
                         :apiUrl="route('search.languages')"
@@ -184,10 +184,10 @@ const submit = () => {
                         placeholder="Select language"
                     />
                     <p
-                        v-if="storyBookFoundationForm.errors.language_id"
+                        v-if="foundationGeneratorForm.errors.language_id"
                         class="text-red-500 text-sm mt-1"
                     >
-                        {{ storyBookFoundationForm.errors.language_id }}
+                        {{ foundationGeneratorForm.errors.language_id }}
                     </p>
                 </div>
 
@@ -196,7 +196,7 @@ const submit = () => {
                         >Genres <span class="text-red-500">*</span></label
                     >
                     <InfiniteScrollApiSelect
-                        :form="storyBookFoundationForm"
+                        :form="foundationGeneratorForm"
                         fieldName="genre_ids"
                         :selectedItem="storyBook?.genres"
                         :apiUrl="genresApiUrl"
@@ -204,10 +204,10 @@ const submit = () => {
                         placeholder="Select genres"
                     />
                     <p
-                        v-if="storyBookFoundationForm.errors.genre_ids"
+                        v-if="foundationGeneratorForm.errors.genre_ids"
                         class="text-red-500 text-sm mt-1"
                     >
-                        {{ storyBookFoundationForm.errors.genre_ids }}
+                        {{ foundationGeneratorForm.errors.genre_ids }}
                     </p>
                 </div>
 
@@ -217,7 +217,7 @@ const submit = () => {
                         <span class="text-red-500">*</span></label
                     >
                     <InfiniteScrollApiSelect
-                        :form="storyBookFoundationForm"
+                        :form="foundationGeneratorForm"
                         fieldName="story_book_type_id"
                         :selectedItem="storyBook?.story_book_type"
                         :apiUrl="route('search.story-book-types')"
@@ -225,10 +225,10 @@ const submit = () => {
                         placeholder="Select story book type"
                     />
                     <p
-                        v-if="storyBookFoundationForm.errors.story_book_type_id"
+                        v-if="foundationGeneratorForm.errors.story_book_type_id"
                         class="text-red-500 text-sm mt-1"
                     >
-                        {{ storyBookFoundationForm.errors.story_book_type_id }}
+                        {{ foundationGeneratorForm.errors.story_book_type_id }}
                     </p>
                 </div>
 
@@ -237,7 +237,7 @@ const submit = () => {
                         >Additional Information</label
                     >
                     <textarea
-                        v-model="storyBookFoundationForm.additional_information"
+                        v-model="foundationGeneratorForm.additional_information"
                         rows="3"
                         placeholder="Any additional context or instructions for the AI..."
                         class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
@@ -258,21 +258,21 @@ const submit = () => {
                 class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
             >
                 <InfiniteScrollApiSelect
-                    :form="storyBookFoundationForm"
+                    :form="foundationGeneratorForm"
                     fieldName="ai_brain_id"
                     :selectedItem="storyBook?.ai_brain"
                     :apiUrl="route('search.ai-brains')"
                     :multiple="false"
                     placeholder="Select AI Brain"
-                    :error="storyBookFoundationForm.errors.ai_brain_id"
+                    :error="foundationGeneratorForm.errors.ai_brain_id"
                     class="ai-brain-select"
                 />
             </div>
             <p
-                v-if="storyBookFoundationForm.errors.ai_brain_id"
+                v-if="foundationGeneratorForm.errors.ai_brain_id"
                 class="text-red-500 text-sm"
             >
-                {{ storyBookFoundationForm.errors.ai_brain_id }}
+                {{ foundationGeneratorForm.errors.ai_brain_id }}
             </p>
         </div>
 
@@ -280,17 +280,17 @@ const submit = () => {
             <button
                 type="button"
                 @click="submit"
-                :disabled="storyBookFoundationForm.processing"
+                :disabled="foundationGeneratorForm.processing"
                 class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
                 <FontAwesomeIcon
-                    v-if="storyBookFoundationForm.processing"
+                    v-if="foundationGeneratorForm.processing"
                     icon="spinner"
                     spin
                 />
                 <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
                 {{
-                    storyBookFoundationForm.processing
+                    foundationGeneratorForm.processing
                         ? "Generating..."
                         : "Generate Foundation"
                 }}
