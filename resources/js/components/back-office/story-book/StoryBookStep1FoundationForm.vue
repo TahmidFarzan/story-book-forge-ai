@@ -298,3 +298,37 @@ const submit = () => {
         </div>
     </div>
 </template>
+
+<style scoped>
+.ai-brain-select :deep(.multiselect) {
+    min-height: 44px;
+}
+
+.ai-brain-select :deep(.multiselect__tags) {
+    min-height: 44px;
+    padding: 8px 40px 0 12px;
+    border-color: #a78bfa;
+    border-width: 1px;
+    border-radius: 0.5rem;
+    background: white;
+}
+
+.ai-brain-select :deep(.multiselect__single) {
+    padding: 4px 0 0 0;
+    margin-bottom: 0;
+    color: #1f2937;
+}
+
+.ai-brain-select :deep(.multiselect__placeholder) {
+    padding: 4px 0 0 0;
+    color: #9ca3af;
+}
+
+.ai-brain-select :deep(.multiselect__select) {
+    height: 44px;
+}
+
+.ai-brain-select :deep(.multiselect__content-wrapper) {
+    border-color: #a78bfa;
+}
+</style>
