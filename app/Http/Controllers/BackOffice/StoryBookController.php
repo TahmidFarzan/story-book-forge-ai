@@ -52,7 +52,7 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateFoundation(StoryBookFoundationRequest $request): RedirectResponse
+    public function createFoundation(StoryBookFoundationRequest $request): RedirectResponse
     {
         $storyBook = $this->storyBookService->new();
         Gate::authorize('create', $storyBook);
@@ -71,7 +71,7 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function regenerateFoundation(StoryBookFoundationRequest $request, string $slug): RedirectResponse
+    public function generateFoundation(StoryBookFoundationRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
@@ -84,33 +84,14 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateCharacters(StoryBookCharactersRequest $request): RedirectResponse
-    {
-        $storyBook = $this->storyBookService->new();
-        Gate::authorize('create', $storyBook);
-
-        $result = $this->storyBookService->generateCharacters($request, $storyBook);
-
-        if ($result['story_book']?->slug) {
-            return to_route('back-office.story-books.edit', ["slug" => $result['story_book']?->slug])->with('flash_message', [
-                'message' => $result['message'],
-                'status'  => $result['status'],
-            ]);
-        }
-        return to_route('back-office.story-books.index')->with('flash_message', [
-            'message' => $result['message'],
-            'status'  => $result['status'],
-        ]);
-    }
-
-    public function regenerateCharacters(StoryBookCharactersRequest $request, string $slug): RedirectResponse
+    public function generateCharacters(StoryBookCharactersRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
         $result = $this->storyBookService->generateCharacters($request, $storyBook);
 
-        return to_route('back-office.story-books.edit', ["slug" => $slug])->with('flash_message', [
+        return to_route('back-office.story-books.edit', ["slug" => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
             'status'  => $result['status'],
         ]);

@@ -5,7 +5,7 @@ namespace App\Helpers;
 class AiPromptGeneratorHelper
 {
     public const AI_PROMPT_NAME_FOUNDATION_GENERATOR       = 'Foundation Generator';
-    public const AI_PROMPT_NAME_BLUEPRIENT_GENERATOR = 'Blueprint Generator';
+    public const AI_PROMPT_NAME_CHARACTER_GENERATOR = 'Character Generator';
 
     public static function foundationGenerator(): string
     {
@@ -272,1684 +272,570 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function blueprintGenerator(): string
+    public static function characterGenerator(): string
     {
         $prompt = "
-            You are a professional Story Book Development AI, Story Architect, Narrative Designer, Plot Analyst, Character Development Specialist, World-Building Specialist, Narrative Continuity Editor, and Publishing Development Expert.
+            You are a professional story character development AI, character designer, narrative character strategist, and story development specialist.
 
-            Your task is to deeply analyze an already-developed Story Book Plot and transform it into a comprehensive, structured Story Book Foundation that can be used by future AI development stages.
+            Your task is to create the character foundation for a professionally developed Story Book.
 
-            You are NOT writing the complete story book.
+            This step focuses on designing the characters that will exist within the established Story Book foundation.
 
-            You are NOT rewriting the story plot.
-
-            You are NOT creating chapters.
-
-            You are NOT creating a chapter outline.
-
-            You are NOT creating a simple summary.
-
-            Your task is to understand the story at a professional narrative-development level and extract everything that future story development will need.
-
-            The generated Story Book Plot was previously developed using multiple requirements such as:
-
-                - Audience
-                - Genre
-                - Story Book Type
-                - Content Maturity
-                - Language
-                - Story Continuity
-                - Additional Story Information
-                - Character Structure
-                - Narrative Direction
-                - Ending Direction
-
-            These requirements have already influenced the generated plot.
-
-            Therefore, treat the provided Story Book Plot as the primary source of truth.
-
-            Do not assume that every original input is still explicitly visible in the plot.
-
-            Instead, analyze how those requirements are reflected in the actual story.
-
-            --------------------------------------------------
-            STORY BOOK PLOT:
-            {{story_book_plot}}
-            --------------------------------------------------
+            The characters must feel original, believable, emotionally authentic, narratively purposeful, and naturally connected to the established story.
 
             ==================================================
-            CORE OBJECTIVE
+            ESTABLISHED STORY FOUNDATION
             ==================================================
 
-            Convert the story plot into a professional Story Book Foundation.
+            The following Story Book foundation is authoritative:
 
-            The foundation should preserve the story's important information and identify everything future AI systems may need to develop:
+            {{plot}}
 
-                - Characters
-                - Character profiles
-                - Character relationships
-                - Character arcs
-                - World
-                - World rules
-                - Locations
-                - Culture
-                - Society
-                - History
-                - Factions
-                - Organizations
-                - Creatures
-                - Species
-                - Technology
-                - Magic
-                - Important objects
-                - Themes
-                - Motifs
-                - Symbols
-                - Conflicts
-                - Stakes
-                - Story arcs
-                - Subplots
-                - Mysteries
-                - Secrets
-                - Twists
-                - Revelations
-                - Clues
-                - Foreshadowing
-                - Pacing
-                - Major events
-                - Timeline
-                - Climax
-                - Ending
-                - Emotional progression
-                - Reader experience
-                - Visual storytelling elements
-                - Continuity requirements
-                - Other story-specific information
+            Use this Story Book foundation as the primary source for all character decisions.
 
-            Do not limit the analysis to this list.
+            The Story Book foundation already contains the established creative direction, including:
 
-            Think like an experienced story development team and identify any additional information required to successfully develop this particular story into a complete professional story book.
-
-            ==================================================
-            IMPORTANT PRINCIPLE
-            ==================================================
-
-            First understand the complete story.
-
-            Do not begin by mechanically extracting keywords.
-
-            Internally determine:
-
-                - What is the story really about?
-                - What is the central narrative?
-                - What is the emotional core?
-                - What is the central dramatic question?
-                - What does the central character or character group want?
-                - Why do they want it?
-                - What prevents them from achieving it?
-                - What is at stake?
-                - What changes?
-                - What must be discovered?
-                - What must be revealed?
-                - What must remain hidden?
-                - What is the reader expected to feel?
-                - What is the story ultimately saying?
-                - What must happen for the ending to feel earned?
-
-            Only after understanding the story should you construct the structured foundation.
-
-            ==================================================
-            SOURCE OF TRUTH
-            ==================================================
-
-            The provided Story Book Plot is the primary source of truth.
-
-            Preserve:
-
-                - Established facts
-                - Character identities
-                - Character relationships
-                - World facts
-                - Locations
-                - Events
-                - Motivations
-                - Conflicts
-                - Rules
-                - Important objects
-                - Timeline information
-                - Existing mysteries
-                - Existing twists
-                - Existing ending direction
-
-            Never contradict the plot.
-
-            Never change the central story.
-
-            Never replace established information with generic genre assumptions.
-
-            ==================================================
-            EXPLICIT, IMPLIED AND INFERRED INFORMATION
-            ==================================================
-
-            Carefully distinguish between:
-
-                - Explicit information
-                - Strongly implied information
-                - Reasonable inference
-
-            Explicit information is directly stated in the plot.
-
-            Strongly implied information is not directly stated but is clearly supported by the narrative.
-
-            Reasonable inference is information that can logically be determined from the story but is not explicitly confirmed.
-
-            Use inference carefully.
-
-            Never turn weak assumptions into established facts.
-
-            When useful, include an information_status field using:
-
-                - explicit
-                - implied
-                - inferred
-
-            Do not add this field to every property unnecessarily.
-
-            ==================================================
-            STORY IDENTITY ANALYSIS
-            ==================================================
-
-            Determine the fundamental identity of the story.
-
-            Analyze:
-
-                - Core premise
-                - Central narrative
                 - Story concept
-                - Emotional identity
-                - Narrative identity
-                - Central dramatic question
-                - Core reader promise
-                - Central character journey
-                - Main source of tension
-                - Overall narrative direction
-                - Story scale
-                - Narrative complexity
+                - Narrative direction
+                - Setting
+                - Protagonist direction
+                - Motivation
+                - Goal
+                - Conflict
+                - Opposing force
+                - Stakes
+                - Consequences
+                - Story progression
+                - Themes
+                - Emotional direction
+                - Character journey direction
+                - Climax direction
+                - Resolution direction
 
-            Do not rewrite the complete plot.
+            Maintain consistency with the established Story Book foundation.
 
-            ==================================================
-            GENRE ANALYSIS
-            ==================================================
+            Do not unnecessarily change, contradict, or replace the established story direction.
 
-            Determine the actual genre structure represented by the plot.
-
-            Do not simply guess a genre from isolated keywords.
-
-            Analyze the complete narrative and determine:
-
-                - Primary genre
-                - Secondary genres
-                - Subgenres
-                - Genre combination
-                - Dominant genre identity
-                - Supporting genre elements
-                - Genre expectations
-                - Genre-specific narrative requirements
-                - Genre conventions present
-                - Genre conventions intentionally avoided or subverted
-
-            The original Genre Instructions are not directly available here.
-
-            Therefore, infer genre from the actual story rather than inventing information about unseen input.
-
-            Determine what the selected genre combination requires from the complete story.
-
-            For example:
-
-                Mystery may require:
-                    - Central mystery
-                    - Investigation
-                    - Clues
-                    - Suspects
-                    - Red herrings
-                    - Revelations
-                    - Final explanation
-
-                Thriller may require:
-                    - Escalating danger
-                    - Suspense
-                    - Time pressure
-                    - Reversals
-                    - Threat progression
-                    - High stakes
-
-                Romance may require:
-                    - Relationship progression
-                    - Emotional attraction
-                    - Emotional obstacles
-                    - Relationship conflict
-                    - Relationship turning points
-                    - Emotional resolution
-
-                Fantasy may require:
-                    - World-building
-                    - Magic or supernatural systems
-                    - Cultures
-                    - Factions
-                    - History
-                    - Creatures
-                    - World rules
-
-                Science Fiction may require:
-                    - Technology
-                    - Scientific concepts
-                    - Societal implications
-                    - Future systems
-                    - Technological limitations
-
-            These are examples only.
-
-            Determine the actual requirements of this story.
+            Create characters that naturally emerge from and strengthen the established story.
 
             ==================================================
-            AUDIENCE ANALYSIS
+            CHARACTER-SPECIFIC INFORMATION
             ==================================================
 
-            The original plot was generated according to an Audience Instruction.
+            {{character_additional_information}}
 
-            The exact Audience Instruction is not directly available to this analyzer.
+            Character-specific information is optional.
 
-            Therefore, do not invent an audience label unless it can reasonably be inferred from the plot.
+            If the value is 'Auto', null, empty, or contains no meaningful character requirements, independently make all necessary character decisions based on the established Story Book foundation.
 
-            Instead analyze the reader experience represented by the story.
+            'Auto' means the AI has full creative freedom to determine the character design. Do not interpret 'Auto' as a character requirement or character detail.
 
-            Determine:
+            If specific character information is provided, use it as creative direction and naturally incorporate the relevant requirements into the character design.
 
-                - Intended reader maturity
-                - Emotional complexity
-                - Narrative complexity
-                - Language complexity
-                - Emotional intensity
-                - Content intensity
-                - Violence intensity when relevant
-                - Romance intensity when relevant
-                - Horror intensity when relevant
-                - Psychological complexity
-                - Moral complexity
-                - Humor level when relevant
-                - Reader expectations
-                - Reader experience
+            When making independent character decisions, prioritize:
 
-            Do not create a separate audience critique.
-
-            ==================================================
-            STORY BOOK TYPE AND SCALE ANALYSIS
-            ==================================================
-
-            The original plot was generated according to a Story Book Type Instruction.
-
-            The exact instruction is not directly available.
-
-            Analyze the resulting plot and determine the natural narrative scale.
-
-            Determine:
-
-                - Story scale
-                - Narrative scope
-                - Character development depth
-                - Number of major narrative threads
-                - Number of meaningful conflicts
-                - World-building depth
-                - Expected pacing
-                - Subplot capacity
-                - Emotional development capacity
-                - Overall complexity
-
-            Determine whether the plot behaves like:
-
-                - Focused / short-scale narrative
-                - Medium-scale narrative
-                - Long / broad-scale narrative
-                - Other story-specific scale
-
-            Do not force the story into a predefined length.
-
-            ==================================================
-            CONTENT MATURITY ANALYSIS
-            ==================================================
-
-            Analyze the content boundaries represented by the actual plot.
-
-            Determine when relevant:
-
-                - General maturity level
-                - Mature themes
-                - Adult themes
-                - Dark themes
-                - Relationship complexity
-                - Violence intensity
-                - Psychological intensity
-                - Sexual or romantic maturity when relevant
-                - Sensitive themes
-                - Content limitations
-
-            Do not add mature content merely because the story could support it.
-
-            Do not infer explicit mature content unless supported by the plot.
-
-            ==================================================
-            NARRATIVE STRUCTURE
-            ==================================================
-
-            Determine the natural narrative architecture.
-
-            Analyze:
-
-                - Opening situation
-                - Inciting event
-                - Central goal
-                - Main obstacle
-                - Initial conflict
-                - Progressive complications
-                - Rising tension
-                - Major turning points
-                - Midpoint development when applicable
-                - Reversal
-                - Crisis
-                - Climax
-                - Resolution
-
-            Determine the number of major narrative arcs.
-
-            Determine whether the story naturally uses:
-
-                - Single arc
-                - Multiple connected arcs
-                - Parallel arcs
-                - Character-driven arc
-                - Mystery-driven arc
-                - Relationship-driven arc
-                - Conflict-driven arc
-                - Other structure
-
-            Do not force a three-act structure.
-
-            ==================================================
-            STORY COMPLEXITY
-            ==================================================
-
-            Determine the actual complexity of the story.
-
-            Analyze:
-
-                - Character count
-                - Relationship complexity
-                - Conflict count
-                - World complexity
-                - Timeline complexity
-                - Mystery complexity
-                - Number of narrative arcs
-                - Number of subplots
-                - Number of factions
-                - Number of major locations
-                - Number of important revelations
-                - Emotional complexity
-
-            Do not artificially increase complexity.
-
-            A simple story should remain simple.
-
-            A complex story should retain its complexity.
-
-            ==================================================
-            TWIST AND REVELATION ARCHITECTURE
-            ==================================================
-
-            Carefully analyze whether this story actually requires twists.
-
-            Do not add twists simply because twists are considered exciting.
-
-            Determine:
-
-                - Whether major twists exist
-                - Number of major twists
-                - Number of minor revelations
-                - Major secrets
-                - Hidden information
-                - False assumptions
-                - Reversals
-                - Betrayals
-                - Identity reveals
-                - Motivation reveals
-                - World revelations
-                - Mystery resolutions
-
-            Determine whether additional twists are actually necessary for future development.
-
-            If the story does not need major twists, do not invent them.
-
-            If the story requires multiple twists, identify their narrative purpose.
-
-            For each important twist or revelation determine:
-
-                - Name
-                - Type
-                - Hidden information
-                - Revealed information
-                - Characters involved
+                - Story consistency
                 - Narrative purpose
-                - Emotional purpose
-                - Story consequence
-                - Approximate narrative position
-                - Foreshadowing requirements
-                - Required clues
-                - Possible red herrings
-                - Reader knowledge
-                - Character knowledge
+                - Character uniqueness
+                - Believable motivations
+                - Strong character relationships
+                - Emotional depth
+                - Meaningful character development
+                - The established plot and themes
+
+            Regardless of the input, maintain consistency with the established Story Book foundation.
+
+            Do not leave character details incomplete because character-specific information was not provided.
 
             ==================================================
-            MYSTERY AND QUESTION STRUCTURE
+            PRIMARY RESPONSIBILITY
             ==================================================
 
-            Identify questions the story intentionally creates.
+            Create the complete character foundation required for future Story Book development.
 
-            Determine:
+            Develop:
 
-                - Central mystery
-                - Secondary mysteries
-                - Reader questions
-                - Character questions
-                - Unanswered questions
-                - Hidden truths
-                - Investigation requirements
-                - Required discoveries
-                - Final explanations
+                1. Main Character
+                2. Important Supporting Characters
+                3. Opposing Characters or Forces
+                4. Character Relationships
+                5. Character Motivations
+                6. Character Goals
+                7. Character Conflicts
+                8. Character Arcs
+                9. Emotional Dynamics
+                10. Narrative Functions
 
-            Determine which questions must be answered and which may intentionally remain unresolved.
-
-            ==================================================
-            FORESHADOWING AND CLUE STRUCTURE
-            ==================================================
-
-            If the story requires mysteries, twists, reveals, or future discoveries, identify the information that should support them.
-
-            Determine:
-
-                - Foreshadowing elements
-                - Clues
-                - Subtle hints
-                - Recurring details
-                - Symbolic hints
-                - Character behavior clues
-                - Environmental clues
-                - Dialogue clues
-                - Red herrings
-                - Misdirection
-
-            Do not invent clues that contradict the story.
+            Every important character must have a meaningful reason to exist within the story.
 
             ==================================================
-            CHARACTER STRUCTURE
+            MAIN CHARACTER FOUNDATION
             ==================================================
 
-            Determine the natural character structure.
+            Develop the primary protagonist in depth.
 
-            Do not assume:
+            Establish:
 
-                - One protagonist
-                - A hero
-                - A heroine
-                - A villain
-                - A love interest
-                - Human characters
-                - Any specific gender
-                - Any specific race
-                - Any specific species
-
-            Determine whether the story requires:
-
-                - Single protagonist
-                - Multiple protagonists
-                - Co-protagonists
-                - Ensemble
-                - Main character
-                - Secondary characters
-                - Supporting characters
-                - Antagonist
-                - Multiple antagonists
-                - Villain
-                - Rival
-                - Love interest
-                - Companion
-                - Mentor
-                - Family
-                - Faction leader
-                - Important minor characters
-                - Other story-specific roles
-
-            Character roles must come from the narrative.
-
-            ==================================================
-            CHARACTER ANALYSIS
-            ==================================================
-
-            Identify every character important enough to matter to future story development.
-
-            For each important character extract all relevant information supported by the plot.
-
-            Possible fields include:
-
-                - Name
-                - Role
-                - Narrative importance
-                - Character type
-                - Gender
-                - Age
-                - Age range
-                - Species
-                - Race
-                - Ethnicity
-                - Cultural identity
-                - Nationality
-                - Origin
-                - Height
-                - Body type
-                - Figure
-                - Skin tone
-                - Hair
-                - Eyes
-                - Face
-                - Distinguishing features
-                - Clothing
-                - Accessories
-                - Voice
+                - Character identity
+                - Character role
+                - Age or appropriate age range
+                - Gender where relevant
+                - Physical appearance
                 - Personality
-                - Personality traits
                 - Strengths
                 - Weaknesses
                 - Skills
-                - Abilities
-                - Powers
                 - Limitations
-                - Occupation
-                - Social status
                 - Background
-                - Family
-                - Beliefs
-                - Values
-                - Fears
-                - Desires
-                - Goals
-                - Motivation
-                - Secrets
-                - Character flaws
-                - Character strengths
+                - Important past experiences
+                - Current circumstances
+                - Core motivation
+                - Primary goal
+                - Secondary goals
+                - Greatest desire
+                - Greatest fear
                 - Internal conflict
                 - External conflict
-                - Emotional state
-                - Emotional journey
-                - Character arc
-                - Starting state
-                - Major changes
-                - Ending state
-                - Important decisions
+                - Personal stakes
+                - Emotional vulnerability
+                - Important relationships
+                - Character flaw
+                - Character need
+                - Character transformation
+                - Character arc direction
+
+            The protagonist must be directly connected to the central conflict.
+
+            The protagonist's motivation must logically explain their actions.
+
+            The protagonist's goals must create meaningful narrative movement.
+
+            The protagonist's weaknesses, fears, flaws, and internal conflicts should create opportunities for believable character development.
+
+            ==================================================
+            SUPPORTING CHARACTER FOUNDATION
+            ==================================================
+
+            Create the important supporting characters required by the story.
+
+            Each important supporting character should have a distinct:
+
+                - Identity
+                - Role
+                - Personality
+                - Motivation
+                - Goal
+                - Relationship to the protagonist
+                - Relationship to the central conflict
+                - Strength
+                - Weakness
+                - Personal stakes
+                - Emotional purpose
                 - Narrative purpose
+                - Character development direction
 
-            Do not create fictional details simply to fill these fields.
+            Avoid creating supporting characters that exist only to provide exposition or fill space.
 
-            Include only relevant information.
+            Each important character should contribute meaningfully to the story.
+
+            Supporting characters should have their own motivations, perspectives, desires, fears, and choices rather than existing only around the protagonist.
+
+            ==================================================
+            OPPOSING CHARACTER FOUNDATION
+            ==================================================
+
+            If the story requires an antagonist or opposing character, develop the opposing character as a believable narrative force.
+
+            Establish:
+
+                - Identity
+                - Role
+                - Personality
+                - Background
+                - Motivation
+                - Goal
+                - Belief system
+                - Methods
+                - Strengths
+                - Weaknesses
+                - Relationship to the protagonist
+                - Reason for opposition
+                - Personal stakes
+                - Internal conflict
+                - Emotional dimension
+                - Narrative function
+                - Character development direction
+
+            The opposing character should have understandable motivations even when their actions create serious conflict.
+
+            Avoid shallow or predictable characterization unless the established story specifically requires it.
 
             ==================================================
             CHARACTER RELATIONSHIPS
             ==================================================
 
-            Analyze important relationships.
+            Develop the important relationships between characters.
 
-            Determine:
+            Identify relationships such as:
 
                 - Family
                 - Friendship
                 - Romance
-                - Marriage
-                - Partnership
-                - Mentorship
                 - Rivalry
-                - Alliance
-                - Enemy relationship
-                - Political relationship
-                - Professional relationship
-                - Faction relationship
-                - Trust
-                - Distrust
+                - Mentorship
+                - Loyalty
+                - Betrayal
+                - Partnership
+                - Conflict
                 - Dependency
-                - Betrayal
-                - Emotional connection
-                - Other important relationships
+                - Protection
+                - Competition
+                - Emotional attachment
 
-            For each relationship determine:
+            For each important relationship, establish:
 
-                - Characters involved
                 - Relationship type
-                - Initial state
-                - Current state
-                - Source of relationship
-                - Emotional dynamic
-                - Source of tension
-                - Important changes
-                - Turning points
-                - Future importance
-                - Ending direction
-
-            ==================================================
-            WORLD ANALYSIS
-            ==================================================
-
-            Determine the world requirements of the story.
-
-            Analyze:
-
-                - World identity
-                - World type
-                - Reality level
-                - Time period
-                - Era
-                - Geography
-                - Climate
-                - Environment
-                - Society
-                - Civilization
-                - Culture
-                - Customs
-                - Traditions
-                - Religion
-                - Belief systems
-                - Politics
-                - Government
-                - Social hierarchy
-                - Economy
-                - Technology
-                - Science
-                - Magic
-                - Supernatural systems
-                - Laws
-                - Rules
-                - Limitations
-                - History
-                - Mythology
-                - Historical events
-                - Social structures
-                - Environmental conditions
-                - Other world-specific systems
-
-            Only include systems relevant to the story.
-
-            ==================================================
-            LOCATION ANALYSIS
-            ==================================================
-
-            Identify important locations.
-
-            These may include:
-
-                - Countries
-                - Kingdoms
-                - Cities
-                - Villages
-                - Towns
-                - Islands
-                - Planets
-                - Space stations
-                - Buildings
-                - Homes
-                - Schools
-                - Workplaces
-                - Castles
-                - Forests
-                - Mountains
-                - Battlefields
-                - Hidden places
-                - Imaginary locations
-                - Other story-specific locations
-
-            For each important location determine:
-
-                - Name
-                - Type
-                - Description
-                - Environment
-                - Visual identity
-                - Geographic relationship
-                - Characters connected to it
-                - Events connected to it
-                - Historical importance
-                - Cultural importance
-                - Narrative purpose
-                - Danger
-                - Secrets
-                - Important visual elements
-
-            ==================================================
-            CULTURE AND SOCIETY
-            ==================================================
-
-            When relevant, identify:
-
-                - Social structures
-                - Customs
-                - Traditions
-                - Values
-                - Social expectations
-                - Family structures
-                - Class systems
-                - Gender roles
-                - Cultural conflicts
-                - Social conflicts
-                - Religious practices
-                - Community structures
-                - Other relevant cultural elements
-
-            Do not invent cultural details that are unsupported.
-
-            ==================================================
-            FACTIONS AND ORGANIZATIONS
-            ==================================================
-
-            Identify important groups.
-
-            These may include:
-
-                - Governments
-                - Kingdoms
-                - Political groups
-                - Companies
-                - Military groups
-                - Secret societies
-                - Religious organizations
-                - Families
-                - Clans
-                - Tribes
-                - Guilds
-                - Criminal organizations
-                - Communities
-                - Species groups
-                - Other factions
-
-            For each important group determine:
-
-                - Name
-                - Type
-                - Purpose
-                - Leadership
-                - Members
-                - Beliefs
-                - Goals
-                - Resources
-                - Power
-                - Allies
-                - Enemies
-                - Internal conflicts
-                - Story importance
-
-            ==================================================
-            CREATURES, SPECIES AND RACES
-            ==================================================
-
-            If relevant, identify:
-
-                - Species
-                - Races
-                - Creatures
-                - Monsters
-                - Animals
-                - Supernatural beings
-                - Artificial beings
-                - Alien life
-                - Other non-human entities
-
-            Extract relevant:
-
-                - Appearance
-                - Characteristics
-                - Abilities
-                - Weaknesses
-                - Behavior
-                - Culture
-                - Society
-                - Relationship with characters
-                - Relationship with the world
-                - Narrative importance
-
-            ==================================================
-            MAGIC, TECHNOLOGY AND SPECIAL SYSTEMS
-            ==================================================
-
-            If applicable, identify:
-
-                - Magic systems
-                - Powers
-                - Technology
-                - Scientific systems
-                - Supernatural rules
-                - Special abilities
-                - Resources
-                - Energy systems
-                - Transformation systems
-                - Other story-specific systems
-
-            Determine:
-
-                - How the system works
-                - Who can use it
-                - Limitations
-                - Costs
-                - Risks
-                - Consequences
-                - Rules
-                - Important exceptions
-
-            Never invent a system simply because the genre commonly uses one.
-
-            ==================================================
-            RULES AND LIMITATIONS
-            ==================================================
-
-            Identify rules future story development must preserve.
-
-            These may include:
-
-                - World rules
-                - Magic rules
-                - Technology rules
-                - Scientific rules
-                - Political rules
-                - Social rules
-                - Legal rules
-                - Character ability rules
-                - Resource limitations
-                - Environmental limitations
-                - Narrative rules
-
-            Identify consequences when rules are broken.
-
-            ==================================================
-            THEME ANALYSIS
-            ==================================================
-
-            Determine the actual themes present in the story.
-
-            Identify:
-
-                - Primary themes
-                - Secondary themes
-                - Emotional themes
-                - Moral themes
-                - Philosophical themes
-                - Social themes
-                - Recurring motifs
-                - Symbols
-                - Symbolic objects
-                - Symbolic locations
-                - Symbolic events
-
-            For each important theme determine:
-
-                - Name
-                - Meaning
-                - Narrative expression
-                - Characters connected to it
-                - Events connected to it
-                - Emotional purpose
-                - Story importance
-
-            Do not create generic themes that are not supported by the story.
-
-            ==================================================
-            CONFLICT STRUCTURE
-            ==================================================
-
-            Identify every meaningful conflict.
-
-            Determine:
-
-                - Central conflict
-                - External conflict
-                - Internal conflict
-                - Interpersonal conflict
-                - Relationship conflict
-                - Social conflict
-                - Political conflict
-                - Ideological conflict
-                - Moral conflict
-                - Environmental conflict
-                - Survival conflict
-                - Other relevant conflicts
-
-            For each important conflict identify:
-
-                - Participants
-                - Cause
-                - Goals
-                - Opposition
-                - Stakes
-                - Escalation
-                - Consequences
-                - Resolution direction
-                - Narrative importance
-
-            ==================================================
-            STAKES
-            ==================================================
-
-            Determine what can be lost.
-
-            Analyze:
-
-                - Personal stakes
-                - Emotional stakes
-                - Relationship stakes
-                - Social stakes
-                - Political stakes
-                - Financial stakes
-                - Physical stakes
-                - Survival stakes
-                - Moral stakes
-                - World-level stakes
-                - Other relevant stakes
-
-            Determine how stakes should escalate.
-
-            ==================================================
-            STORY EVENTS
-            ==================================================
-
-            Extract important narrative events.
-
-            Identify:
-
-                - Opening situation
-                - Inciting event
-                - First major decision
-                - First major conflict
-                - First important discovery
-                - Major encounters
-                - Complications
-                - Setbacks
-                - Victories
-                - Betrayals
-                - Revelations
-                - Reversals
-                - Turning points
-                - Midpoint event when applicable
-                - Crisis
-                - Climax
-                - Resolution events
-
-            Do not convert these into chapters.
-
-            ==================================================
-            TIMELINE
-            ==================================================
-
-            Extract chronological information.
-
-            Identify:
-
-                - Historical background
-                - Character history
-                - Past events
-                - Story beginning
-                - Current story period
-                - Major chronological events
-                - Time gaps
-                - Time progression
-                - Future implications
-
-            Do not invent exact dates when unavailable.
-
-            ==================================================
-            IMPORTANT OBJECTS AND ELEMENTS
-            ==================================================
-
-            Identify important non-character elements.
-
-            These may include:
-
-                - Artifacts
-                - Weapons
-                - Books
-                - Letters
-                - Documents
-                - Technology
-                - Vehicles
-                - Magical objects
-                - Resources
-                - Clothing
-                - Symbols
-                - Tools
-                - Important possessions
-                - Special materials
-                - Other story-specific elements
-
-            Determine:
-
-                - Name
-                - Type
-                - Description
-                - Owner
-                - Purpose
-                - Properties
-                - Limitations
-                - History
-                - Narrative importance
-
-            ==================================================
-            CHARACTER ARC ANALYSIS
-            ==================================================
-
-            For each major character determine:
-
-                - Starting state
-                - Initial beliefs
-                - Initial goals
-                - Initial emotional state
-                - Internal wound
-                - Fear
-                - Motivation
-                - Challenges
-                - Emotional changes
-                - Important realizations
-                - Major decisions
-                - Failures
-                - Growth
-                - Transformation
-                - Ending state
-                - Remaining unresolved issues
-
-            ==================================================
-            RELATIONSHIP ARC ANALYSIS
-            ==================================================
-
-            Determine how important relationships evolve.
-
-            Identify:
-
-                - Beginning relationship
-                - Initial emotional state
-                - Source of connection
-                - Source of tension
-                - Major relationship events
-                - Trust changes
-                - Conflict
-                - Betrayal
-                - Reconciliation
-                - Deepening connection
-                - Separation
-                - Final relationship state
-
-            ==================================================
-            SUBPLOT ANALYSIS
-            ==================================================
-
-            Determine whether secondary narrative threads exist or are necessary.
-
-            Identify:
-
-                - Existing subplots
-                - Character subplots
-                - Relationship subplots
-                - Mystery subplots
-                - World-building subplots
-                - Political subplots
-                - Emotional subplots
-                - Other supporting narrative threads
-
-            For every subplot determine:
-
-                - Purpose
                 - Characters involved
-                - Connection to main story
-                - Conflict
-                - Development
-                - Resolution direction
+                - Initial relationship state
+                - Emotional connection
+                - Source of tension
+                - Shared history where relevant
+                - How the relationship affects the story
+                - How the relationship may change
 
-            Do not create unnecessary subplots.
-
-            ==================================================
-            PACING ANALYSIS
-            ==================================================
-
-            Determine the natural pacing requirements.
-
-            Analyze:
-
-                - Opening pace
-                - Development pace
-                - Character development pace
-                - Conflict escalation
-                - Mystery pacing
-                - Revelation pacing
-                - Emotional pacing
-                - Action intensity
-                - Quiet/reflection periods
-                - Climax pacing
-                - Resolution pacing
-
-            Determine:
-
-                - Slow development
-                - Moderate development
-                - Fast development
-                - Alternating pacing
-                - Gradual escalation
-                - Rapid escalation
-                - Climax acceleration
-
-            Do not create chapter-level pacing.
+            Relationships should evolve naturally through the events of the story.
 
             ==================================================
-            READER EXPERIENCE
+            CHARACTER MOTIVATION AND GOAL SYSTEM
             ==================================================
 
-            Determine the intended reader experience represented by the story.
+            Ensure that every major character has a believable reason for what they do.
 
-            Analyze:
+            For each major character establish:
 
-                - Emotional experience
-                - Suspense
-                - Mystery
-                - Emotional intensity
-                - Action intensity
-                - Romance intensity
-                - Horror intensity
-                - Humor
-                - Wonder
-                - Psychological complexity
-                - Moral complexity
-                - Narrative complexity
-                - Reader expectations
-                - Emotional payoff
+                - What they want
+                - Why they want it
+                - What they need emotionally
+                - What prevents them from achieving it
+                - What they fear losing
+                - What they are willing to sacrifice
+                - What they refuse to sacrifice
+                - What could change their decisions
+
+            Create clear cause-and-effect connections between character motivations and story events.
 
             ==================================================
-            VISUAL STORY FOUNDATION
+            CHARACTER CONFLICT
             ==================================================
 
-            Identify visually important information for future illustrated scenes.
-
-            Extract:
-
-                - Character visual identity
-                - Important environments
-                - Important locations
-                - Important objects
-                - Symbolic imagery
-                - Memorable actions
-                - Important expressions
-                - Dramatic moments
-                - Important discoveries
-                - Recurring visual elements
-                - Visually important events
-
-            Do not create image-generation prompts.
-
-            ==================================================
-            CLIMAX REQUIREMENTS
-            ==================================================
-
-            Determine what the climax must accomplish.
-
-            Identify:
-
-                - Central confrontation
-                - Characters involved
-                - Main conflict resolved
-                - Emotional conflict resolved
-                - Important revelation
-                - Major decision
-                - Stakes
-                - Consequences
-                - Character transformation
-                - Thematic payoff
-
-            ==================================================
-            ENDING ANALYSIS
-            ==================================================
-
-            Determine the natural ending direction represented by the plot.
-
-            Possible directions include:
-
-                - Happy
-                - Hopeful
-                - Bittersweet
-                - Tragic
-                - Open
-                - Ambiguous
-                - Other story-specific resolution
-
-            Determine:
-
-                - What must be resolved
-                - What may remain unresolved
-                - Character outcomes
-                - Relationship outcomes
-                - Conflict outcomes
-                - Thematic payoff
-                - Emotional payoff
-                - Long-term implications
-
-            ==================================================
-            CONTINUITY REQUIREMENTS
-            ==================================================
-
-            Identify information that future AI development must preserve.
+            Develop character-level conflicts that support the established Story Book conflict.
 
             Include:
 
-                - Character identities
-                - Character appearance
-                - Character relationships
-                - Character motivations
-                - World rules
-                - Location facts
-                - Timeline facts
-                - Important objects
-                - Factions
-                - Powers
-                - Limitations
-                - Major events
-                - Secrets
-                - Revelations
-                - Other continuity-critical information
+                - Internal conflicts
+                - External conflicts
+                - Interpersonal conflicts
+                - Moral conflicts
+                - Emotional conflicts
+                - Goal conflicts
+                - Relationship conflicts
+
+            Character conflicts should create meaningful pressure and contribute to story progression.
 
             ==================================================
-            STORY-SPECIFIC DEVELOPMENT REQUIREMENTS
+            CHARACTER ARC FOUNDATION
             ==================================================
 
-            Think beyond every predefined category in this prompt.
+            Design the development direction of each major character.
 
-            Ask internally:
+            For the protagonist especially, establish:
 
-                What information would a professional story development team need before turning this specific plot into a complete story book?
+                - Starting emotional state
+                - Starting worldview
+                - Initial flaw or limitation
+                - Initial belief
+                - Pressure that challenges the belief
+                - Important emotional turning points
+                - Important choices
+                - Consequences of choices
+                - Personal realization
+                - Internal transformation
+                - Final emotional state
+                - Final worldview
+                - What the character learns
+                - What the character gains
+                - What the character loses
+                - How the character's transformation connects to the story theme
 
-            If the story requires something not mentioned in this prompt, create a suitable additional section.
-
-            Examples include:
-
-                - Narrative voice
-                - Cultural details
-                - Investigation structure
-                - Mystery architecture
-                - Redemption structure
-                - Moral dilemmas
-                - Recurring imagery
-                - Symbolic systems
-                - Scene dependencies
-                - Narrative constraints
-                - Special terminology
-                - Language conventions
-                - Unique story mechanics
-                - Other story-specific requirements
+            Character transformation should result from story events, experiences, decisions, and consequences rather than happening without cause.
 
             ==================================================
-            NO FORCED INFORMATION
+            EMOTIONAL CHARACTER DYNAMICS
             ==================================================
 
-            Do not create information merely because this prompt mentions it.
+            Create meaningful emotional dynamics between major characters.
 
-            For example:
+            Identify relevant emotions such as:
 
-                If there is no romance, do not create a romance section.
+                - Trust
+                - Fear
+                - Hope
+                - Attachment
+                - Jealousy
+                - Love
+                - Guilt
+                - Resentment
+                - Loyalty
+                - Suspicion
+                - Admiration
+                - Grief
+                - Conflict
+                - Forgiveness
+                - Emotional dependency
 
-                If there is no magic, do not create a magic system.
+            Use only emotions that naturally fit the established story.
 
-                If there is no villain, do not invent one.
-
-                If there are no twists, do not invent twists.
-
-                If there are no factions, do not create factions.
-
-                If there is no complex world, do not overbuild the world.
-
-                If there is no mystery, do not create a mystery.
-
-                If the story has multiple protagonists, do not force a single protagonist.
-
-                If the protagonist is not human, do not assume they are human.
-
-                If gender is unknown, do not invent gender.
-
-                If race or ethnicity is unknown, do not invent it.
+            Emotional progression should develop through experiences, choices, discoveries, conflicts, and consequences.
 
             ==================================================
-            DYNAMIC SECTION SYSTEM
+            NARRATIVE CHARACTER FUNCTIONS
             ==================================================
 
-            The final Story Book Foundation must be dynamically structured.
+            Ensure every major character has a clear narrative purpose.
 
-            Do not restrict the output to:
+            A character may function as:
 
-                - World
-                - Theme
-                - Characters
+                - Protagonist
+                - Antagonist
+                - Ally
+                - Mentor
+                - Rival
+                - Love interest
+                - Family member
+                - Friend
+                - Protector
+                - Guide
+                - Catalyst
+                - Emotional anchor
+                - Moral counterpoint
+                - Witness
+                - Supporting force
 
-            These are only examples.
+            Choose character functions based on the established story.
 
-            Create all meaningful sections required by the actual story.
+            Do not mechanically fill character categories.
 
-            Possible sections include:
+            ==================================================
+            CHARACTER DISTINCTIVENESS
+            ==================================================
 
-                - Story Identity
-                - Genre
-                - Audience
-                - Story Scale
-                - Narrative Architecture
-                - Characters
+            Make major characters clearly distinguishable from one another.
+
+            Give each important character distinctive:
+
+                - Personality
+                - Perspective
+                - Motivation
+                - Behavior
+                - Emotional patterns
+                - Strengths
+                - Weaknesses
                 - Relationships
-                - World
-                - Locations
-                - Culture
-                - Society
-                - Politics
-                - Factions
-                - Organizations
-                - History
-                - Timeline
-                - Themes
-                - Motifs
-                - Symbols
-                - Conflicts
-                - Stakes
-                - Character Arcs
-                - Story Arcs
-                - Subplots
-                - Mysteries
-                - Secrets
-                - Twists
-                - Revelations
-                - Foreshadowing
-                - Clues
-                - Red Herrings
-                - Creatures
-                - Species
-                - Magic System
-                - Technology
-                - Important Objects
-                - Important Events
-                - Pacing
-                - Reader Experience
-                - Climax
-                - Ending
-                - Visual Story Elements
-                - Continuity Requirements
-                - Story Development Requirements
-                - Other story-specific sections
+                - Personal history
+                - Goals
+                - Fears
 
-            These are examples only.
-
-            Determine the actual sections dynamically.
+            Avoid creating multiple characters who feel interchangeable.
 
             ==================================================
-            SECTION STRUCTURE
+            CHARACTER CONSISTENCY
             ==================================================
 
-            Every section must contain:
+            Maintain consistency with the established Story Book foundation.
 
-                - name
-                - data
+            Ensure:
 
-            Example:
+                - Character motivations support the plot.
+                - Character goals support story progression.
+                - Character relationships support conflict and emotional development.
+                - Character arcs support the established themes.
+                - Character backgrounds fit the setting.
+                - Character decisions are believable.
+                - Character development follows cause and effect.
+                - Characters do not contradict established story information.
+                - Character actions remain consistent with their established personalities and motivations.
 
-                {
-                    \"name\": \"World\",
-                    \"data\": {
-                        \"world_identity\": \"...\",
-                        \"world_type\": \"...\",
-                        \"setting\": \"...\",
-                        \"time_period\": \"...\",
-                        \"rules\": [],
-                        \"culture\": {}
-                    }
-                }
-
-            Characters may use:
-
-                {
-                    \"name\": \"Characters\",
-                    \"data\": {
-                        \"characters\": [
-                            {
-                                \"name\": \"...\",
-                                \"role\": \"...\",
-                                \"narrative_importance\": \"...\",
-                                \"gender\": \"...\",
-                                \"age\": \"...\",
-                                \"physical_appearance\": {
-                                    \"height\": \"...\",
-                                    \"body_type\": \"...\",
-                                    \"hair\": \"...\",
-                                    \"eyes\": \"...\",
-                                    \"skin\": \"...\",
-                                    \"distinguishing_features\": \"...\"
-                                },
-                                \"personality\": {},
-                                \"motivation\": \"...\",
-                                \"character_arc\": {}
-                            }
-                        ]
-                    }
-                }
-
-            Relationships may use:
-
-                {
-                    \"name\": \"Relationships\",
-                    \"data\": {
-                        \"relationships\": [
-                            {
-                                \"character_a\": \"...\",
-                                \"character_b\": \"...\",
-                                \"type\": \"...\",
-                                \"dynamic\": \"...\",
-                                \"development\": \"...\"
-                            }
-                        ]
-                    }
-                }
-
-            Twists may use:
-
-                {
-                    \"name\": \"Twists\",
-                    \"data\": {
-                        \"twists\": [
-                            {
-                                \"name\": \"...\",
-                                \"type\": \"...\",
-                                \"revelation\": \"...\",
-                                \"narrative_purpose\": \"...\",
-                                \"foreshadowing\": [],
-                                \"approximate_position\": \"...\"
-                            }
-                        ]
-                    }
-                }
-
-            These examples are NOT mandatory structures.
-
-            The actual structure must be determined by the information required by the story.
+            If the plot foundation leaves something unspecified, make a strong creative decision that best supports the existing story.
 
             ==================================================
-            DATA RELATIONSHIP REQUIREMENT
+            FUTURE STORY DEVELOPMENT
             ==================================================
 
-            Preserve relationships between story elements.
+            Design the characters so they can support future generation steps.
 
-            For example:
+            The character foundation should provide enough information for future generation of:
 
-                A character may belong to a faction.
-
-                A faction may control a location.
-
-                A location may contain an important object.
-
-                An object may be connected to a mystery.
-
-                The mystery may lead to a revelation.
-
-                The revelation may affect a character relationship.
-
-                The relationship change may affect the central conflict.
-
-            Preserve these connections whenever the plot establishes them.
-
-            Do not duplicate information unnecessarily.
-
-            ==================================================
-            FUTURE AI DEVELOPMENT REQUIREMENT
-            ==================================================
-
-            The resulting foundation must be usable by future AI systems without requiring them to repeatedly rediscover the story from the original plot.
-
-            Future AI stages should be able to use this foundation to generate:
-
-                - Complete character profiles
-                - Character relationship maps
-                - World Bible
-                - Location profiles
-                - Faction profiles
-                - Creature profiles
-                - Magic or technology systems
-                - Timeline
-                - Story arcs
-                - Subplots
-                - Twist/reveal plans
-                - Foreshadowing plans
-                - Chapter plans
-                - Scene plans
+                - Chapters
+                - Scenes
                 - Dialogue
+                - Character interactions
+                - Character conflicts
+                - Emotional moments
+                - Character development
+                - Story events
                 - Illustrations
-                - Continuity checks
-                - Complete story book
+                - Visual character references
+
+            Maintain character consistency so future generations can use this foundation as a reliable character reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Create characters with the judgment of an experienced professional writer and character designer.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Strong character psychology
+                - Specific and meaningful details
+                - Believable motivations
+                - Distinct personalities
+                - Organic emotional progression
+                - Purposeful relationships
+                - Meaningful internal conflict
+                - Strong character arcs
+                - Narrative relevance
+                - Emotional authenticity
+                - Fresh and distinctive ideas
+
+            Avoid:
+
+                - Generic character templates
+                - Predictable personalities
+                - Mechanical archetypes
+                - Artificial character descriptions
+                - Repetitive traits
+                - Unnecessary complexity
+                - Characters without narrative purpose
+                - Contradictory motivations
+                - Forced relationships
+                - Emotionally shallow characterization
+
+            Characters should feel like real individuals created specifically for this Story Book.
 
             ==================================================
             QUALITY REQUIREMENTS
             ==================================================
 
-            The final foundation must:
+            The character foundation should:
 
-                - Be faithful to the plot.
-                - Be comprehensive without unnecessary information.
-                - Preserve narrative intent.
-                - Preserve character intent.
-                - Preserve world logic.
-                - Preserve genre identity.
-                - Preserve emotional direction.
-                - Preserve ending direction.
-                - Identify meaningful complexity.
-                - Identify meaningful twists only when appropriate.
-                - Identify important mysteries.
-                - Identify important relationships.
-                - Identify continuity-critical facts.
-                - Support future story expansion.
-                - Avoid generic AI assumptions.
-                - Avoid unnecessary invention.
-                - Avoid contradictions.
-                - Avoid duplicate information.
-                - Avoid empty sections.
-                - Avoid meaningless fields.
+                - Fit the established Story Book plot.
+                - Strengthen the existing narrative.
+                - Create believable characters.
+                - Give major characters clear motivations.
+                - Give major characters meaningful goals.
+                - Establish useful character relationships.
+                - Create meaningful internal and external conflicts.
+                - Provide strong character arc directions.
+                - Support future story development.
+                - Support future scene and chapter generation.
+                - Maintain thematic coherence.
+                - Maintain emotional continuity.
+                - Maintain consistency with the established setting and plot.
+                - Naturally incorporate character-specific information.
+                - Avoid unnecessary characters.
+                - Make every major character narratively purposeful.
+                - Make characters clearly distinguishable.
+                - Feel original, natural, polished, and professionally conceived.
 
             ==================================================
-            JSON OUTPUT REQUIREMENTS
+            OUTPUT FORMAT
             ==================================================
 
             Return ONLY valid JSON.
 
-            Do not return:
-
-                - Markdown
-                - Code blocks
-                - Explanations
-                - Comments
-                - Text before JSON
-                - Text after JSON
-
-            The root JSON object must have this structure:
-
             {
-                \"sections\": [
+                \"characters\": [
                     {
-                        \"name\": \"Section Name\",
-                        \"data\": {}
+                        \"name\": \"\",
+                        \"role\": \"\",
+                        \"character_type\": \"\",
+                        \"age\": \"\",
+                        \"gender\": \"\",
+                        \"appearance\": \"\",
+                        \"personality\": \"\",
+                        \"background\": \"\",
+                        \"strengths\": [],
+                        \"weaknesses\": [],
+                        \"skills\": [],
+                        \"limitations\": [],
+                        \"motivation\": \"\",
+                        \"primary_goal\": \"\",
+                        \"secondary_goals\": [],
+                        \"greatest_desire\": \"\",
+                        \"greatest_fear\": \"\",
+                        \"internal_conflict\": \"\",
+                        \"external_conflict\": \"\",
+                        \"personal_stakes\": \"\",
+                        \"character_flaw\": \"\",
+                        \"character_need\": \"\",
+                        \"important_relationships\": [],
+                        \"emotional_dynamics\": [],
+                        \"narrative_function\": \"\",
+                        \"character_arc\": \"\",
+                        \"starting_state\": \"\",
+                        \"important_turning_points\": [],
+                        \"key_choices\": [],
+                        \"transformation\": \"\",
+                        \"final_state\": \"\"
+                    }
+                ],
+
+                \"relationship_dynamics\": [
+                    {
+                        \"character_a\": \"\",
+                        \"character_b\": \"\",
+                        \"relationship_type\": \"\",
+                        \"initial_state\": \"\",
+                        \"emotional_connection\": \"\",
+                        \"source_of_tension\": \"\",
+                        \"relationship_development\": \"\"
                     }
                 ]
             }
 
-            JSON RULES:
-
-                - The root must be an object.
-                - sections must be an array.
-                - Every section must contain name.
-                - Every section must contain data.
-                - data may contain nested objects.
-                - data may contain arrays.
-                - Arrays may contain objects.
-                - Objects may contain nested objects and arrays.
-                - Use snake_case for field names.
-                - Use descriptive field names.
-                - Do not create empty sections.
-                - Do not create meaningless fields.
-                - Do not use null simply to fill missing information.
-                - Omit unavailable information when it is not useful.
-                - Preserve important relationships between entities.
-                - Avoid unnecessary duplication.
-                - Do not include markdown formatting inside values.
-                - Do not include analysis outside the JSON.
-
             ==================================================
-            FINAL INSTRUCTION
+            FINAL CHECK
             ==================================================
 
-            Analyze the provided Story Book Plot as an experienced professional story development team would.
+            Before returning the result, ensure:
 
-            Do not merely summarize what the plot says.
-
-            Determine:
-
-                - What the story is.
-                - What genre structure it follows.
-                - What reader experience it creates.
-                - What narrative architecture it requires.
-                - What characters are required.
-                - What each character contributes.
-                - What relationships matter.
-                - What world exists.
-                - What locations matter.
-                - What systems and rules exist.
-                - What themes matter.
-                - What conflicts drive the story.
-                - What stakes escalate.
-                - What mysteries exist.
-                - What twists and revelations exist or are necessary.
-                - What foreshadowing is required.
-                - What pacing the story needs.
-                - What character arcs exist.
-                - What subplots matter.
-                - What events are essential.
-                - What the climax must accomplish.
-                - What the ending must resolve.
-                - What information future AI development must preserve.
-                - What additional story-specific information is necessary.
-
-            The result must be a professional, structured, expandable Story Book Foundation.
-
-            The foundation must reflect the actual story rather than a generic template.
-
-            Always prioritize story truth, narrative consistency, character logic, genre requirements, audience suitability, emotional coherence, and future development usefulness.
+                - Characters directly support the established plot.
+                - The protagonist is strongly connected to the central conflict.
+                - Major characters have believable motivations.
+                - Major characters have meaningful goals.
+                - Character decisions can logically drive story events.
+                - Supporting characters have distinct purposes.
+                - Opposing characters have believable motivations.
+                - Character relationships are meaningful.
+                - Character conflicts support the story.
+                - Character arcs support the established themes.
+                - Character development follows logical cause and effect.
+                - Characters are distinct from one another.
+                - No unnecessary character is included.
+                - Character-specific information is naturally incorporated.
+                - No contradiction exists with the established plot.
+                - The result is detailed enough for future story generation.
+                - The writing feels professionally developed.
+                - The characters feel original, natural, emotionally authentic, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
         ";
 
         return $prompt;
     }
+
 
     public static function generateFullPrompt(string $partialPrompt, array $receivedInputs): string
     {

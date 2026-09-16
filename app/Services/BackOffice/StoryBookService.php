@@ -2,6 +2,7 @@
 
 namespace App\Services\BackOffice;
 
+use App\Http\Requests\StoryBookCharactersRequest;
 use App\Helpers\AiPromptGeneratorHelper;
 use App\Helpers\StoryBookHelper;
 use App\Http\Requests\StoryBookFoundationRequest;
@@ -114,19 +115,17 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_FOUNDATION_GENERATOR));
             $aiBrain  = $this->aiBrainService->findById($request->input("ai_brain_id"));
 
-            $receivedInputs = $this->receivedInputsFormatter($request->input("language_id"), $request->input("audience_id"), $request->input("story_book_type_id"), $request->input("genre_ids"), $request->input("additional_information", "Auto"));
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $receivedInputs);
-
-            // json_encode($storyBook->plot, JSON_PRETTY_PRINT)
+            $requestInputs = $this->foundationRequestInputsFormatter($request->input("language_id"), $request->input("audience_id"), $request->input("story_book_type_id"), $request->input("genre_ids"), $request->input("additional_information", "Auto"));
+            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($request, $apiResponse, $storyBook, $isNew) {
-                $storyObject = $this->extractStoryPlotFromResponse($apiResponse);
+                $foundationObject = $this->extractFoundationFromResponse($apiResponse);
 
-                $storyBook->title     = $storyObject->title;
-                $storyBook->sub_title = $storyObject->subtitle;
-                $storyBook->plot      = $storyObject->plot;
+                $storyBook->title     = $foundationObject->title;
+                $storyBook->sub_title = $foundationObject->subtitle;
+                $storyBook->plot      = $foundationObject->plot;
 
                 $storyBook->audience_id   = $request->input("audience_id");
                 $storyBook->story_book_type_id = $request->input("story_book_type_id");
@@ -171,6 +170,45 @@ class StoryBookService
         }
     }
 
+    public function generateCharacters(StoryBookCharactersRequest $request, StoryBook $storyBook): array
+    {
+        try {
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_CHARACTER_GENERATOR));
+            $aiBrain  = $this->aiBrainService->findById($request->input("ai_brain_id"));
+
+            $requestInputs = $this->charactersRequestInputsFormatter($storyBook, $request->input("character_additional_information", "Auto"));
+            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
+
+            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+
+            $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
+                $characterObject = $this->extractCharactersFromResponse($apiResponse);
+                $storyBook->characters      = $characterObject;
+                $storyBook->status        = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->save();
+
+                return $storyBook;
+            });
+
+            return [
+                "story_book" => $storyBook,
+                'status'  => 'success',
+                'message' =>  'Story characters generate successfully.'
+            ];
+        } catch (Exception $exception) {
+
+            Log::error("Failed to generate Story characters", [
+                "exception" => $exception->getMessage(),
+            ]);
+
+            return [
+                "story_book" => null,
+                'status'  => 'error',
+                'message' => 'Failed to generate Story characters. Please try again.',
+            ];
+        }
+    }
+
     public function delete(StoryBook $storyBook): array
     {
 
@@ -197,7 +235,7 @@ class StoryBookService
         }
     }
 
-    private function extractStoryPlotFromResponse($apiResponse): object
+    private function extractFoundationFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -239,9 +277,9 @@ class StoryBookService
         ];
     }
 
-    private function receivedInputsFormatter(int|string $languageId, int|string $audienceId, int|string $storyBookTypeId, array $genreIds, string $additionalInformation): array
+    private function foundationRequestInputsFormatter(int|string $languageId, int|string $audienceId, int|string $storyBookTypeId, array $genreIds, string $additionalInformation): array
     {
-        $receivedInputs = array();
+        $requestInputs = array();
 
         $language  = $this->languageService->findByIdsOrEnglish($languageId);
         $audience  = $this->audienceService->findById($audienceId);
@@ -264,7 +302,7 @@ class StoryBookService
             $genrePromptInstruction .= $gInstruction;
         }
 
-        $receivedInputs = [
+        $requestInputs = [
             "language" => $language?->name,
             "additional_information" => $additionalInformation,
             "genre_prompt_instruction" => $genrePromptInstruction,
@@ -272,6 +310,61 @@ class StoryBookService
             "story_book_type_instruction" => $storyBookType->prompt_instruction,
         ];
 
-        return $receivedInputs;
+        return $requestInputs;
+    }
+
+
+    private function charactersRequestInputsFormatter(StoryBook $storyBook, string $characterAdditionalInformation): array
+    {
+        $requestInputs = array();
+
+        $formatedPlot = json_encode($storyBook->plot, JSON_PRETTY_PRINT);
+        $requestInputs = [
+            "plot" => $formatedPlot,
+            "character_additional_information" => $characterAdditionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function extractCharactersFromResponse($apiResponse): object
+    {
+        $content = data_get(
+            $apiResponse,
+            'choices.0.message.content'
+        );
+
+        if (! is_string($content) || trim($content) === '') {
+            throw new Exception('Invalid AI response structure.');
+        }
+
+        $content = trim($content);
+
+        $content = preg_replace(
+            '/^```(?:json)?\s*|\s*```$/i',
+            '',
+            $content
+        );
+
+        $content = trim($content);
+
+        $decoded = json_decode(
+            $content,
+            true
+        );
+
+        if (
+            json_last_error() !== JSON_ERROR_NONE ||
+            ! is_array($decoded)
+        ) {
+            throw new Exception(
+                'AI response is not valid JSON: ' . json_last_error_msg()
+            );
+        }
+
+        return (object) [
+            'characters' => $decoded['characters'] ?? [],
+            'relationship_dynamics' => $decoded['relationship_dynamics'] ?? [],
+        ];
     }
 }

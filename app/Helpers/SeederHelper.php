@@ -475,11 +475,11 @@ class SeederHelper
             ],
 
             (object) [
-                'name'                 => AiPromptGeneratorHelper::AI_PROMPT_NAME_BLUEPRIENT_GENERATOR,
-                'code'                 => "FoundationGenerator",
+                'name'                 => AiPromptGeneratorHelper::AI_PROMPT_NAME_CHARACTER_GENERATOR,
+                'code'                 => "CharacterGenerator",
                 'step_number'          => 1,
                 'depend_on_prompt_ids' => null,
-                'prompt'               => AiPromptGeneratorHelper::blueprintGenerator()
+                'prompt'               => AiPromptGeneratorHelper::characterGenerator()
             ],
 
         ]);

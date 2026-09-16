@@ -19,31 +19,37 @@ const emit = defineEmits(["completed"]);
 const { storyBook } = defineProps({
     storyBook: {
         type: Object,
-        default: null,
+        required: true,
     },
 });
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const storyBookCharactersForm = useForm({
-    characters: storyBook?.characters
-        ? typeof storyBook.characters === "string"
-            ? storyBook.characters
-            : JSON.stringify(storyBook.characters, null, 2)
-        : "",
-    ai_brain_id: storyBook?.ai_brain_id ?? null,
+const charactersGeneratorForm = useForm({
+    plot: storyBook?.plot
+        ? typeof storyBook.plot === "string"
+            ? storyBook.plot
+            : JSON.stringify(storyBook.plot)
+        : null,
+    character_additional_information: null,
+    ai_brain_id: null,
 });
 
 const validate = () => {
-    storyBookCharactersForm.clearErrors();
+    charactersGeneratorForm.clearErrors();
 
     let valid = true;
 
-    if (!storyBookCharactersForm.ai_brain_id) {
-        storyBookCharactersForm.setError(
+    if (!charactersGeneratorForm.ai_brain_id) {
+        charactersGeneratorForm.setError(
             "ai_brain_id",
             "AI Brain selection is required",
         );
+        valid = false;
+    }
+
+    if (!charactersGeneratorForm.plot) {
+        charactersGeneratorForm.setError("plot", "Plot is required");
         valid = false;
     }
 
@@ -51,12 +57,12 @@ const validate = () => {
 };
 
 const handleSuccess = () => {
-    storyBookCharactersForm.clearErrors();
+    charactersGeneratorForm.clearErrors();
     emit("completed", storyBook);
 };
 
 const submit = () => {
-    if (storyBookCharactersForm.processing || !validate()) {
+    if (!isUpdate.value || charactersGeneratorForm.processing || !validate()) {
         return;
     }
 
@@ -66,20 +72,16 @@ const submit = () => {
         onSuccess: handleSuccess,
     };
 
-    if (isUpdate.value) {
-        inertiaRoute.patch(
-            route("back-office.story-books.regenerate.characters", {
-                slug: storyBook?.slug,
-            }),
-            { ...storyBookCharactersForm.data(), _method: "patch" },
-            requestConfig,
-        );
-    } else {
-        storyBookCharactersForm.post(
-            route("back-office.story-books.generate.characters"),
-            requestConfig,
-        );
-    }
+    inertiaRoute.patch(
+        route("back-office.story-books.regenerate.characters", {
+            slug: storyBook?.slug,
+        }),
+        {
+            ...charactersGeneratorForm.data(),
+            _method: "patch",
+        },
+        requestConfig,
+    );
 };
 </script>
 
@@ -87,20 +89,35 @@ const submit = () => {
     <div class="space-y-6">
         <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
             <div>
-                <label class="block text-sm font-medium mb-1"
-                    >Characters</label
-                >
+                <p v-if="charactersGeneratorForm.errors.plot">
+                    {{ charactersGeneratorForm.errors.plot }}
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">
+                    Characters Additional Information
+                </label>
+
                 <textarea
-                    v-model="storyBookCharactersForm.characters"
-                    rows="10"
-                    placeholder="Enter characters details..."
+                    v-model="
+                        charactersGeneratorForm.character_additional_information
+                    "
+                    rows="3"
+                    placeholder="Any additional context or instructions for the AI..."
                     class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
                 ></textarea>
+
                 <p
-                    v-if="storyBookCharactersForm.errors.characters"
-                    class="text-red-500 text-sm mt-1"
+                    v-if="
+                        charactersGeneratorForm.errors
+                            .character_additional_information
+                    "
                 >
-                    {{ storyBookCharactersForm.errors.characters }}
+                    {{
+                        charactersGeneratorForm.errors
+                            .character_additional_information
+                    }}
                 </p>
             </div>
         </div>
@@ -110,28 +127,31 @@ const submit = () => {
                 <FontAwesomeIcon icon="brain" class="text-purple-600" />
                 <h3 class="text-base font-semibold">AI Brain Configuration</h3>
             </div>
+
             <p class="text-sm text-gray-500">
                 Select the AI model that will generate the characters.
             </p>
+
             <div
                 class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
             >
                 <InfiniteScrollApiSelect
-                    :form="storyBookCharactersForm"
+                    :form="charactersGeneratorForm"
                     fieldName="ai_brain_id"
                     :selectedItem="storyBook?.ai_brain"
                     :apiUrl="route('search.ai-brains')"
                     :multiple="false"
                     placeholder="Select AI Brain"
-                    :error="storyBookCharactersForm.errors.ai_brain_id"
+                    :error="charactersGeneratorForm.errors.ai_brain_id"
                     class="ai-brain-select"
                 />
             </div>
+
             <p
-                v-if="storyBookCharactersForm.errors.ai_brain_id"
+                v-if="charactersGeneratorForm.errors.ai_brain_id"
                 class="text-red-500 text-sm"
             >
-                {{ storyBookCharactersForm.errors.ai_brain_id }}
+                {{ charactersGeneratorForm.errors.ai_brain_id }}
             </p>
         </div>
 
@@ -139,20 +159,19 @@ const submit = () => {
             <button
                 type="button"
                 @click="submit"
-                :disabled="storyBookCharactersForm.processing"
+                :disabled="!isUpdate || charactersGeneratorForm.processing"
                 class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
                 <FontAwesomeIcon
-                    v-if="storyBookCharactersForm.processing"
+                    v-if="charactersGeneratorForm.processing"
                     icon="spinner"
                     spin
                 />
-                <FontAwesomeIcon
-                    v-else
-                    icon="wand-magic-sparkles"
-                />
+
+                <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
+
                 {{
-                    storyBookCharactersForm.processing
+                    charactersGeneratorForm.processing
                         ? "Generating..."
                         : "Generate Characters"
                 }}
