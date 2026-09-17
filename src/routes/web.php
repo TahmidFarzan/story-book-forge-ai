@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-
 // Backoffice
 use App\Http\Controllers\BackOffice\ActivityLogController;
 use App\Http\Controllers\BackOffice\AiBrainController;
@@ -16,7 +15,6 @@ use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\StoryBookController;
 use App\Http\Controllers\BackOffice\StoryBookTypeController;
 use App\Http\Controllers\BackOffice\UserController;
-
 //
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SearchController;
@@ -257,6 +255,9 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
                 Route::patch('world-vibe', [StoryBookController::class, 'generateWorldVibe'])->name('world-vibe');
                 Route::patch('locations', [StoryBookController::class, 'generateLocations'])->name('locations');
                 Route::patch('factions', [StoryBookController::class, 'generateFactions'])->name('factions');
+                Route::patch('creature', [StoryBookController::class, 'generateCreature'])->name('creature');
+                Route::patch('system', [StoryBookController::class, 'generateSystem'])->name('system');
+                Route::patch('timeline', [StoryBookController::class, 'generateTimeline'])->name('timeline');
             });
 
             Route::delete('delete', [StoryBookController::class, 'delete'])->name('delete');

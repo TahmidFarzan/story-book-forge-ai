@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoryBookFoundationRequest;
 use App\Http\Requests\StoryBookCharactersRequest;
-use App\Http\Requests\StoryBookLocationsRequest;
-use App\Http\Requests\StoryBookWorldVibeRequest;
+use App\Http\Requests\StoryBookCreaturesRequest;
 use App\Http\Requests\StoryBookFactionsRequest;
+use App\Http\Requests\StoryBookFoundationRequest;
+use App\Http\Requests\StoryBookLocationsRequest;
+use App\Http\Requests\StoryBookSystemsRequest;
+use App\Http\Requests\StoryBookTimelineRequest;
+use App\Http\Requests\StoryBookWorldVibeRequest;
 use App\Services\BackOffice\StoryBookService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -63,14 +66,15 @@ class StoryBookController extends Controller
         $result = $this->storyBookService->generateFoundation($request, $storyBook);
 
         if ($result['story_book']?->slug) {
-            return to_route('back-office.story-books.edit', ["slug" => $result['story_book']?->slug])->with('flash_message', [
+            return to_route('back-office.story-books.edit', ['slug' => $result['story_book']?->slug])->with('flash_message', [
                 'message' => $result['message'],
-                'status'  => $result['status'],
+                'status' => $result['status'],
             ]);
         }
+
         return to_route('back-office.story-books.index')->with('flash_message', [
             'message' => $result['message'],
-            'status'  => $result['status'],
+            'status' => $result['status'],
         ]);
     }
 
@@ -81,9 +85,9 @@ class StoryBookController extends Controller
 
         $result = $this->storyBookService->generateFoundation($request, $storyBook);
 
-        return to_route('back-office.story-books.edit', ["slug" => $slug])->with('flash_message', [
+        return to_route('back-office.story-books.edit', ['slug' => $slug])->with('flash_message', [
             'message' => $result['message'],
-            'status'  => $result['status'],
+            'status' => $result['status'],
         ]);
     }
 
@@ -94,9 +98,9 @@ class StoryBookController extends Controller
 
         $result = $this->storyBookService->generateCharacters($request, $storyBook);
 
-        return to_route('back-office.story-books.edit', ["slug" => $storyBook?->slug])->with('flash_message', [
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
-            'status'  => $result['status'],
+            'status' => $result['status'],
         ]);
     }
 
@@ -107,9 +111,9 @@ class StoryBookController extends Controller
 
         $result = $this->storyBookService->generateWorldBible($request, $storyBook);
 
-        return to_route('back-office.story-books.edit', ["slug" => $storyBook?->slug])->with('flash_message', [
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
-            'status'  => $result['status'],
+            'status' => $result['status'],
         ]);
     }
 
@@ -120,9 +124,9 @@ class StoryBookController extends Controller
 
         $result = $this->storyBookService->generateLocations($request, $storyBook);
 
-        return to_route('back-office.story-books.edit', ["slug" => $storyBook?->slug])->with('flash_message', [
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
-            'status'  => $result['status'],
+            'status' => $result['status'],
         ]);
     }
 
@@ -133,9 +137,48 @@ class StoryBookController extends Controller
 
         $result = $this->storyBookService->generateFactions($request, $storyBook);
 
-        return to_route('back-office.story-books.edit', ["slug" => $storyBook?->slug])->with('flash_message', [
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
-            'status'  => $result['status'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function generateCreature(StoryBookCreaturesRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateCreatures($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function generateSystem(StoryBookSystemsRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateSystems($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function generateTimeline(StoryBookTimelineRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateTimeline($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status' => $result['status'],
         ]);
     }
 
@@ -149,7 +192,7 @@ class StoryBookController extends Controller
 
         return to_route('back-office.story-books.index')->with('flash_message', [
             'message' => $result['message'],
-            'status'  => $result['status'],
+            'status' => $result['status'],
         ]);
     }
 }

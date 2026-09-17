@@ -4,11 +4,21 @@ namespace App\Helpers;
 
 class AiPromptGeneratorHelper
 {
-    public const AI_PROMPT_NAME_FOUNDATION_GENERATOR       = 'Foundation Generator';
+    public const AI_PROMPT_NAME_FOUNDATION_GENERATOR = 'Foundation Generator';
+
     public const AI_PROMPT_NAME_CHARACTER_GENERATOR = 'Character Generator';
+
     public const AI_PROMPT_NAME_WORLD_BIBLE_GENERATOR = 'World Bible Generator';
+
     public const AI_PROMPT_NAME_LOCATION_GENERATOR = 'Location Generator';
+
     public const AI_PROMPT_NAME_FACTION_GENERATOR = 'Faction Generator';
+
+    public const AI_PROMPT_NAME_CREATURE_GENERATOR = 'Creature Generator';
+
+    public const AI_PROMPT_NAME_SYSTEM_GENERATOR = 'System Generator';
+
+    public const AI_PROMPT_NAME_TIMELINE_GENERATOR = 'Timeline Generator';
 
     public static function foundationGenerator(): string
     {
@@ -838,7 +848,6 @@ class AiPromptGeneratorHelper
 
         return $prompt;
     }
-
 
     public static function worldBibleGenerator(): string
     {
@@ -2016,13 +2025,1180 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
+    public static function creaturesGenerator(): string
+    {
+        $prompt = "
+            You are a professional story creature development AI, creature designer, ecology specialist, and story development expert.
+
+            Your task is to create the complete creature foundation for a professionally developed Story Book.
+
+            This step focuses on defining the creatures and species that inhabit the established world, story, characters, locations, and factions.
+
+            The creatures must feel original, believable, ecologically meaningful, narratively purposeful, and naturally connected to everything established before this step.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            The following established World Bible is authoritative:
+
+            {{world_bible}}
+
+            The following established locations are authoritative:
+
+            {{locations}}
+
+            The following established factions are authoritative:
+
+            {{factions}}
+
+            Use the established foundation, characters, World Bible, locations, and factions as the primary source for all creature decisions.
+
+            Maintain consistency with the established story, world, characters, locations, and factions.
+
+            Do not unnecessarily change, contradict, or replace the established creative direction.
+
+            Create creatures that naturally emerge from and strengthen the established story, world, and locations.
+
+            ==================================================
+            CREATURE-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            Creature-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful creature requirements, independently make all necessary creature decisions based on the established story context.
+
+            'Auto' means the AI has full creative freedom to determine the creature design. Do not interpret 'Auto' as a creature requirement or creature detail.
+
+            If specific creature information is provided, use it as creative direction and naturally incorporate the relevant requirements into the creature design.
+
+            When making independent creature decisions, prioritize:
+
+                - Story consistency
+                - World consistency
+                - Character fit
+                - Ecological believability
+                - Species uniqueness
+                - Clear abilities and behaviors
+                - Meaningful roles in the environment
+                - Narrative purpose
+                - Visual potential for illustrations
+                - Future scene and chapter support
+
+            Regardless of the input, maintain consistency with the established story context.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Create the complete creature foundation required for future Story Book development.
+
+            Develop:
+
+                1. Creatures
+                2. Abilities
+                3. Behaviors
+                4. Ecosystem Role
+
+            Every creature must have a meaningful reason to exist within the story and world.
+
+            ==================================================
+            CREATURES
+            ==================================================
+
+            Create the important creatures and species that inhabit the world.
+
+            For each creature establish:
+
+                - Creature name
+                - Species type
+                - Classification
+                - Physical description
+                - Size and scale
+                - Appearance and visual features
+                - Native environment
+                - Distribution and habitat
+                - Diet and feeding
+                - Life cycle and reproduction
+                - Intelligence and sentience
+                - Communication methods
+                - Social structure
+                - Historical and cultural significance
+                - Relationship to the world
+                - Relationship to the story
+                - Relationship to the characters
+                - Relationship to the factions
+                - Strengths
+                - Weaknesses
+                - Dangers and threats posed
+                - Narrative function
+
+            Creatures must feel like living, believable parts of the world rather than simple labels or obstacles.
+
+            ==================================================
+            ABILITIES
+            ==================================================
+
+            Define the capabilities, powers, and special characteristics of each creature.
+
+            For each creature establish:
+
+                - Natural abilities
+                - Physical abilities
+                - Sensory abilities
+                - Special or extraordinary abilities
+                - Limitations and costs
+                - Conditions and triggers
+                - Weaknesses that counter the abilities
+                - How abilities are learned or developed
+                - How abilities are used in daily life
+                - How abilities are used in conflict
+                - How abilities affect the story
+                - How abilities affect the characters
+
+            Abilities must follow understandable logic consistent with the established world rules.
+
+            ==================================================
+            BEHAVIORS
+            ==================================================
+
+            Define how each creature thinks, acts, and interacts.
+
+            For each creature establish:
+
+                - Typical behaviors
+                - Instincts and drives
+                - Habits and routines
+                - Social behaviors
+                - Territorial behaviors
+                - Hunting or gathering behaviors
+                - Defensive behaviors
+                - Reactions to threats
+                - Interactions with other species
+                - Interactions with humans and established characters
+                - Responses to environment changes
+                - Emotional and psychological characteristics
+                - Unusual or distinctive behaviors
+                - How the creature's behavior affects the story
+                - How the creature's behavior affects the characters
+                - How the creature's behavior is shaped by the world
+
+            Behaviors must feel consistent, believable, and narratively useful.
+
+            ==================================================
+            ECOSYSTEM ROLE
+            ==================================================
+
+            Define the creature's place within the natural order of the world.
+
+            For each creature establish:
+
+                - Position in the food chain
+                - Role in the ecosystem
+                - Relations with other species
+                - Predators and prey
+                - Effect on the environment
+                - Effect on settlements and locations
+                - Importance to the economy or culture
+                - Importance to the factions
+                - Importance to the story
+                - Ecological threats the creature faces
+                - Theories or myths surrounding the creature
+                - How the creature shapes daily life
+                - How the creature shapes the story
+                - How the environment sustains or limits the creature
+
+            Ecosystem roles must connect creatures to the established world and locations.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
+            ==================================================
+
+            Maintain consistency with the established foundation, characters, World Bible, locations, and factions.
+
+            Ensure:
+
+                - Creatures fit the established world.
+                - Creatures fit the established locations.
+                - Creature abilities respect the established world rules.
+                - Creatures connect to the established characters.
+                - Creatures support the established story conflict.
+                - Creature history connects to the established world history.
+                - No creature contradicts established story information.
+
+            If the established context leaves a creature unspecified, make a strong creative decision that best supports the existing story, world, and characters.
+
+            ==================================================
+            FUTURE STORY DEVELOPMENT
+            ==================================================
+
+            Design the creature foundation so it can support future generation steps.
+
+            The creatures should provide enough information for future generation of:
+
+                - Systems
+                - Timeline
+                - Scene plans
+                - Chapter plans
+                - Dialogue
+                - Story events
+                - Conflicts and encounters
+                - Illustrations
+                - Visual creature references
+
+            Maintain creature consistency so future generations can use this foundation as a reliable reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Create creatures with the judgment of an experienced professional writer, creature designer, and world-builder.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Strong ecological believability
+                - Specific and meaningful details
+                - Distinct species identities
+                - Purposeful abilities and limitations
+                - Believable behavior patterns
+                - Clear ecosystem connections
+                - Narrative relevance
+                - Fresh and distinctive ideas
+
+            Avoid:
+
+                - Generic creature templates
+                - Creatures without clear purpose
+                - Overpowered creatures without limitations
+                - Contradictory creature behavior
+                - Creatures disconnected from the story, world, and characters
+                - Creatures that exist only as obstacles
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The creature foundation should:
+
+                - Fit the established Story Book foundation.
+                - Fit the established characters.
+                - Fit the established World Bible.
+                - Fit the established locations and factions.
+                - Create believable and memorable creatures.
+                - Give creatures clear abilities and limitations.
+                - Provide meaningful behaviors.
+                - Provide clear ecosystem roles.
+                - Support future story development.
+                - Support future scene and chapter generation.
+                - Maintain thematic coherence.
+                - Feel original, natural, ecologically alive, and professionally conceived.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            {
+                \"creatures\": [
+                    {
+                        \"name\": \"\",
+                        \"species_type\": \"\",
+                        \"classification\": \"\",
+                        \"physical_description\": \"\",
+                        \"size_and_scale\": \"\",
+                        \"appearance_and_visual_features\": [],
+                        \"native_environment\": \"\",
+                        \"distribution_and_habitat\": \"\",
+                        \"diet_and_feeding\": \"\",
+                        \"life_cycle\": \"\",
+                        \"intelligence_and_sentience\": \"\",
+                        \"communication_methods\": [],
+                        \"social_structure\": \"\",
+                        \"historical_and_cultural_significance\": \"\",
+                        \"relationship_to_story\": \"\",
+                        \"relationship_to_characters\": \"\",
+                        \"relationship_to_factions\": \"\",
+                        \"strengths\": [],
+                        \"weaknesses\": [],
+                        \"dangers_and_threats\": [],
+                        \"narrative_function\": \"\"
+                    }
+                ],
+                \"abilities\": [
+                    {
+                        \"creature_name\": \"\",
+                        \"natural_abilities\": [],
+                        \"physical_abilities\": [],
+                        \"sensory_abilities\": [],
+                        \"special_abilities\": [],
+                        \"limitations_and_costs\": [],
+                        \"conditions_and_triggers\": [],
+                        \"countering_weaknesses\": [],
+                        \"use_in_daily_life\": \"\",
+                        \"use_in_conflict\": \"\",
+                        \"effect_on_story\": \"\",
+                        \"effect_on_characters\": \"\"
+                    }
+                ],
+                \"behaviors\": [
+                    {
+                        \"creature_name\": \"\",
+                        \"typical_behaviors\": [],
+                        \"instincts_and_drives\": [],
+                        \"social_behaviors\": [],
+                        \"territorial_behaviors\": [],
+                        \"hunting_and_gathering\": \"\",
+                        \"defensive_behaviors\": [],
+                        \"reactions_to_threats\": \"\",
+                        \"interactions_with_other_species\": [],
+                        \"interactions_with_characters\": [],
+                        \"responses_to_environment\": \"\",
+                        \"distinctive_behaviors\": [],
+                        \"effect_on_story\": \"\",
+                        \"effect_on_characters\": \"\"
+                    }
+                ],
+                \"ecosystem_role\": [
+                    {
+                        \"creature_name\": \"\",
+                        \"position_in_food_chain\": \"\",
+                        \"role_in_ecosystem\": \"\",
+                        \"relations_with_other_species\": [],
+                        \"predators_and_prey\": [],
+                        \"effect_on_environment\": \"\",
+                        \"effect_on_settlements\": \"\",
+                        \"cultural_and_economic_importance\": \"\",
+                        \"importance_to_factions\": \"\",
+                        \"importance_to_story\": \"\",
+                        \"ecological_threats\": [],
+                        \"myths_and_theories\": [],
+                        \"effect_on_daily_life\": \"\",
+                        \"environmental_limitations\": \"\"
+                    }
+                ]
+            }
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - Creatures directly support the established Story Book.
+                - Creatures fit the established world, locations, characters, and factions.
+                - Every creature has believable abilities and limitations.
+                - Behaviors are consistent and narratively useful.
+                - Ecosystem roles are clear and connected to the world.
+                - Creatures are detailed enough for future story generation.
+                - No contradiction exists with the established story or world.
+                - The writing feels professionally developed.
+                - The creatures feel original, natural, ecologically alive, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
+
+    public static function systemsGenerator(): string
+    {
+        $prompt = "
+            You are a professional story system development AI, magic and technology designer, rules strategist, and story development expert.
+
+            Your task is to create the complete system foundation for a professionally developed Story Book.
+
+            This step focuses on defining the magic, technology, or special rule systems that govern the established story, world, characters, locations, factions, and creatures.
+
+            The systems must feel original, coherent, internally logical, narratively meaningful, and naturally connected to everything established before this step.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            The following established World Bible is authoritative:
+
+            {{world_bible}}
+
+            The following established locations are authoritative:
+
+            {{locations}}
+
+            The following established factions are authoritative:
+
+            {{factions}}
+
+            The following established creatures are authoritative:
+
+            {{creatures}}
+
+            Use the established foundation, characters, World Bible, locations, factions, and creatures as the primary source for all system decisions.
+
+            Maintain consistency with the established story, world, characters, locations, factions, and creatures.
+
+            Do not unnecessarily change, contradict, or replace the established creative direction.
+
+            Create systems that naturally emerge from and strengthen the established story, world, and characters.
+
+            ==================================================
+            SYSTEM-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            System-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful system requirements, independently make all necessary system decisions based on the established story context.
+
+            'Auto' means the AI has full creative freedom to determine the system design. Do not interpret 'Auto' as a system requirement or system detail.
+
+            If specific system information is provided, use it as creative direction and naturally incorporate the relevant requirements into the system design.
+
+            When making independent system decisions, prioritize:
+
+                - Story consistency
+                - World consistency
+                - Character fit
+                - Internal logic
+                - Clear mechanics
+                - Meaningful limitations
+                - Believable rules
+                - Narrative purpose
+                - Consequences and costs
+                - Future scene and chapter support
+
+            Regardless of the input, maintain consistency with the established story context.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Create the complete system foundation required for future Story Book development.
+
+            Develop:
+
+                1. Systems
+                2. Mechanics
+                3. Limitations
+                4. Rules
+
+            Every system must have a meaningful reason to exist within the story and world.
+
+            ==================================================
+            SYSTEMS
+            ==================================================
+
+            Create the important magic, technology, or special rule systems of the world.
+
+            For each system establish:
+
+                - System name
+                - System type
+                - Fundamental concept
+                - Source and origin
+                - How the system works
+                - Who can use the system
+                - How access is gained
+                - How the system functions in daily life
+                - How the system functions in conflict
+                - Relationship to the world
+                - Relationship to the story
+                - Relationship to the characters
+                - Relationship to the factions
+                - Relationship to the creatures
+                - Cultural understanding of the system
+                - Historical development of the system
+                - Current state of the system
+                - Narrative function
+
+            Systems must feel like living, internally coherent forces that shape the world.
+
+            ==================================================
+            MECHANICS
+            ==================================================
+
+            Define the concrete operation, techniques, and processes of each system.
+
+            For each system establish:
+
+                - Core mechanics
+                - Primary functions
+                - Methods of use
+                - Required resources or materials
+                - Required skills or knowledge
+                - Time and effort required
+                - Stages or levels of mastery
+                - Techniques and variations
+                - Interactions with other systems
+                - Interactions with the environment
+                - Side effects and consequences
+                - Unintended uses
+                - Failure conditions
+                - How mechanics affect the story
+                - How mechanics affect the characters
+
+            Mechanics must be specific enough to guide consistent story and scene development.
+
+            ==================================================
+            LIMITATIONS
+            ==================================================
+
+            Define what each system cannot do and what its use costs.
+
+            For each system establish:
+
+                - Core limitations
+                - Cost of use
+                - Energy or material requirements
+                - Physical and mental strain
+                - Time limitations
+                - Conditions and prerequisites
+                - Prohibited uses
+                - Countermeasures
+                - Resistance and immunities
+                - Risks and dangers
+                - Long-term consequences
+                - Social and legal restrictions
+                - Why the system is not used for everything
+                - How limitations affect the story
+                - How limitations affect the characters
+
+            Limitations must create meaningful constraints that make the system believable and narratively useful.
+
+            ==================================================
+            RULES
+            ==================================================
+
+            Define the clear, consistent rules that govern each system.
+
+            For each system establish:
+
+                - Fundamental rules
+                - Operating principles
+                - Rules of acquisition and learning
+                - Rules of use and application
+                - Rules of interaction and combination
+                - Rules of conflict and confrontation
+                - Rules of consequence and cost
+                - Rules of the world that restrict the system
+                - Rules accepted by society
+                - Rules enforced by law or authority
+                - Rules known to few
+                - Rules hidden from most
+                - Exceptions and edge cases
+                - How rules support internal logic
+                - How rules support the story
+                - How rules support the characters
+
+            Rules must be consistent enough that the story never contradicts its own system logic.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
+            ==================================================
+
+            Maintain consistency with the established foundation, characters, World Bible, locations, factions, and creatures.
+
+            Ensure:
+
+                - Systems fit the established world rules.
+                - Systems respect the established environment.
+                - Systems connect to the established characters.
+                - Systems support the established factions and creatures.
+                - Systems support the established story conflict.
+                - System history connects to the established world history.
+                - No system contradicts established story information.
+
+            If the established context leaves a system unspecified, make a strong creative decision that best supports the existing story, world, and characters.
+
+            ==================================================
+            FUTURE STORY DEVELOPMENT
+            ==================================================
+
+            Design the system foundation so it can support future generation steps.
+
+            The systems should provide enough information for future generation of:
+
+                - Timeline
+                - Scene plans
+                - Chapter plans
+                - Dialogue
+                - Story events
+                - Conflicts and confrontations
+                - Problem solving
+                - Illustrations
+                - Visual system references
+
+            Maintain system consistency so future generations can use this foundation as a reliable reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Create systems with the judgment of an experienced professional writer, world designer, and rules architect.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Strong internal logic
+                - Specific and meaningful details
+                - Believable mechanics
+                - Clear limitations and costs
+                - Consistent rules
+                - Narrative relevance
+                - Fresh and distinctive ideas
+
+            Avoid:
+
+                - Generic magic or technology templates
+                - Systems without clear logic
+                - Unlimited or overpowered systems
+                - Inconsistent or arbitrary rules
+                - Systems disconnected from the story, world, and characters
+                - Unnecessary complexity
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The system foundation should:
+
+                - Fit the established Story Book foundation.
+                - Fit the established characters.
+                - Fit the established World Bible.
+                - Fit the established locations, factions, and creatures.
+                - Create coherent and memorable systems.
+                - Give systems clear mechanics.
+                - Provide meaningful limitations.
+                - Provide consistent rules.
+                - Support future story development.
+                - Support future scene and chapter generation.
+                - Maintain thematic coherence.
+                - Feel original, natural, internally logical, and professionally conceived.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            {
+                \"systems\": [
+                    {
+                        \"name\": \"\",
+                        \"type\": \"\",
+                        \"fundamental_concept\": \"\",
+                        \"source_and_origin\": \"\",
+                        \"how_the_system_works\": \"\",
+                        \"who_can_use\": \"\",
+                        \"how_access_is_gained\": \"\",
+                        \"use_in_daily_life\": \"\",
+                        \"use_in_conflict\": \"\",
+                        \"relationship_to_story\": \"\",
+                        \"relationship_to_characters\": \"\",
+                        \"relationship_to_factions\": \"\",
+                        \"relationship_to_creatures\": \"\",
+                        \"cultural_understanding\": \"\",
+                        \"historical_development\": \"\",
+                        \"current_state\": \"\",
+                        \"narrative_function\": \"\"
+                    }
+                ],
+                \"mechanics\": [
+                    {
+                        \"system_name\": \"\",
+                        \"core_mechanics\": [],
+                        \"primary_functions\": [],
+                        \"methods_of_use\": [],
+                        \"required_resources\": [],
+                        \"required_skills\": [],
+                        \"time_and_effort\": \"\",
+                        \"stages_of_mastery\": [],
+                        \"techniques_and_variations\": [],
+                        \"interactions_with_other_systems\": [],
+                        \"interactions_with_environment\": [],
+                        \"side_effects\": [],
+                        \"unintended_uses\": [],
+                        \"failure_conditions\": [],
+                        \"effect_on_story\": \"\",
+                        \"effect_on_characters\": \"\"
+                    }
+                ],
+                \"limitations\": [
+                    {
+                        \"system_name\": \"\",
+                        \"core_limitations\": [],
+                        \"cost_of_use\": \"\",
+                        \"energy_and_material_requirements\": [],
+                        \"physical_and_mental_strain\": \"\",
+                        \"time_limitations\": \"\",
+                        \"conditions_and_prerequisites\": [],
+                        \"prohibited_uses\": [],
+                        \"countermeasures\": [],
+                        \"resistance_and_immunities\": [],
+                        \"risks_and_dangers\": [],
+                        \"long_term_consequences\": [],
+                        \"social_and_legal_restrictions\": [],
+                        \"why_not_used_everywhere\": \"\",
+                        \"effect_on_story\": \"\",
+                        \"effect_on_characters\": \"\"
+                    }
+                ],
+                \"rules\": [
+                    {
+                        \"system_name\": \"\",
+                        \"fundamental_rules\": [],
+                        \"operating_principles\": [],
+                        \"rules_of_acquisition\": [],
+                        \"rules_of_use\": [],
+                        \"rules_of_interaction\": [],
+                        \"rules_of_conflict\": [],
+                        \"rules_of_consequence\": [],
+                        \"world_restrictions\": [],
+                        \"societal_rules\": [],
+                        \"enforced_rules\": [],
+                        \"secret_rules\": [],
+                        \"exceptions_and_edge_cases\": [],
+                        \"support_for_internal_logic\": \"\",
+                        \"support_for_story\": \"\",
+                        \"support_for_characters\": \"\"
+                    }
+                ]
+            }
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - Systems directly support the established Story Book.
+                - Systems fit the established world, characters, factions, and creatures.
+                - Every system has clear and coherent mechanics.
+                - Limitations are meaningful and create constraint.
+                - Rules are consistent and internally logical.
+                - Systems are detailed enough for future story generation.
+                - No contradiction exists with the established story or world.
+                - The writing feels professionally developed.
+                - The systems feel original, natural, internally logical, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
+
+    public static function timelineGenerator(): string
+    {
+        $prompt = "
+            You are a professional story timeline development AI, chronology specialist, history architect, and story development expert.
+
+            Your task is to create the complete timeline foundation for a professionally developed Story Book.
+
+            This step focuses on defining the chronological history and important events that connect the established story, world, characters, locations, factions, creatures, and systems.
+
+            The timeline must feel original, logically coherent, historically meaningful, narratively purposeful, and naturally connected to everything established before this step.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            The following established World Bible is authoritative:
+
+            {{world_bible}}
+
+            The following established locations are authoritative:
+
+            {{locations}}
+
+            The following established factions are authoritative:
+
+            {{factions}}
+
+            The following established creatures are authoritative:
+
+            {{creatures}}
+
+            The following established systems are authoritative:
+
+            {{systems}}
+
+            Use the established foundation, characters, World Bible, locations, factions, creatures, and systems as the primary source for all timeline decisions.
+
+            Maintain consistency with the established story, world, characters, locations, factions, creatures, and systems.
+
+            Do not unnecessarily change, contradict, or replace the established creative direction.
+
+            Create a timeline that naturally emerges from and connects the established story, world, and characters.
+
+            ==================================================
+            TIMELINE-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            Timeline-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful timeline requirements, independently make all necessary timeline decisions based on the established story context.
+
+            'Auto' means the AI has full creative freedom to determine the timeline design. Do not interpret 'Auto' as a timeline requirement or timeline detail.
+
+            If specific timeline information is provided, use it as creative direction and naturally incorporate the relevant requirements into the timeline design.
+
+            When making independent timeline decisions, prioritize:
+
+                - Story consistency
+                - World consistency
+                - Character fit
+                - Logical chronology
+                - Cause-and-effect relationships
+                - Narrative purpose
+                - Meaningful milestones
+                - Emotional progression
+                - Historical depth
+                - Future scene and chapter support
+
+            Regardless of the input, maintain consistency with the established story context.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Create the complete timeline foundation required for future Story Book development.
+
+            Develop:
+
+                1. Timeline
+                2. Major Events
+                3. Milestones
+                4. Historical Flow
+
+            Every event must have a meaningful connection to the established story and world.
+
+            ==================================================
+            TIMELINE
+            ==================================================
+
+            Create the chronological sequence of important events in the world and story.
+
+            For each event establish:
+
+                - Event name
+                - Time period
+                - Chronological position
+                - Event type
+                - Location
+                - Characters involved
+                - Factions involved
+                - Creatures involved
+                - Systems involved
+                - Event description
+                - Short-term consequences
+                - Long-term consequences
+                - Importance to the world
+                - Importance to the story
+                - Emotional significance
+                - Narrative function
+
+            Events must connect through logical cause and effect.
+
+            ==================================================
+            MAJOR EVENTS
+            ==================================================
+
+            Identify and develop the most significant events that shaped the world and drive the story.
+
+            For each major event establish:
+
+                - Event name
+                - Time period
+                - Location
+                - Participants
+                - Background and causes
+                - What happened
+                - Immediate effects
+                - Long-term effects
+                - Turning point consequences
+                - Importance to the world
+                - Importance to the story
+                - Importance to the characters
+                - Connection to the present story
+                - Connection to the central conflict
+                - How it shapes future events
+
+            Major events must explain why the story world and characters are in their current state.
+
+            ==================================================
+            MILESTONES
+            ==================================================
+
+            Define the important markers of change, progress, and development.
+
+            For each milestone establish:
+
+                - Milestone name
+                - Time period
+                - Milestone type
+                - What changed
+                - Who was affected
+                - Significance to the world
+                - Significance to the story
+                - Significance to the characters
+                - Character development connection
+                - Relationship development connection
+                - Symbolic or thematic meaning
+                - Connection to future events
+
+            Milestones must represent meaningful points of change within the story and world.
+
+            ==================================================
+            HISTORICAL FLOW
+            ==================================================
+
+            Describe how the world and story developed over time as a connected sequence.
+
+            Establish:
+
+                - Major historical eras
+                - The progression from each era to the next
+                - Key transitions between eras
+                - How the established world history developed
+                - How the established culture developed
+                - How the established factions developed
+                - How the established creatures developed
+                - How the established systems developed
+                - How the established characters are shaped by history
+                - The chain of cause and effect across history
+                - How the past leads to the present story
+                - How the present story is positioned within history
+                - The overall direction of history
+                - What the future may hold
+
+            Historical flow must make the world and story feel connected across time.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
+            ==================================================
+
+            Maintain consistency with the established foundation, characters, World Bible, locations, factions, creatures, and systems.
+
+            Ensure:
+
+                - Events fit the established world history.
+                - Events connect to the established characters.
+                - Events respect the established factions and creatures.
+                - Events respect the established systems.
+                - Events support the established story conflict.
+                - The chronology is logically consistent.
+                - Character histories align with world history.
+                - No event contradicts established story information.
+
+            If the established context leaves an event unspecified, make a strong creative decision that best supports the existing story, world, and characters.
+
+            ==================================================
+            FUTURE STORY DEVELOPMENT
+            ==================================================
+
+            Design the timeline foundation so it can support future generation steps.
+
+            The timeline should provide enough information for future generation of:
+
+                - Scene plans
+                - Chapter plans
+                - Dialogue
+                - Story events
+                - Character development
+                - Conflicts and confrontations
+                - Flashbacks and history
+                - Future story direction
+                - Illustrations
+                - Visual historical references
+
+            Maintain timeline consistency so future generations can use this foundation as a reliable reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Create the timeline with the judgment of an experienced professional writer and history architect.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Strong chronological logic
+                - Specific and meaningful details
+                - Believable cause and effect
+                - Purposeful historical development
+                - Meaningful emotional milestones
+                - Narrative relevance
+                - Fresh and distinctive ideas
+
+            Avoid:
+
+                - Generic history templates
+                - Events without meaningful consequence
+                - Contradictory chronology
+                - Disconnected historical details
+                - Events that do not serve the established story
+                - Unnecessary complexity
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The timeline foundation should:
+
+                - Fit the established Story Book foundation.
+                - Fit the established characters.
+                - Fit the established World Bible.
+                - Fit the established locations, factions, creatures, and systems.
+                - Create a logically coherent chronology.
+                - Identify meaningful major events.
+                - Provide important milestones.
+                - Establish a clear historical flow.
+                - Align character and world history.
+                - Support future story development.
+                - Support future scene and chapter generation.
+                - Maintain thematic coherence.
+                - Feel original, natural, historically alive, and professionally conceived.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            {
+                \"timeline\": [
+                    {
+                        \"event_name\": \"\",
+                        \"time_period\": \"\",
+                        \"chronological_position\": \"\",
+                        \"event_type\": \"\",
+                        \"location\": \"\",
+                        \"characters_involved\": [],
+                        \"factions_involved\": [],
+                        \"creatures_involved\": [],
+                        \"systems_involved\": [],
+                        \"event_description\": \"\",
+                        \"short_term_consequences\": [],
+                        \"long_term_consequences\": [],
+                        \"importance_to_world\": \"\",
+                        \"importance_to_story\": \"\",
+                        \"emotional_significance\": \"\",
+                        \"narrative_function\": \"\"
+                    }
+                ],
+                \"major_events\": [
+                    {
+                        \"event_name\": \"\",
+                        \"time_period\": \"\",
+                        \"location\": \"\",
+                        \"participants\": [],
+                        \"background_and_causes\": \"\",
+                        \"what_happened\": \"\",
+                        \"immediate_effects\": [],
+                        \"long_term_effects\": [],
+                        \"turning_point_consequences\": [],
+                        \"importance_to_world\": \"\",
+                        \"importance_to_story\": \"\",
+                        \"importance_to_characters\": \"\",
+                        \"connection_to_present_story\": \"\",
+                        \"connection_to_central_conflict\": \"\",
+                        \"shapes_future_events\": \"\"
+                    }
+                ],
+                \"milestones\": [
+                    {
+                        \"milestone_name\": \"\",
+                        \"time_period\": \"\",
+                        \"milestone_type\": \"\",
+                        \"what_changed\": \"\",
+                        \"who_was_affected\": [],
+                        \"significance_to_world\": \"\",
+                        \"significance_to_story\": \"\",
+                        \"significance_to_characters\": \"\",
+                        \"character_development_connection\": \"\",
+                        \"relationship_development_connection\": \"\",
+                        \"symbolic_meaning\": \"\",
+                        \"connection_to_future_events\": \"\"
+                    }
+                ],
+                \"historical_flow\": {
+                    \"major_historical_eras\": [],
+                    \"era_progression\": [],
+                    \"key_transitions\": [],
+                    \"development_of_world_history\": \"\",
+                    \"development_of_culture\": \"\",
+                    \"development_of_factions\": \"\",
+                    \"development_of_creatures\": \"\",
+                    \"development_of_systems\": \"\",
+                    \"character_shaping_by_history\": \"\",
+                    \"chain_of_cause_and_effect\": [],
+                    \"how_past_leads_to_present\": \"\",
+                    \"present_story_position\": \"\",
+                    \"overall_direction_of_history\": \"\",
+                    \"future_direction\": \"\"
+                }
+            }
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - The timeline directly supports the established Story Book.
+                - Events fit the established world, characters, factions, creatures, and systems.
+                - The chronology is logical and consistent.
+                - Major events meaningfully shape the present story.
+                - Milestones represent real points of change.
+                - Historical flow connects all story elements across time.
+                - Character and world history are aligned.
+                - The timeline is detailed enough for future story generation.
+                - No contradiction exists with the established story or world.
+                - The writing feels professionally developed.
+                - The timeline feels original, natural, historically coherent, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
+
     public static function generateFullPrompt(string $partialPrompt, array $receivedInputs): string
     {
-        $search  = [];
+        $search = [];
         $replace = [];
 
         foreach ($receivedInputs as $key => $value) {
-            $search[]  = '{{' . $key . '}}';
+            $search[] = '{{'.$key.'}}';
             $replace[] = $value ?? '';
         }
 
