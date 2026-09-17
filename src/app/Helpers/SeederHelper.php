@@ -482,6 +482,30 @@ class SeederHelper
                 'prompt'               => AiPromptGeneratorHelper::characterGenerator()
             ],
 
+            (object) [
+                'name'                 => AiPromptGeneratorHelper::AI_PROMPT_NAME_WORLD_BIBLE_GENERATOR,
+                'code'                 => "WorldBibleGenerator",
+                'step_number'          => 3,
+                'depend_on_prompt_ids' => null,
+                'prompt'               => AiPromptGeneratorHelper::worldBibleGenerator()
+            ],
+
+            (object) [
+                'name'                 => AiPromptGeneratorHelper::AI_PROMPT_NAME_LOCATION_GENERATOR,
+                'code'                 => "LocationGenerator",
+                'step_number'          => 4,
+                'depend_on_prompt_ids' => null,
+                'prompt'               => AiPromptGeneratorHelper::locationsGenerator()
+            ],
+
+            (object) [
+                'name'                 => AiPromptGeneratorHelper::AI_PROMPT_NAME_FACTION_GENERATOR,
+                'code'                 => "FactionGenerator",
+                'step_number'          => 5,
+                'depend_on_prompt_ids' => null,
+                'prompt'               => AiPromptGeneratorHelper::factionsGenerator()
+            ],
+
         ]);
     }
 

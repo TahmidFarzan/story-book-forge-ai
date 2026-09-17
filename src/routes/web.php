@@ -252,6 +252,13 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
                 Route::patch('page-plan', [StoryBookController::class, 'generatePagePlan'])->name('page-plan');
             });
 
+            Route::prefix('regenerate')->name('regenerate.')->group(function () {
+                Route::patch('characters', [StoryBookController::class, 'generateCharacters'])->name('characters');
+                Route::patch('world-vibe', [StoryBookController::class, 'generateWorldVibe'])->name('world-vibe');
+                Route::patch('locations', [StoryBookController::class, 'generateLocations'])->name('locations');
+                Route::patch('factions', [StoryBookController::class, 'generateFactions'])->name('factions');
+            });
+
             Route::delete('delete', [StoryBookController::class, 'delete'])->name('delete');
         });
     });

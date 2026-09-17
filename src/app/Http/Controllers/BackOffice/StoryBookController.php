@@ -5,6 +5,9 @@ namespace App\Http\Controllers\BackOffice;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoryBookFoundationRequest;
 use App\Http\Requests\StoryBookCharactersRequest;
+use App\Http\Requests\StoryBookLocationsRequest;
+use App\Http\Requests\StoryBookWorldVibeRequest;
+use App\Http\Requests\StoryBookFactionsRequest;
 use App\Services\BackOffice\StoryBookService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -90,6 +93,45 @@ class StoryBookController extends Controller
         Gate::authorize('update', $storyBook);
 
         $result = $this->storyBookService->generateCharacters($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ["slug" => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status'  => $result['status'],
+        ]);
+    }
+
+    public function generateWorldVibe(StoryBookWorldVibeRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateWorldBible($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ["slug" => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status'  => $result['status'],
+        ]);
+    }
+
+    public function generateLocations(StoryBookLocationsRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateLocations($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ["slug" => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status'  => $result['status'],
+        ]);
+    }
+
+    public function generateFactions(StoryBookFactionsRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateFactions($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ["slug" => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],

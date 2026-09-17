@@ -6,6 +6,9 @@ class AiPromptGeneratorHelper
 {
     public const AI_PROMPT_NAME_FOUNDATION_GENERATOR       = 'Foundation Generator';
     public const AI_PROMPT_NAME_CHARACTER_GENERATOR = 'Character Generator';
+    public const AI_PROMPT_NAME_WORLD_BIBLE_GENERATOR = 'World Bible Generator';
+    public const AI_PROMPT_NAME_LOCATION_GENERATOR = 'Location Generator';
+    public const AI_PROMPT_NAME_FACTION_GENERATOR = 'Faction Generator';
 
     public static function foundationGenerator(): string
     {
@@ -836,6 +839,1182 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
+
+    public static function worldBibleGenerator(): string
+    {
+        $prompt = "
+            You are a professional story world development AI, world-building specialist, narrative environment strategist, and story development expert.
+
+            Your task is to create the complete World Bible for a professionally developed Story Book.
+
+            This step focuses on defining the world in which the established Story Book foundation and characters exist.
+
+            The World Bible must feel original, alive, consistent, deeply considered, and naturally connected to the established story and its characters.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            Use the established foundation and characters as the primary source for all world decisions.
+
+            Maintain consistency with the established Story Book foundation and characters.
+
+            Do not unnecessarily change, contradict, or replace the established story direction.
+
+            Create a world that naturally emerges from and strengthens the established story and its characters.
+
+            ==================================================
+            WORLD-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            World-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful world requirements, independently make all necessary world decisions based on the established Story Book foundation and characters.
+
+            'Auto' means the AI has full creative freedom to determine the world design. Do not interpret 'Auto' as a world requirement or world detail.
+
+            If specific world information is provided, use it as creative direction and naturally incorporate the relevant requirements into the world design.
+
+            When making independent world decisions, prioritize:
+
+                - Story consistency
+                - Character fit
+                - World uniqueness
+                - Believable geography
+                - Coherent rules
+                - Meaningful culture
+                - Rich history
+                - Layered lore
+                - Emotional atmosphere
+                - Narrative purpose
+                - The established foundation, characters, and themes
+
+            Regardless of the input, maintain consistency with the established Story Book foundation and characters.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Create the complete World Bible required for future Story Book development.
+
+            Develop:
+
+                1. World Overview
+                2. World Rules
+                3. Culture and History
+                4. Lore
+
+            Every section must feel intentional, connected, and directly useful to the established story.
+
+            ==================================================
+            WORLD OVERVIEW
+            ==================================================
+
+            Create a compelling and cohesive introduction to the story world.
+
+            Establish:
+
+                - World name
+                - World identity
+                - World concept
+                - World scale
+                - Core essence of the world
+                - Dominant atmosphere
+                - Primary environment
+                - Important civilizations
+                - Central power dynamics
+                - How the world shapes daily life
+                - How the world connects to the story
+                - How the world connects to the characters
+                - Significant world-level challenges
+                - Meaningful world-level opportunities
+
+            The overview must give a reader an immediate, vivid, and accurate sense of the world.
+
+            ==================================================
+            WORLD RULES
+            ==================================================
+
+            Define the physical, social, and unexplained rules that govern the world.
+
+            Establish:
+
+                - Natural laws unique to the world
+                - Environmental rules and limitations
+                - Social rules and expectations
+                - Political rules and structures
+                - Economic rules and systems
+                - Legal rules and consequences
+                - Rules of conflict and violence
+                - Rules of communication and knowledge
+                - Rules of travel and distances
+                - Rules of survival and resources
+                - Rules of belief and religion
+                - Rules of exceptional abilities where relevant
+                - Limitations and costs of any extraordinary elements
+                - What is forbidden
+                - What is unspoken
+                - What the established characters accept
+                - What the established characters resist
+
+            Rules must feel consistent, believable, and narratively useful.
+
+            Rules should create meaningful limitations and possibilities for the story.
+
+            ==================================================
+            CULTURE AND HISTORY
+            ==================================================
+
+            Develop the cultures and histories that give the world depth.
+
+            Establish:
+
+                - Major cultures
+                - Cultural identities
+                - Cultural values
+                - Cultural traditions
+                - Cultural customs and rituals
+                - Daily life patterns
+                - Social classes
+                - Family and community structures
+                - Education and knowledge
+                - Art, music, and storytelling
+                - Cuisine and celebration
+                - Dress and appearance
+                - Language and communication
+                - Religion and belief systems
+                - Philosophy and worldview
+                - Taboos and sensitive subjects
+                - Relations between different cultures
+                - Cultural conflict areas
+
+            For history, establish:
+
+                - Historical ages and eras
+                - Important founding events
+                - Key historical figures
+                - Major wars and conflicts
+                - Significant discoveries
+                - Periods of peace and prosperity
+                - Periods of crisis and loss
+                - Important migrations or settlements
+                - Rise and fall of powers
+                - Historical turning points
+                - How history shapes the present
+                - How history shapes the story
+                - How history shapes the characters
+
+            History must feel layered and connected to the present circumstances of the story.
+
+            ==================================================
+            LORE
+            ==================================================
+
+            Create the deep knowledge, myths, mysteries, and beliefs of the world.
+
+            Establish:
+
+                - Founding myths
+                - Creation stories
+                - Legendary figures
+                - Heroic tales
+                - Prophecies and omens
+                - Sacred places
+                - Forbidden knowledge
+                - Hidden truths
+                - Mysteries of the world
+                - Symbolic meanings
+                - Myths about important locations
+                - Folklore and legends
+                - Beliefs about the unexplained
+                - Knowledge known to few
+                - Knowledge kept from many
+                - World secrets with narrative relevance
+                - How lore influences the story
+                - How lore influences the characters
+                - Lore that supports future story development
+
+            Lore must feel meaningful, mysterious where appropriate, and connected to the story.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY
+            ==================================================
+
+            Maintain consistency with the established Story Book foundation and characters.
+
+            Ensure:
+
+                - The world supports the established narrative.
+                - The world fits the established setting direction.
+                - The world explains the established character backgrounds.
+                - The world creates meaningful conflict and challenge.
+                - The world provides opportunities for character development.
+                - The world matches the established themes.
+                - The world respects the established audience and story type.
+                - The world does not contradict established story information.
+                - The world gives future generations a reliable reference.
+
+            If the established foundation leaves something unspecified, make a strong creative decision that best supports the existing story and characters.
+
+            ==================================================
+            FUTURE STORY DEVELOPMENT
+            ==================================================
+
+            Design the World Bible so it can support future generation steps.
+
+            The World Bible should provide enough information for future generation of:
+
+                - Locations
+                - Factions
+                - Creatures
+                - Systems
+                - Timeline
+                - Scenes
+                - Chapters
+                - Dialogue
+                - Story events
+                - Illustrations
+                - Visual world references
+
+            Maintain world consistency so future generations can use this World Bible as a reliable reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Create the world with the judgment of an experienced professional world-builder and writer.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Strong world-building depth
+                - Specific and meaningful details
+                - Believable cultural and historical logic
+                - Organic connections between world and story
+                - Purposeful world elements
+                - Rich but focused world information
+                - Fresh and distinctive ideas
+                - Consistent and coherent world logic
+
+            Avoid:
+
+                - Generic fantasy or sci-fi world templates
+                - Material that does not serve the established story
+                - Overcomplicated or unnecessary world clutter
+                - Contradictory world rules
+                - Shallow cultural stereotypes
+                - History that is disconnected from the present story
+                - Lore that exists only for decoration
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The World Bible should:
+
+                - Fit the established Story Book foundation.
+                - Fit the established characters.
+                - Strengthen the existing narrative.
+                - Create a vivid and memorable world.
+                - Provide clear and consistent world rules.
+                - Give the world meaningful cultural and historical depth.
+                - Provide lore that supports the story.
+                - Support future story development.
+                - Support future location and faction generation.
+                - Maintain thematic coherence.
+                - Feel original, natural, culturally sensitive, and professionally conceived.
+                - Provide a reliable reference for all future generation steps.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            {
+                \"world_overview\": {
+                    \"world_name\": \"\",
+                    \"identity\": \"\",
+                    \"concept\": \"\",
+                    \"scale\": \"\",
+                    \"atmosphere\": \"\",
+                    \"primary_environment\": \"\",
+                    \"civilizations\": [],
+                    \"power_dynamics\": \"\",
+                    \"connection_to_story\": \"\",
+                    \"connection_to_characters\": \"\",
+                    \"world_challenges\": [],
+                    \"world_opportunities\": []
+                },
+                \"world_rules\": {
+                    \"natural_laws\": [],
+                    \"environmental_rules\": [],
+                    \"social_rules\": [],
+                    \"political_rules\": [],
+                    \"economic_rules\": [],
+                    \"legal_rules\": [],
+                    \"conflict_rules\": [],
+                    \"travel_rules\": [],
+                    \"survival_rules\": [],
+                    \"belief_rules\": [],
+                    \"extraordinary_element_rules\": [],
+                    \"limitations_and_costs\": [],
+                    \"forbidden_things\": [],
+                    \"accepted_by_characters\": [],
+                    \"resisted_by_characters\": []
+                },
+                \"culture_and_history\": {
+                    \"cultures\": [],
+                    \"cultural_values\": [],
+                    \"traditions_and_customs\": [],
+                    \"daily_life\": \"\",
+                    \"social_structure\": \"\",
+                    \"belief_systems\": [],
+                    \"philosophy_and_worldview\": \"\",
+                    \"cultural_relations\": [],
+                    \"cultural_conflicts\": [],
+                    \"historical_eras\": [],
+                    \"founding_events\": [],
+                    \"historical_figures\": [],
+                    \"major_conflicts\": [],
+                    \"significant_discoveries\": [],
+                    \"powerful_rises_and_falls\": [],
+                    \"historical_turning_points\": [],
+                    \"effect_on_present\": \"\",
+                    \"effect_on_story\": \"\",
+                    \"effect_on_characters\": \"\"
+                },
+                \"lore\": {
+                    \"creation_stories\": [],
+                    \"founding_myths\": [],
+                    \"legendary_figures\": [],
+                    \"heroic_tales\": [],
+                    \"prophecies_and_omens\": [],
+                    \"sacred_places\": [],
+                    \"forbidden_knowledge\": [],
+                    \"hidden_truths\": [],
+                    \"world_mysteries\": [],
+                    \"symbolic_meanings\": [],
+                    \"folklore_and_legends\": [],
+                    \"influence_on_story\": \"\",
+                    \"influence_on_characters\": \"\",
+                    \"support_for_future_development\": \"\"
+                }
+            }
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - The world directly supports the established foundation.
+                - The world directly supports the established characters.
+                - The world overview is vivid and memorable.
+                - World rules are clear, consistent, and useful.
+                - Culture and history feel layered and meaningful.
+                - Lore is connected to the story and its characters.
+                - World information is detailed enough for future story generation.
+                - No contradiction exists with the established foundation and characters.
+                - The writing feels professionally developed.
+                - The world feels original, natural, alive, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
+
+    public static function locationsGenerator(): string
+    {
+        $prompt = "
+            You are a professional story world location development AI, map design specialist, setting strategist, and story development expert.
+
+            Your task is to create the complete location foundation for a professionally developed Story Book.
+
+            This step focuses on defining the places where the established story, characters, and world live.
+
+            The locations must feel original, vivid, geographically coherent, narratively purposeful, and naturally connected to the established World Bible, foundation, and characters.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            The following established World Bible is authoritative:
+
+            {{world_bible}}
+
+            Use the established foundation, characters, and World Bible as the primary source for all location decisions.
+
+            Maintain consistency with the established Story Book foundation, characters, and world.
+
+            Do not unnecessarily change, contradict, or replace the established story, world, or character direction.
+
+            Create locations that naturally emerge from and strengthen the established world and story.
+
+            ==================================================
+            LOCATION-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            Location-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful location requirements, independently make all necessary location decisions based on the established story context.
+
+            'Auto' means the AI has full creative freedom to determine the location design. Do not interpret 'Auto' as a location requirement or location detail.
+
+            If specific location information is provided, use it as creative direction and naturally incorporate the relevant requirements into the location design.
+
+            When making independent location decisions, prioritize:
+
+                - Story consistency
+                - World consistency
+                - Character fit
+                - Location uniqueness
+                - Believable geography
+                - Narrative purpose
+                - Emotional atmosphere
+                - Logical connections between places
+                - Visual potential for illustrations
+                - Future scene and chapter support
+
+            Regardless of the input, maintain consistency with the established story context.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Create the complete location foundation required for future Story Book development.
+
+            Develop:
+
+                1. Locations
+                2. Regions
+                3. Landmarks
+                4. Environment Details
+
+            Every location must have a meaningful reason to exist within the story.
+
+            ==================================================
+            LOCATIONS
+            ==================================================
+
+            Create the important individual places where scenes, events, and character moments occur.
+
+            For each important location establish:
+
+                - Location name
+                - Location type
+                - Geographic position
+                - Size and scale
+                - Physical description
+                - Atmosphere and mood
+                - History and significance
+                - Purpose within the world
+                - Purpose within the story
+                - Characters associated with the location
+                - Events likely to occur there
+                - Important visual features
+                - Possible changes or threats
+                - The emotional feeling of the place
+
+            Locations must feel detailed, usable for scene planning, and strongly connected to the story.
+
+            ==================================================
+            REGIONS
+            ==================================================
+
+            Define the larger geographical areas that organize the world.
+
+            For each region establish:
+
+                - Region name
+                - Region type
+                - Boundaries and position
+                - Climate and weather
+                - Terrain and geography
+                - Natural resources
+                - Major settlements
+                - Primary activities and economy
+                - Culture and characteristics
+                - Significance to the world
+                - Significance to the story
+                - Characters associated with the region
+                - Key locations within the region
+                - Neighboring regions
+                - Relations and tensions
+                - Accessibility and travel conditions
+                - Challenges and dangers
+                - Visual identity
+
+            Regions must form a believable, organized geography that supports the story.
+
+            ==================================================
+            LANDMARKS
+            ==================================================
+
+            Create the distinctive places and structures that make the world memorable.
+
+            For each landmark establish:
+
+                - Landmark name
+                - Landmark type
+                - Location
+                - Physical description
+                - Visual appearance
+                - Historical significance
+                - Cultural significance
+                - Story significance
+                - Mysteries or legends attached to it
+                - Function or purpose
+                - Accessibility
+                - Danger or challenge associated
+                - Emotional or symbolic meaning
+                - Potential for illustrations
+
+            Landmarks should be visually strong and narratively memorable.
+
+            ==================================================
+            ENVIRONMENT DETAILS
+            ==================================================
+
+            Define the sensory and physical details of the world that make it feel alive.
+
+            Establish:
+
+                - Seasonal patterns
+                - Weather conditions
+                - Climate zones
+                - Sky and light conditions
+                - Flora and natural growth
+                - Fauna and wildlife
+                - Water sources
+                - Soil and natural materials
+                - Natural sounds and silences
+                - Scents and smells
+                - Textures and materials
+                - Time of day atmosphere
+                - Environmental dangers
+                - Resource availability
+                - How the environment affects daily life
+                - How the environment affects the story
+                - How the environment affects the characters
+                - How the environment supports illustrations
+
+            Environment details must make the world feel concrete, sensory, and imaginable.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
+            ==================================================
+
+            Maintain consistency with the established Story Book foundation, characters, and World Bible.
+
+            Ensure:
+
+                - Locations fit the established World Bible.
+                - Locations support the established characters.
+                - Locations enable the established story events.
+                - Geography is believable and coherent.
+                - Places have logical relationships with one another.
+                - Location history connects to world history.
+                - Locations respect the established atmosphere and rules.
+                - No location contradicts established world information.
+
+            If the established context leaves a location unspecified, make a strong creative decision that best supports the existing story, world, and characters.
+
+            ==================================================
+            FUTURE STORY DEVELOPMENT
+            ==================================================
+
+            Design the location foundation so it can support future generation steps.
+
+            The locations should provide enough information for future generation of:
+
+                - Factions
+                - Creatures
+                - Timeline
+                - Scene plans
+                - Chapter plans
+                - Dialogue
+                - Story events
+                - Illustrations
+                - Visual environment references
+
+            Maintain location consistency so future generations can use this foundation as a reliable reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Create locations with the judgment of an experienced professional writer and world-builder.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Strong place identity
+                - Specific and meaningful details
+                - Believable geography and ecology
+                - Vivid sensory description
+                - Purposeful location design
+                - Emotional atmosphere
+                - Fresh and distinctive places
+                - Clear cause-and-effect between place and story
+
+            Avoid:
+
+                - Generic place descriptions
+                - Locations without narrative purpose
+                - Geographically impossible arrangements when avoided by the world
+                - Repetitive environments
+                - Description that does not support the story
+                - Places disconnected from the established world and characters
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The location foundation should:
+
+                - Fit the established Story Book foundation.
+                - Fit the established characters.
+                - Fit the established World Bible.
+                - Create memorable and usable locations.
+                - Provide believable geographical organization.
+                - Provide landmarks that support the story.
+                - Provide environment details that make the world feel alive.
+                - Support future story development.
+                - Support future scene and chapter generation.
+                - Maintain thematic coherence.
+                - Feel original, natural, vivid, and professionally conceived.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            {
+                \"locations\": [
+                    {
+                        \"name\": \"\",
+                        \"type\": \"\",
+                        \"geographic_position\": \"\",
+                        \"size_and_scale\": \"\",
+                        \"physical_description\": \"\",
+                        \"atmosphere_and_mood\": \"\",
+                        \"history_and_significance\": \"\",
+                        \"purpose_in_story\": \"\",
+                        \"associated_characters\": [],
+                        \"possible_events\": [],
+                        \"visual_features\": [],
+                        \"threats_and_changes\": [],
+                        \"emotional_feeling\": \"\"
+                    }
+                ],
+                \"regions\": [
+                    {
+                        \"name\": \"\",
+                        \"type\": \"\",
+                        \"boundaries_and_position\": \"\",
+                        \"climate_and_weather\": \"\",
+                        \"terrain_and_geography\": \"\",
+                        \"natural_resources\": [],
+                        \"major_settlements\": [],
+                        \"activities_and_economy\": \"\",
+                        \"culture_and_characteristics\": \"\",
+                        \"significance_to_story\": \"\",
+                        \"associated_characters\": [],
+                        \"key_locations\": [],
+                        \"neighboring_regions\": [],
+                        \"travel_conditions\": \"\",
+                        \"challenges_and_dangers\": [],
+                        \"visual_identity\": \"\"
+                    }
+                ],
+                \"landmarks\": [
+                    {
+                        \"name\": \"\",
+                        \"type\": \"\",
+                        \"location\": \"\",
+                        \"physical_description\": \"\",
+                        \"historical_significance\": \"\",
+                        \"cultural_significance\": \"\",
+                        \"story_significance\": \"\",
+                        \"mysteries_and_legends\": [],
+                        \"function_and_purpose\": \"\",
+                        \"accessibility\": \"\",
+                        \"dangers_and_challenges\": [],
+                        \"symbolic_meaning\": \"\"
+                    }
+                ],
+                \"environment_details\": {
+                    \"seasons\": [],
+                    \"weather_conditions\": [],
+                    \"climate_zones\": [],
+                    \"sky_and_light\": \"\",
+                    \"flora\": [],
+                    \"fauna\": [],
+                    \"water_sources\": [],
+                    \"natural_sounds\": \"\",
+                    \"scents_and_smells\": [],
+                    \"textures_and_materials\": [],
+                    \"environmental_dangers\": [],
+                    \"resource_availability\": \"\",
+                    \"effect_on_daily_life\": \"\",
+                    \"effect_on_story\": \"\",
+                    \"effect_on_characters\": \"\"
+                }
+            }
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - Locations directly support the established Story Book.
+                - Locations fit the established World Bible and characters.
+                - Locations are detailed enough for scene and chapter generation.
+                - Regions form a believable and organized geography.
+                - Landmarks are visually memorable and narratively useful.
+                - Environment details make the world feel concrete and alive.
+                - No contradiction exists with the established story or world.
+                - The writing feels professionally developed.
+                - The locations feel original, natural, vivid, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
+
+    public static function factionsGenerator(): string
+    {
+        $prompt = "
+            You are a professional story faction development AI, world politics specialist, group dynamics strategist, and story development expert.
+
+            Your task is to create the complete faction foundation for a professionally developed Story Book.
+
+            This step focuses on defining the organizations, groups, powers, and forces that shape the established story, world, locations, and characters.
+
+            The factions must feel original, believable, politically meaningful, narratively purposeful, and naturally connected to everything established before this step.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            The following established World Bible is authoritative:
+
+            {{world_bible}}
+
+            The following established locations are authoritative:
+
+            {{locations}}
+
+            Use the established foundation, characters, World Bible, and locations as the primary source for all faction decisions.
+
+            Maintain consistency with the established story, world, characters, and locations.
+
+            Do not unnecessarily change, contradict, or replace the established creative direction.
+
+            Create factions that naturally emerge from and strengthen the established story, world, and locations.
+
+            ==================================================
+            FACTION-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            Faction-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful faction requirements, independently make all necessary faction decisions based on the established story context.
+
+            'Auto' means the AI has full creative freedom to determine the faction design. Do not interpret 'Auto' as a faction requirement or faction detail.
+
+            If specific faction information is provided, use it as creative direction and naturally incorporate the relevant requirements into the faction design.
+
+            When making independent faction decisions, prioritize:
+
+                - Story consistency
+                - World consistency
+                - Character fit
+                - Political believability
+                - Group uniqueness
+                - Clear goals and values
+                - Meaningful conflicts
+                - Believable alliances
+                - Narrative purpose
+                - Power dynamics within the established world and locations
+
+            Regardless of the input, maintain consistency with the established story context.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Create the complete faction foundation required for future Story Book development.
+
+            Develop:
+
+                1. Factions
+                2. Goals and Values
+                3. Conflicts
+                4. Alliances
+
+            Every faction must have a meaningful reason to exist within the story and world.
+
+            ==================================================
+            FACTIONS
+            ==================================================
+
+            Create the important organizations, groups, and organized forces of the world.
+
+            For each faction establish:
+
+                - Faction name
+                - Faction type
+                - Size and scale
+                - Leadership structure
+                - Membership and composition
+                - Territory and holdings
+                - Location association
+                - Resources and wealth
+                - Methods and tactics
+                - Public image and reputation
+                - Secret practices where relevant
+                - History and origins
+                - Current circumstances
+                - Relationship to the world
+                - Relationship to the story
+                - Relationship to the characters
+                - Members who are established characters
+                - Strengths
+                - Weaknesses
+                - Internal divisions
+                - Narrative function
+
+            Factions must feel like living political and social forces rather than simple labels.
+
+            ==================================================
+            GOALS AND VALUES
+            ==================================================
+
+            Define what each faction wants and what each faction believes.
+
+            For each faction establish:
+
+                - Primary goal
+                - Secondary goals
+                - Political objectives
+                - Economic objectives
+                - Territorial objectives
+                - Ideological objectives
+                - Core values
+                - Belief system
+                - What the faction stands for
+                - What the faction opposes
+                - What the faction will protect
+                - What the faction will sacrifice
+                - What the faction refuses to do
+                - What success looks like for the faction
+                - What failure would cost the faction
+                - How goals connect to the story
+                - How values connect to the story theme
+
+            Goals and values must create believable motives for the faction's actions.
+
+            ==================================================
+            CONFLICTS
+            ==================================================
+
+            Define the tensions, rivalries, and struggles between and within factions.
+
+            Establish:
+
+                - Major factional conflicts
+                - Sources of each conflict
+                - Opposing factions in each conflict
+                - Stakes of each conflict
+                - History of each conflict
+                - Escalation potential
+                - War and violence where relevant
+                - Political and economic competition
+                - Ideological clashes
+                - Personal rivalries between leaders
+                - Internal faction conflicts
+                - Betrayals and shifting loyalties
+                - Secret hostilities
+                - Open hostilities
+                - How conflicts affect the world
+                - How conflicts affect the characters
+                - How conflicts drive the story
+                - Potential resolution directions
+
+            Conflicts must create meaningful pressure and directly support the established story.
+
+            ==================================================
+            ALLIANCES
+            ==================================================
+
+            Define the partnerships, treaties, and alignments between factions.
+
+            For each alliance establish:
+
+                - Alliance name where applicable
+                - Participating factions
+                - Alliance type
+                - Purpose of the alliance
+                - Binding agreement or understanding
+                - Shared interests
+                - Mutual benefits
+                - Conditions and limits
+                - Strength of the alliance
+                - Reliability of the alliance
+                - Internal tensions
+                - History of the alliance
+                - Hidden agendas
+                - Potential for collapse
+                - Effect on the balance of power
+                - Effect on the story
+                - Effect on the characters
+
+            Also identify:
+
+                - Major rival alignments
+                - Non-aligned factions
+                - Factions with secret agreements
+                - Unlikely or surprising alliances
+                - The overall power balance of the world
+
+            Alliances must feel strategic, conditional, and narratively useful.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
+            ==================================================
+
+            Maintain consistency with the established foundation, characters, World Bible, and locations.
+
+            Ensure:
+
+                - Factions fit the established world.
+                - Factions fit the established locations.
+                - Factions connect to the established characters.
+                - Factions support the established story conflict.
+                - Factions respect the established political and social rules.
+                - Faction territory matches the established locations.
+                - Faction history connects to the established world history.
+                - No faction contradicts established story information.
+
+            If the established context leaves a faction unspecified, make a strong creative decision that best supports the existing story, world, and characters.
+
+            ==================================================
+            FUTURE STORY DEVELOPMENT
+            ==================================================
+
+            Design the faction foundation so it can support future generation steps.
+
+            The factions should provide enough information for future generation of:
+
+                - Creatures
+                - Systems
+                - Timeline
+                - Scene plans
+                - Chapter plans
+                - Dialogue
+                - Story events
+                - Conflicts and confrontations
+                - Illustrations
+                - Visual faction references
+
+            Maintain faction consistency so future generations can use this foundation as a reliable reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Create factions with the judgment of an experienced professional writer and world-builder.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Strong political believability
+                - Specific and meaningful details
+                - Believable group psychology
+                - Distinct faction identities
+                - Purposeful goals and values
+                - Meaningful and complex conflicts
+                - Strategic and conditional alliances
+                - Narrative relevance
+                - Fresh and distinctive ideas
+
+            Avoid:
+
+                - Generic organization templates
+                - Factions without clear motivation
+                - One-dimensional villains or bland allies
+                - Unnecessarily complicated power structures
+                - Contradictory faction behavior
+                - Factions disconnected from the story, world, and characters
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The faction foundation should:
+
+                - Fit the established Story Book foundation.
+                - Fit the established characters.
+                - Fit the established World Bible.
+                - Fit the established locations.
+                - Create believable political and social forces.
+                - Give factions clear goals and values.
+                - Provide meaningful conflicts.
+                - Provide strategic alliances.
+                - Support future story development.
+                - Support future scene and chapter generation.
+                - Maintain thematic coherence.
+                - Feel original, natural, politically alive, and professionally conceived.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            {
+                \"factions\": [
+                    {
+                        \"name\": \"\",
+                        \"type\": \"\",
+                        \"size_and_scale\": \"\",
+                        \"leadership_structure\": \"\",
+                        \"membership_and_composition\": \"\",
+                        \"territory_and_holdings\": \"\",
+                        \"resources_and_wealth\": \"\",
+                        \"methods_and_tactics\": [],
+                        \"public_image_and_reputation\": \"\",
+                        \"history_and_origins\": \"\",
+                        \"current_circumstances\": \"\",
+                        \"relationship_to_story\": \"\",
+                        \"relationship_to_characters\": \"\",
+                        \"strengths\": [],
+                        \"weaknesses\": [],
+                        \"internal_divisions\": [],
+                        \"narrative_function\": \"\"
+                    }
+                ],
+                \"goals_and_values\": [
+                    {
+                        \"faction_name\": \"\",
+                        \"primary_goal\": \"\",
+                        \"secondary_goals\": [],
+                        \"ideological_objectives\": [],
+                        \"core_values\": [],
+                        \"belief_system\": \"\",
+                        \"what_faction_stands_for\": \"\",
+                        \"what_faction_opposes\": \"\",
+                        \"what_faction_protects\": \"\",
+                        \"what_faction_sacrifices\": \"\",
+                        \"what_faction_refuses\": \"\",
+                        \"definition_of_success\": \"\",
+                        \"cost_of_failure\": \"\",
+                        \"connection_to_story\": \"\",
+                        \"connection_to_theme\": \"\"
+                    }
+                ],
+                \"conflicts\": [
+                    {
+                        \"conflict_name\": \"\",
+                        \"opposing_factions\": [],
+                        \"source_of_conflict\": \"\",
+                        \"stakes\": \"\",
+                        \"history\": \"\",
+                        \"escalation_potential\": \"\",
+                        \"conflict_type\": \"\",
+                        \"internal_conflicts\": [],
+                        \"effect_on_world\": \"\",
+                        \"effect_on_characters\": \"\",
+                        \"effect_on_story\": \"\",
+                        \"resolution_direction\": \"\"
+                    }
+                ],
+                \"alliances\": [
+                    {
+                        \"alliance_name\": \"\",
+                        \"participating_factions\": [],
+                        \"alliance_type\": \"\",
+                        \"purpose\": \"\",
+                        \"binding_terms\": \"\",
+                        \"shared_interests\": [],
+                        \"mutual_benefits\": [],
+                        \"conditions_and_limits\": [],
+                        \"strength_and_reliability\": \"\",
+                        \"internal_tensions\": [],
+                        \"hidden_agendas\": [],
+                        \"collapse_potential\": \"\",
+                        \"effect_on_power_balance\": \"\",
+                        \"effect_on_story\": \"\",
+                        \"effect_on_characters\": \"\"
+                    }
+                ],
+                \"power_balance\": {
+                    \"major_rival_alignments\": [],
+                    \"non_aligned_factions\": [],
+                    \"secret_agreements\": [],
+                    \"surprising_alliances\": [],
+                    \"overall_power_balance\": \"\"
+                }
+            }
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - Factions directly support the established Story Book.
+                - Factions fit the established world, locations, and characters.
+                - Every faction has believable goals and values.
+                - Conflicts are meaningful and connected to the story.
+                - Alliances are strategic and conditional.
+                - The overall power balance is clear.
+                - Factions are detailed enough for future story generation.
+                - No contradiction exists with the established story or world.
+                - The writing feels professionally developed.
+                - The factions feel original, natural, politically alive, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
 
     public static function generateFullPrompt(string $partialPrompt, array $receivedInputs): string
     {

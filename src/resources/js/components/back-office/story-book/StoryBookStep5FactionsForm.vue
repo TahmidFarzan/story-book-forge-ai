@@ -25,22 +25,18 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const storyBookFactionsForm = useForm({
-    factions: storyBook?.factions
-        ? typeof storyBook.factions === "string"
-            ? storyBook.factions
-            : JSON.stringify(storyBook.factions, null, 2)
-        : "",
-    ai_brain_id: storyBook?.ai_brain_id ?? null,
+const factionsGeneratorForm = useForm({
+    additional_information: null,
+    ai_brain_id: null,
 });
 
 const validate = () => {
-    storyBookFactionsForm.clearErrors();
+    factionsGeneratorForm.clearErrors();
 
     let valid = true;
 
-    if (!storyBookFactionsForm.ai_brain_id) {
-        storyBookFactionsForm.setError(
+    if (!factionsGeneratorForm.ai_brain_id) {
+        factionsGeneratorForm.setError(
             "ai_brain_id",
             "AI Brain selection is required",
         );
@@ -51,12 +47,12 @@ const validate = () => {
 };
 
 const handleSuccess = () => {
-    storyBookFactionsForm.clearErrors();
+    factionsGeneratorForm.clearErrors();
     emit("completed", storyBook);
 };
 
 const submit = () => {
-    if (storyBookFactionsForm.processing || !validate()) {
+    if (!isUpdate.value || factionsGeneratorForm.processing || !validate()) {
         return;
     }
 
@@ -66,20 +62,16 @@ const submit = () => {
         onSuccess: handleSuccess,
     };
 
-    if (isUpdate.value) {
-        inertiaRoute.patch(
-            route("back-office.story-books.regenerate.factions", {
-                slug: storyBook?.slug,
-            }),
-            { ...storyBookFactionsForm.data(), _method: "patch" },
-            requestConfig,
-        );
-    } else {
-        storyBookFactionsForm.post(
-            route("back-office.story-books.generate.factions"),
-            requestConfig,
-        );
-    }
+    inertiaRoute.patch(
+        route("back-office.story-books.regenerate.factions", {
+            slug: storyBook?.slug,
+        }),
+        {
+            ...factionsGeneratorForm.data(),
+            _method: "patch",
+        },
+        requestConfig,
+    );
 };
 </script>
 
@@ -87,20 +79,31 @@ const submit = () => {
     <div class="space-y-6">
         <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
             <div>
-                <label class="block text-sm font-medium mb-1"
-                    >Factions</label
-                >
+                <p v-if="factionsGeneratorForm.errors.additional_information">
+                    {{ factionsGeneratorForm.errors.additional_information }}
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">
+                    Factions Additional Information
+                </label>
+
                 <textarea
-                    v-model="storyBookFactionsForm.factions"
-                    rows="10"
-                    placeholder="Enter factions details..."
+                    v-model="factionsGeneratorForm.additional_information"
+                    rows="3"
+                    placeholder="Any additional context or instructions for the AI..."
                     class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
                 ></textarea>
+
                 <p
-                    v-if="storyBookFactionsForm.errors.factions"
-                    class="text-red-500 text-sm mt-1"
+                    v-if="
+                        factionsGeneratorForm.errors.additional_information
+                    "
                 >
-                    {{ storyBookFactionsForm.errors.factions }}
+                    {{
+                        factionsGeneratorForm.errors.additional_information
+                    }}
                 </p>
             </div>
         </div>
@@ -110,28 +113,31 @@ const submit = () => {
                 <FontAwesomeIcon icon="brain" class="text-purple-600" />
                 <h3 class="text-base font-semibold">AI Brain Configuration</h3>
             </div>
+
             <p class="text-sm text-gray-500">
                 Select the AI model that will generate the factions.
             </p>
+
             <div
                 class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
             >
                 <InfiniteScrollApiSelect
-                    :form="storyBookFactionsForm"
+                    :form="factionsGeneratorForm"
                     fieldName="ai_brain_id"
                     :selectedItem="storyBook?.ai_brain"
                     :apiUrl="route('search.ai-brains')"
                     :multiple="false"
                     placeholder="Select AI Brain"
-                    :error="storyBookFactionsForm.errors.ai_brain_id"
+                    :error="factionsGeneratorForm.errors.ai_brain_id"
                     class="ai-brain-select"
                 />
             </div>
+
             <p
-                v-if="storyBookFactionsForm.errors.ai_brain_id"
+                v-if="factionsGeneratorForm.errors.ai_brain_id"
                 class="text-red-500 text-sm"
             >
-                {{ storyBookFactionsForm.errors.ai_brain_id }}
+                {{ factionsGeneratorForm.errors.ai_brain_id }}
             </p>
         </div>
 
@@ -139,20 +145,19 @@ const submit = () => {
             <button
                 type="button"
                 @click="submit"
-                :disabled="storyBookFactionsForm.processing"
+                :disabled="!isUpdate || factionsGeneratorForm.processing"
                 class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
                 <FontAwesomeIcon
-                    v-if="storyBookFactionsForm.processing"
+                    v-if="factionsGeneratorForm.processing"
                     icon="spinner"
                     spin
                 />
-                <FontAwesomeIcon
-                    v-else
-                    icon="wand-magic-sparkles"
-                />
+
+                <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
+
                 {{
-                    storyBookFactionsForm.processing
+                    factionsGeneratorForm.processing
                         ? "Generating..."
                         : "Generate Factions"
                 }}

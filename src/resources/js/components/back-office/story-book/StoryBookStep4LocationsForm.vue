@@ -25,22 +25,18 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const storyBookLocationsForm = useForm({
-    locations: storyBook?.locations
-        ? typeof storyBook.locations === "string"
-            ? storyBook.locations
-            : JSON.stringify(storyBook.locations, null, 2)
-        : "",
-    ai_brain_id: storyBook?.ai_brain_id ?? null,
+const locationsGeneratorForm = useForm({
+    additional_information: null,
+    ai_brain_id: null,
 });
 
 const validate = () => {
-    storyBookLocationsForm.clearErrors();
+    locationsGeneratorForm.clearErrors();
 
     let valid = true;
 
-    if (!storyBookLocationsForm.ai_brain_id) {
-        storyBookLocationsForm.setError(
+    if (!locationsGeneratorForm.ai_brain_id) {
+        locationsGeneratorForm.setError(
             "ai_brain_id",
             "AI Brain selection is required",
         );
@@ -51,12 +47,12 @@ const validate = () => {
 };
 
 const handleSuccess = () => {
-    storyBookLocationsForm.clearErrors();
+    locationsGeneratorForm.clearErrors();
     emit("completed", storyBook);
 };
 
 const submit = () => {
-    if (storyBookLocationsForm.processing || !validate()) {
+    if (!isUpdate.value || locationsGeneratorForm.processing || !validate()) {
         return;
     }
 
@@ -66,20 +62,16 @@ const submit = () => {
         onSuccess: handleSuccess,
     };
 
-    if (isUpdate.value) {
-        inertiaRoute.patch(
-            route("back-office.story-books.regenerate.locations", {
-                slug: storyBook?.slug,
-            }),
-            { ...storyBookLocationsForm.data(), _method: "patch" },
-            requestConfig,
-        );
-    } else {
-        storyBookLocationsForm.post(
-            route("back-office.story-books.generate.locations"),
-            requestConfig,
-        );
-    }
+    inertiaRoute.patch(
+        route("back-office.story-books.regenerate.locations", {
+            slug: storyBook?.slug,
+        }),
+        {
+            ...locationsGeneratorForm.data(),
+            _method: "patch",
+        },
+        requestConfig,
+    );
 };
 </script>
 
@@ -87,20 +79,32 @@ const submit = () => {
     <div class="space-y-6">
         <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
             <div>
-                <label class="block text-sm font-medium mb-1"
-                    >Locations</label
-                >
+                <p v-if="locationsGeneratorForm.errors.additional_information">
+                    {{ locationsGeneratorForm.errors.additional_information }}
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">
+                    Locations Additional Information
+                </label>
+
                 <textarea
-                    v-model="storyBookLocationsForm.locations"
-                    rows="10"
-                    placeholder="Enter locations details..."
+                    v-model="locationsGeneratorForm.additional_information"
+                    rows="3"
+                    placeholder="Any additional context or instructions for the AI..."
                     class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
                 ></textarea>
+
                 <p
-                    v-if="storyBookLocationsForm.errors.locations"
-                    class="text-red-500 text-sm mt-1"
+                    v-if="
+                        locationsGeneratorForm.errors.additional_information
+                    "
                 >
-                    {{ storyBookLocationsForm.errors.locations }}
+                    {{
+                        locationsGeneratorForm.errors
+                            .additional_information
+                    }}
                 </p>
             </div>
         </div>
@@ -110,28 +114,31 @@ const submit = () => {
                 <FontAwesomeIcon icon="brain" class="text-purple-600" />
                 <h3 class="text-base font-semibold">AI Brain Configuration</h3>
             </div>
+
             <p class="text-sm text-gray-500">
                 Select the AI model that will generate the locations.
             </p>
+
             <div
                 class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
             >
                 <InfiniteScrollApiSelect
-                    :form="storyBookLocationsForm"
+                    :form="locationsGeneratorForm"
                     fieldName="ai_brain_id"
                     :selectedItem="storyBook?.ai_brain"
                     :apiUrl="route('search.ai-brains')"
                     :multiple="false"
                     placeholder="Select AI Brain"
-                    :error="storyBookLocationsForm.errors.ai_brain_id"
+                    :error="locationsGeneratorForm.errors.ai_brain_id"
                     class="ai-brain-select"
                 />
             </div>
+
             <p
-                v-if="storyBookLocationsForm.errors.ai_brain_id"
+                v-if="locationsGeneratorForm.errors.ai_brain_id"
                 class="text-red-500 text-sm"
             >
-                {{ storyBookLocationsForm.errors.ai_brain_id }}
+                {{ locationsGeneratorForm.errors.ai_brain_id }}
             </p>
         </div>
 
@@ -139,20 +146,19 @@ const submit = () => {
             <button
                 type="button"
                 @click="submit"
-                :disabled="storyBookLocationsForm.processing"
+                :disabled="!isUpdate || locationsGeneratorForm.processing"
                 class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
                 <FontAwesomeIcon
-                    v-if="storyBookLocationsForm.processing"
+                    v-if="locationsGeneratorForm.processing"
                     icon="spinner"
                     spin
                 />
-                <FontAwesomeIcon
-                    v-else
-                    icon="wand-magic-sparkles"
-                />
+
+                <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
+
                 {{
-                    storyBookLocationsForm.processing
+                    locationsGeneratorForm.processing
                         ? "Generating..."
                         : "Generate Locations"
                 }}
