@@ -4,10 +4,13 @@ namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoryBookCharactersRequest;
+use App\Http\Requests\StoryBookCompleteStoryBookRequest;
 use App\Http\Requests\StoryBookCreaturesRequest;
+use App\Http\Requests\StoryBookDialoguePlanRequest;
 use App\Http\Requests\StoryBookFactionsRequest;
 use App\Http\Requests\StoryBookFoundationRequest;
 use App\Http\Requests\StoryBookLocationsRequest;
+use App\Http\Requests\StoryBookPagePlanRequest;
 use App\Http\Requests\StoryBookScenePlanRequest;
 use App\Http\Requests\StoryBookStoryStructureRequest;
 use App\Http\Requests\StoryBookSystemsRequest;
@@ -217,6 +220,45 @@ class StoryBookController extends Controller
         Gate::authorize('update', $storyBook);
 
         $result = $this->storyBookService->generateScenePlan($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function generateDialoguePlan(StoryBookDialoguePlanRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateDialoguePlan($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function generatePagePlan(StoryBookPagePlanRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generatePagePlan($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function generateCompleteStoryBook(StoryBookCompleteStoryBookRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateCompleteStoryBook($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],

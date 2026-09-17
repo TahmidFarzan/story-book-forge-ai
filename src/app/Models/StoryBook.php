@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
@@ -28,8 +27,8 @@ use Spatie\Sluggable\SlugOptions;
     'datetime',
     'slug',
     'status',
-    "audience_id",
-    "story_book_type_id",
+    'audience_id',
+    'story_book_type_id',
     'language_id',
     'ai_prompt',
     'foundation',
@@ -45,20 +44,21 @@ use Spatie\Sluggable\SlugOptions;
     'scene_plans',
     'dialogue_plans',
     'page_plan',
+    'complete_story_book',
     'created_by_id',
 ])]
 #[UsePolicy(StoryBookPolicy::class)]
 #[ObservedBy([StoryBookObserver::class])]
 class StoryBook extends Model
 {
-    use HasFactory, LogsActivity, HasSlug;
+    use HasFactory, HasSlug, LogsActivity;
 
     protected $appends = [];
 
     protected function casts(): array
     {
         return [
-            'datetime'   => 'datetime',
+            'datetime' => 'datetime',
 
             'foundation' => 'array',
             'characters' => 'array',
@@ -73,6 +73,7 @@ class StoryBook extends Model
             'scene_plans' => 'array',
             'dialogue_plans' => 'array',
             'page_plan' => 'array',
+            'complete_story_book' => 'array',
 
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -88,8 +89,8 @@ class StoryBook extends Model
                 'datetime',
                 'slug',
                 'status',
-                "audience_id",
-                "story_book_type_id",
+                'audience_id',
+                'story_book_type_id',
                 'language_id',
                 'ai_prompt',
 
@@ -106,10 +107,11 @@ class StoryBook extends Model
                 'scene_plans',
                 'dialogue_plans',
                 'page_plan',
+                'complete_story_book',
                 'chapter_plan',
             ])
             ->useLogName('StoryBook')
-            ->setDescriptionForEvent(fn(string $eventName) => "The record has been {$eventName}.")
+            ->setDescriptionForEvent(fn (string $eventName) => "The record has been {$eventName}.")
             ->logOnlyDirty()
             ->logExcept([
                 'id',
@@ -123,10 +125,10 @@ class StoryBook extends Model
     {
         return SlugOptions::create()
             ->saveSlugsTo('slug')
-            ->generateSlugsFrom(["title", "sub_title"])
+            ->generateSlugsFrom(['title', 'sub_title'])
             ->doNotGenerateSlugsOnUpdate()
             ->slugsShouldBeNoLongerThan(255)
-            ->usingSuffixGenerator(fn() => Str::lower(Str::random(5)));
+            ->usingSuffixGenerator(fn () => Str::lower(Str::random(5)));
     }
 
     public function getRouteKeyName(): string

@@ -554,6 +554,30 @@ class SeederHelper
                 'prompt' => AiPromptGeneratorHelper::scenePlanGenerator(),
             ],
 
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_DIALOGUE_PLAN_GENERATOR,
+                'code' => 'DialoguePlanGenerator',
+                'step_number' => 12,
+                'depend_on_prompt_ids' => null,
+                'prompt' => AiPromptGeneratorHelper::dialoguePlanGenerator(),
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_PAGE_PLAN_GENERATOR,
+                'code' => 'PagePlanGenerator',
+                'step_number' => 13,
+                'depend_on_prompt_ids' => null,
+                'prompt' => AiPromptGeneratorHelper::pagePlanGenerator(),
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_COMPLETE_STORY_BOOK_GENERATOR,
+                'code' => 'CompleteStoryBookGenerator',
+                'step_number' => 14,
+                'depend_on_prompt_ids' => null,
+                'prompt' => AiPromptGeneratorHelper::completeStoryBookGenerator(),
+            ],
+
         ]);
     }
 

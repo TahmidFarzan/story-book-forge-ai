@@ -249,6 +249,7 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
                 Route::patch('scene-plan', [StoryBookController::class, 'generateScenePlan'])->name('scene-plan');
                 Route::patch('dialogue-plan', [StoryBookController::class, 'generateDialoguePlan'])->name('dialogue-plan');
                 Route::patch('page-plan', [StoryBookController::class, 'generatePagePlan'])->name('page-plan');
+                Route::patch('complete-story-book', [StoryBookController::class, 'generateCompleteStoryBook'])->name('complete-story-book');
             });
 
             Route::prefix('regenerate')->name('regenerate.')->group(function () {
@@ -262,6 +263,9 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
                 Route::patch('story-structure', [StoryBookController::class, 'generateStoryStructure'])->name('story-structure');
                 Route::patch('twists-and-foreshadowing', [StoryBookController::class, 'generateTwistsAndForeshadowing'])->name('twists-and-foreshadowing');
                 Route::patch('scene-plan', [StoryBookController::class, 'generateScenePlan'])->name('scene-plan');
+                Route::patch('dialogue-plan', [StoryBookController::class, 'generateDialoguePlan'])->name('dialogue-plan');
+                Route::patch('page-plan', [StoryBookController::class, 'generatePagePlan'])->name('page-plan');
+                Route::patch('complete-story-book', [StoryBookController::class, 'generateCompleteStoryBook'])->name('complete-story-book');
             });
 
             Route::delete('delete', [StoryBookController::class, 'delete'])->name('delete');

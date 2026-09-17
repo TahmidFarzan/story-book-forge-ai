@@ -26,6 +26,12 @@ class AiPromptGeneratorHelper
 
     public const AI_PROMPT_NAME_SCENE_PLAN_GENERATOR = 'Scene Plan Generator';
 
+    public const AI_PROMPT_NAME_DIALOGUE_PLAN_GENERATOR = 'Dialogue Plan Generator';
+
+    public const AI_PROMPT_NAME_PAGE_PLAN_GENERATOR = 'Page Plan Generator';
+
+    public const AI_PROMPT_NAME_COMPLETE_STORY_BOOK_GENERATOR = 'Complete Story Book Generator';
+
     public static function foundationGenerator(): string
     {
         $prompt = "
@@ -4393,6 +4399,1164 @@ class AiPromptGeneratorHelper
                 - No scene contradicts the established story or world.
                 - The writing feels professionally developed.
                 - The scenes feel original, natural, vivid, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
+
+    public static function dialoguePlanGenerator(): string
+    {
+        $prompt = "
+            You are a professional dialogue development AI, character voice specialist, conversation designer, and story development expert.
+
+            Your task is to create the complete dialogue plan foundation for a professionally developed Story Book.
+
+            This step focuses on defining how characters speak, what conversations must happen, and how dialogue carries the story forward.
+
+            The dialogue must feel original, natural, distinctly voiced, narratively purposeful, and naturally connected to the established characters and scenes.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            The following established World Bible is authoritative:
+
+            {{world_bible}}
+
+            The following established locations are authoritative:
+
+            {{locations}}
+
+            The following established factions are authoritative:
+
+            {{factions}}
+
+            The following established creatures are authoritative:
+
+            {{creatures}}
+
+            The following established systems are authoritative:
+
+            {{systems}}
+
+            The following established timeline is authoritative:
+
+            {{timeline}}
+
+            The following established story structure is authoritative:
+
+            {{story_structure}}
+
+            The following established twists and foreshadowing are authoritative:
+
+            {{twists_and_foreshadowing}}
+
+            The following established scene plans are authoritative:
+
+            {{scene_plans}}
+
+            Use the established characters and scene plans as the primary source for all dialogue decisions.
+
+            Maintain consistency with the established story, world, characters, structure, and scenes.
+
+            Do not unnecessarily change, contradict, or replace the established creative direction.
+
+            Create dialogue that sounds like the established characters and serves the established scenes.
+
+            ==================================================
+            DIALOGUE-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            Dialogue-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful dialogue requirements, independently make all necessary dialogue decisions based on the established story context.
+
+            'Auto' means the AI has full creative freedom to determine the dialogue design. Do not interpret 'Auto' as a dialogue requirement or dialogue detail.
+
+            If specific dialogue information is provided, use it as creative direction and naturally incorporate the relevant requirements into the dialogue plan.
+
+            When making independent dialogue decisions, prioritize:
+
+                - Character consistency
+                - Distinct character voices
+                - Scene consistency
+                - Natural conversation flow
+                - Emotional authenticity
+                - Subtext and implication
+                - Narrative purpose
+                - Information delivery
+                - Relationship dynamics
+                - Support for future page planning
+
+            Regardless of the input, maintain consistency with the established story context.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Create the complete dialogue plan foundation required for future Story Book development.
+
+            Develop:
+
+                1. Dialogue Bank
+                2. Character Voice
+                3. Conversation Flow
+                4. Key Dialogues
+
+            Every dialogue element must serve the established characters and scenes.
+
+            ==================================================
+            DIALOGUE BANK
+            ==================================================
+
+            Create a reusable bank of dialogue lines, exchanges, and exchanges grouped by purpose.
+
+            For each dialogue entry establish:
+
+                - Dialogue identifier
+                - Scene association
+                - Characters involved
+                - Dialogue type
+                - The dialogue lines
+                - Emotional tone
+                - Subtext
+                - Purpose in the scene
+                - Information conveyed
+                - Character revealed
+                - How the dialogue connects to the scene objective
+                - How the dialogue connects to the story
+                - Usage notes
+
+            The dialogue bank must be specific enough to be reused directly during page and book generation.
+
+            ==================================================
+            CHARACTER VOICE
+            ==================================================
+
+            Define how each speaking character sounds.
+
+            For each character establish:
+
+                - Character name
+                - Voice summary
+                - Vocabulary level
+                - Sentence patterns
+                - Speech rhythm
+                - Favorite expressions
+                - Verbal habits
+                - Humor style
+                - Emotional expression
+                - Confidence and hesitation patterns
+                - How the character speaks to different people
+                - How the character speaks under pressure
+                - How the voice reflects backstory
+                - How the voice reflects personality
+                - Voice consistency notes
+                - Voice weaknesses to avoid
+
+            Character voices must remain distinct, recognizable, and consistent throughout the story.
+
+            ==================================================
+            CONVERSATION FLOW
+            ==================================================
+
+            Define how conversations develop within the established scenes.
+
+            For each conversation establish:
+
+                - Conversation identifier
+                - Scene association
+                - Participants
+                - Conversation purpose
+                - Opening beat
+                - Escalation and turns
+                - Emotional shifts
+                - Conflict and tension
+                - Information exchange
+                - Subtext progression
+                - Key decisions or realizations
+                - Closing beat
+                - How the conversation advances the scene
+                - How the conversation advances the story
+                - Length and pacing guidance
+
+            Conversation flow must match the established scene plans and stay true to the characters.
+
+            ==================================================
+            KEY DIALOGUES
+            ==================================================
+
+            Identify and design the most important dialogue moments of the story.
+
+            For each key dialogue establish:
+
+                - Key dialogue name
+                - Story location
+                - Scene association
+                - Characters involved
+                - Story significance
+                - What must be communicated
+                - What must NOT be revealed
+                - Emotional stakes
+                - Subtext
+                - The turning point of the dialogue
+                - The climactic line or exchange
+                - Immediate reactions
+                - Consequences after the dialogue
+                - How the dialogue connects to the twists and reveals
+                - How the dialogue connects to the story structure
+                - Writing guidance
+
+            Key dialogues must carry the emotional and narrative weight of the story.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
+            ==================================================
+
+            Maintain consistency with the established foundation, characters, World Bible, locations, factions, creatures, systems, timeline, story structure, twists, and scene plans.
+
+            Ensure:
+
+                - Character voices match established personalities.
+                - Dialogue fits the established scenes.
+                - Conversations respect the established timeline.
+                - Key dialogues align with reveals and twists.
+                - Dialogue tone matches the established story type and audience.
+                - No dialogue contradicts established story information.
+
+            If the established context leaves a dialogue decision unspecified, make a strong creative decision that best serves the existing story.
+
+            ==================================================
+            FUTURE STORY DEVELOPMENT
+            ==================================================
+
+            Design the dialogue plan so it can support future generation steps.
+
+            The dialogue plan should provide enough information for future generation of:
+
+                - Page plans
+                - Final narrative passages
+                - Character interactions
+                - Emotional moments
+                - Illustrations
+                - The final Story Book compilation
+
+            Maintain dialogue consistency so future generations can use this plan as a reliable reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Create dialogue with the judgment of an experienced professional writer and dialogue specialist.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Distinct character voices
+                - Believable conversation rhythm
+                - Specific and meaningful lines
+                - Effective subtext
+                - Emotional authenticity
+                - Narrative relevance
+                - Fresh and distinctive ideas
+
+            Avoid:
+
+                - Generic or interchangeable voices
+                - On-the-nose exposition
+                - Dialogue without purpose
+                - Repetitive exchanges
+                - Dialogue that contradicts the characters
+                - Unnecessary conversations
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The dialogue plan should:
+
+                - Fit the established Story Book foundation and characters.
+                - Fit the established scene plans.
+                - Give every speaking character a distinct voice.
+                - Provide a reusable dialogue bank.
+                - Establish clear conversation flow.
+                - Deliver powerful key dialogues.
+                - Support future page and book generation.
+                - Maintain thematic coherence.
+                - Feel original, natural, authentic, and professionally written.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            {
+                \"dialogue_bank\": [
+                    {
+                        \"dialogue_identifier\": \"\",
+                        \"scene_association\": \"\",
+                        \"characters_involved\": [],
+                        \"dialogue_type\": \"\",
+                        \"dialogue_lines\": [],
+                        \"emotional_tone\": \"\",
+                        \"subtext\": \"\",
+                        \"purpose_in_scene\": \"\",
+                        \"information_conveyed\": [],
+                        \"character_revealed\": \"\",
+                        \"connection_to_scene_objective\": \"\",
+                        \"connection_to_story\": \"\",
+                        \"usage_notes\": \"\"
+                    }
+                ],
+                \"character_voice\": [
+                    {
+                        \"character_name\": \"\",
+                        \"voice_summary\": \"\",
+                        \"vocabulary_level\": \"\",
+                        \"sentence_patterns\": \"\",
+                        \"speech_rhythm\": \"\",
+                        \"favorite_expressions\": [],
+                        \"verbal_habits\": [],
+                        \"humor_style\": \"\",
+                        \"emotional_expression\": \"\",
+                        \"confidence_and_hesitation\": \"\",
+                        \"speech_to_different_people\": \"\",
+                        \"speech_under_pressure\": \"\",
+                        \"voice_reflects_backstory\": \"\",
+                        \"voice_reflects_personality\": \"\",
+                        \"voice_consistency_notes\": \"\",
+                        \"voice_weaknesses_to_avoid\": []
+                    }
+                ],
+                \"conversation_flow\": [
+                    {
+                        \"conversation_identifier\": \"\",
+                        \"scene_association\": \"\",
+                        \"participants\": [],
+                        \"conversation_purpose\": \"\",
+                        \"opening_beat\": \"\",
+                        \"escalation_and_turns\": [],
+                        \"emotional_shifts\": [],
+                        \"conflict_and_tension\": \"\",
+                        \"information_exchange\": [],
+                        \"subtext_progression\": \"\",
+                        \"key_decisions_or_realizations\": [],
+                        \"closing_beat\": \"\",
+                        \"advances_scene\": \"\",
+                        \"advances_story\": \"\",
+                        \"length_and_pacing\": \"\"
+                    }
+                ],
+                \"key_dialogues\": [
+                    {
+                        \"key_dialogue_name\": \"\",
+                        \"story_location\": \"\",
+                        \"scene_association\": \"\",
+                        \"characters_involved\": [],
+                        \"story_significance\": \"\",
+                        \"must_communicate\": [],
+                        \"must_not_reveal\": [],
+                        \"emotional_stakes\": \"\",
+                        \"subtext\": \"\",
+                        \"turning_point\": \"\",
+                        \"climactic_line_or_exchange\": \"\",
+                        \"immediate_reactions\": \"\",
+                        \"consequences\": [],
+                        \"connection_to_twists\": \"\",
+                        \"connection_to_story_structure\": \"\",
+                        \"writing_guidance\": \"\"
+                    }
+                ]
+            }
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - Dialogue directly serves the established characters and scenes.
+                - Character voices are distinct and consistent.
+                - Conversation flow follows the established scene plans.
+                - Key dialogues carry real narrative weight.
+                - No dialogue contradicts the established story or world.
+                - The dialogue is detailed enough for page and book generation.
+                - The writing feels professionally developed.
+                - The dialogue feels original, natural, authentic, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
+
+    public static function pagePlanGenerator(): string
+    {
+        $prompt = "
+            You are a professional page layout AI, illustrated book designer, page pacing specialist, and story development expert.
+
+            Your task is to create the complete page plan foundation for a professionally developed Story Book.
+
+            This step focuses on translating the established scenes and dialogue into a page-by-page layout ready for final narrative and illustration production.
+
+            The page plan must feel original, visually considered, narratively paced, and naturally connected to the established story.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            The following established World Bible is authoritative:
+
+            {{world_bible}}
+
+            The following established locations are authoritative:
+
+            {{locations}}
+
+            The following established factions are authoritative:
+
+            {{factions}}
+
+            The following established creatures are authoritative:
+
+            {{creatures}}
+
+            The following established systems are authoritative:
+
+            {{systems}}
+
+            The following established timeline is authoritative:
+
+            {{timeline}}
+
+            The following established story structure is authoritative:
+
+            {{story_structure}}
+
+            The following established twists and foreshadowing are authoritative:
+
+            {{twists_and_foreshadowing}}
+
+            The following established scene plans are authoritative:
+
+            {{scene_plans}}
+
+            The following established dialogue plans are authoritative:
+
+            {{dialogue_plans}}
+
+            Use the established scene plans and dialogue plans as the primary source for all page decisions.
+
+            Maintain consistency with the established story, world, characters, structure, scenes, and dialogue.
+
+            Do not unnecessarily change, contradict, or replace the established creative direction.
+
+            Create a page plan that presents the established story clearly and beautifully.
+
+            ==================================================
+            PAGE-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            Page-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful page requirements, independently make all necessary page decisions based on the established story context.
+
+            'Auto' means the AI has full creative freedom to determine the page design. Do not interpret 'Auto' as a page requirement or page detail.
+
+            If specific page information is provided, use it as creative direction and naturally incorporate the relevant requirements into the page plan.
+
+            When making independent page decisions, prioritize:
+
+                - Story consistency
+                - Scene consistency
+                - Page pacing and flow
+                - Illustration opportunities
+                - Text and image balance
+                - Emotional beats
+                - Readability for the target audience
+                - Visual storytelling
+                - Continuity across pages
+                - Support for the final book compilation
+
+            Regardless of the input, maintain consistency with the established story context.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Create the complete page plan foundation required for final Story Book production.
+
+            Develop:
+
+                1. Page Layout
+                2. Page Descriptions
+                3. Illustration Notes
+                4. Key Points
+
+            Every page must serve the established story and its intended reader experience.
+
+            ==================================================
+            PAGE LAYOUT
+            ==================================================
+
+            Define the page-by-page structure of the complete book.
+
+            For each page establish:
+
+                - Page number
+                - Parent scene
+                - Parent chapter
+                - Page type
+                - Narrative content summary
+                - Illustration placement
+                - Text placement
+                - Layout composition
+                - Amount of text
+                - Transition into the page
+                - Transition out of the page
+                - Emotional beat
+                - How the page connects to the previous page
+                - How the page connects to the next page
+                - Pacing role of the page
+
+            Page layout must follow the established scenes and maintain smooth reading flow.
+
+            ==================================================
+            PAGE DESCRIPTIONS
+            ==================================================
+
+            Describe what appears on every page.
+
+            For each page establish:
+
+                - Page number
+                - Page summary
+                - Narrative description
+                - Visual description
+                - Characters present
+                - Location
+                - Action depicted
+                - Mood and atmosphere
+                - Text content direction
+                - Dialogue used
+                - Story information delivered
+                - Emotional tone
+                - Reader experience
+                - Continuity notes
+
+            Page descriptions must be detailed enough to guide final narrative and illustration production.
+
+            ==================================================
+            ILLUSTRATION NOTES
+            ==================================================
+
+            Provide illustration guidance for every illustrated page.
+
+            For each illustration establish:
+
+                - Page number
+                - Illustration summary
+                - Main subject
+                - Characters depicted
+                - Character poses and expressions
+                - Setting and background
+                - Action captured
+                - Composition and framing
+                - Perspective and camera angle
+                - Lighting and mood
+                - Color direction
+                - Important visual details
+                - Details to avoid
+                - Continuity with previous illustrations
+                - Illustration type
+
+            Illustration notes must be specific, consistent, and production ready.
+
+            ==================================================
+            KEY POINTS
+            ==================================================
+
+            Capture the essential content that must appear across the book.
+
+            For each key point establish:
+
+                - Key point identifier
+                - Associated page or pages
+                - Associated scene
+                - What must be communicated
+                - Why it matters
+                - Story information involved
+                - Character information involved
+                - Emotional purpose
+                - Visual requirement
+                - Text requirement
+                - Continuity requirement
+                - Risk if omitted
+
+            Key points must protect the most important story, character, and visual information.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
+            ==================================================
+
+            Maintain consistency with the established foundation, characters, World Bible, locations, factions, creatures, systems, timeline, story structure, twists, scene plans, and dialogue plans.
+
+            Ensure:
+
+                - Pages follow the established scene order.
+                - Illustrations match established characters and locations.
+                - Dialogue placed on pages matches the dialogue plan.
+                - Twists and reveals are placed at the correct story moments.
+                - Page pacing matches the established pacing guidance.
+                - No page contradicts established story information.
+
+            If the established context leaves a page decision unspecified, make a strong creative decision that best serves the existing story.
+
+            ==================================================
+            FUTURE STORY DEVELOPMENT
+            ==================================================
+
+            Design the page plan so it can support the final compilation step.
+
+            The page plan should provide enough information for future generation of:
+
+                - Final narrative passages
+                - Illustration generation
+                - Page text and typography
+                - The complete publication-ready Story Book
+                - eBook and PDF assembly
+
+            Maintain page consistency so future generations can use this plan as a reliable reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Create the page plan with the judgment of an experienced professional book designer and story developer.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Strong visual thinking
+                - Specific and meaningful details
+                - Believable page pacing
+                - Purposeful illustration placement
+                - Emotional sensitivity
+                - Audience awareness
+                - Fresh and distinctive ideas
+
+            Avoid:
+
+                - Generic page descriptions
+                - Illustration ideas without story purpose
+                - Overcrowded or empty pages
+                - Inconsistent visual continuity
+                - Pages that contradict the established story
+                - Unnecessary pages
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The page plan should:
+
+                - Fit the established Story Book foundation and characters.
+                - Fit the established scene and dialogue plans.
+                - Cover the complete story page by page.
+                - Balance text and illustrations.
+                - Provide clear, production-ready illustration notes.
+                - Protect essential story and character information.
+                - Support the final Story Book compilation.
+                - Maintain thematic coherence.
+                - Feel original, natural, visually compelling, and professional.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            {
+                \"page_layout\": [
+                    {
+                        \"page_number\": 1,
+                        \"parent_scene\": \"\",
+                        \"parent_chapter\": \"\",
+                        \"page_type\": \"\",
+                        \"narrative_content_summary\": \"\",
+                        \"illustration_placement\": \"\",
+                        \"text_placement\": \"\",
+                        \"layout_composition\": \"\",
+                        \"amount_of_text\": \"\",
+                        \"transition_in\": \"\",
+                        \"transition_out\": \"\",
+                        \"emotional_beat\": \"\",
+                        \"connection_to_previous_page\": \"\",
+                        \"connection_to_next_page\": \"\",
+                        \"pacing_role\": \"\"
+                    }
+                ],
+                \"page_descriptions\": [
+                    {
+                        \"page_number\": 1,
+                        \"page_summary\": \"\",
+                        \"narrative_description\": \"\",
+                        \"visual_description\": \"\",
+                        \"characters_present\": [],
+                        \"location\": \"\",
+                        \"action_depicted\": \"\",
+                        \"mood_and_atmosphere\": \"\",
+                        \"text_content_direction\": \"\",
+                        \"dialogue_used\": [],
+                        \"story_information_delivered\": [],
+                        \"emotional_tone\": \"\",
+                        \"reader_experience\": \"\",
+                        \"continuity_notes\": \"\"
+                    }
+                ],
+                \"illustration_notes\": [
+                    {
+                        \"page_number\": 1,
+                        \"illustration_summary\": \"\",
+                        \"main_subject\": \"\",
+                        \"characters_depicted\": [],
+                        \"poses_and_expressions\": [],
+                        \"setting_and_background\": \"\",
+                        \"action_captured\": \"\",
+                        \"composition_and_framing\": \"\",
+                        \"perspective_and_angle\": \"\",
+                        \"lighting_and_mood\": \"\",
+                        \"color_direction\": \"\",
+                        \"important_visual_details\": [],
+                        \"details_to_avoid\": [],
+                        \"continuity_with_previous\": \"\",
+                        \"illustration_type\": \"\"
+                    }
+                ],
+                \"key_points\": [
+                    {
+                        \"key_point_identifier\": \"\",
+                        \"associated_pages\": [],
+                        \"associated_scene\": \"\",
+                        \"what_must_be_communicated\": \"\",
+                        \"why_it_matters\": \"\",
+                        \"story_information\": [],
+                        \"character_information\": [],
+                        \"emotional_purpose\": \"\",
+                        \"visual_requirement\": \"\",
+                        \"text_requirement\": \"\",
+                        \"continuity_requirement\": \"\",
+                        \"risk_if_omitted\": \"\"
+                    }
+                ]
+            }
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - Pages directly follow the established scenes.
+                - The complete story is covered page by page.
+                - Illustrations are production ready and consistent.
+                - Dialogue placement matches the dialogue plan.
+                - Key points protect essential story information.
+                - No page contradicts the established story or world.
+                - The page plan is detailed enough for the final compilation.
+                - The writing feels professionally developed.
+                - The page plan feels original, natural, visually compelling, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
+
+    public static function completeStoryBookGenerator(): string
+    {
+        $prompt = "
+            You are a professional book compilation AI, senior editor, continuity specialist, and publication formatting expert.
+
+            Your task is to compile every established generation step into a complete, consistent, publication-ready Story Book.
+
+            This final step must preserve continuity across the entire story, unify all established creative direction, and produce a finished book structure ready for eBook and PDF conversion.
+
+            The final compilation must feel cohesive, polished, publication ready, and naturally built from everything established before it.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            The following established World Bible is authoritative:
+
+            {{world_bible}}
+
+            The following established locations are authoritative:
+
+            {{locations}}
+
+            The following established factions are authoritative:
+
+            {{factions}}
+
+            The following established creatures are authoritative:
+
+            {{creatures}}
+
+            The following established systems are authoritative:
+
+            {{systems}}
+
+            The following established timeline is authoritative:
+
+            {{timeline}}
+
+            The following established story structure is authoritative:
+
+            {{story_structure}}
+
+            The following established twists and foreshadowing are authoritative:
+
+            {{twists_and_foreshadowing}}
+
+            The following established scene plans are authoritative:
+
+            {{scene_plans}}
+
+            The following established dialogue plans are authoritative:
+
+            {{dialogue_plans}}
+
+            The following established page plan is authoritative:
+
+            {{page_plan}}
+
+            Use every established generation step as the primary source for the final compilation.
+
+            Maintain consistency with the established story, world, characters, structure, scenes, dialogue, and pages.
+
+            Do not unnecessarily change, contradict, or replace the established creative direction.
+
+            Produce a complete book that faithfully represents the established story.
+
+            ==================================================
+            COMPILATION-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            Compilation-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful compilation requirements, independently make all necessary compilation decisions based on the established story context.
+
+            'Auto' means the AI has full creative freedom to determine the final presentation. Do not interpret 'Auto' as a compilation requirement or compilation detail.
+
+            If specific compilation information is provided, use it as creative direction and naturally incorporate the relevant requirements into the final book.
+
+            When making independent compilation decisions, prioritize:
+
+                - Story consistency
+                - Character continuity
+                - World continuity
+                - Timeline integrity
+                - Narrative completeness
+                - Publication quality
+                - Reader experience
+                - Formatting readiness
+                - Illustration readiness
+                - eBook and PDF compatibility
+
+            Regardless of the input, maintain consistency with the established story context.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Compile the complete Story Book into a finished, publication-ready work.
+
+            Produce:
+
+                1. Complete Story Book
+                2. Publication Ready Format
+                3. Final Narrative
+
+            Every element must remain faithful to the established story and be ready for production.
+
+            ==================================================
+            COMPLETE STORY BOOK
+            ==================================================
+
+            Assemble all generated data into a complete unified book.
+
+            Establish:
+
+                - Book title
+                - Book subtitle
+                - Book summary and blurb
+                - Table of contents
+                - Front matter
+                - Introduction or opening
+                - Complete chapter list
+                - Chapter content assembled from scenes and dialogue
+                - Back matter
+                - Author or closing note
+                - Story synopsis
+                - Character index
+                - World glossary
+                - Timeline appendix
+                - How all generated steps were integrated
+                - How continuity was preserved
+                - How the story type, audience, and genre were honored
+
+            The complete story book must read as a finished, coherent publication.
+
+            ==================================================
+            PUBLICATION READY FORMAT
+            ==================================================
+
+            Prepare the book for eBook and PDF conversion.
+
+            Establish:
+
+                - Document structure
+                - Chapter hierarchy and headings
+                - Page structure
+                - Front matter formatting
+                - Body formatting
+                - Back matter formatting
+                - Typography guidance
+                - Illustration placement guidance
+                - Image resolution and format guidance
+                - Accessibility guidance
+                - Metadata (title, author, language, genre, audience, keywords)
+                - Copyright and legal page content
+                - ISBN placeholder guidance
+                - eBook conversion notes
+                - PDF conversion notes
+                - Print considerations
+                - Formatting consistency rules
+
+            The publication-ready format must be specific enough to guide final production directly.
+
+            ==================================================
+            FINAL NARRATIVE
+            ==================================================
+
+            Produce the final continuous narrative of the story.
+
+            Establish:
+
+                - Opening passage
+                - Full narrative flow from beginning to end
+                - Chapter-by-chapter narrative
+                - How scenes connect in prose
+                - How dialogue is woven into narrative
+                - How the established twists and reveals pay off
+                - How the established pacing is followed
+                - How character arcs resolve
+                - How the story reaches its established climax
+                - How the story reaches its established resolution
+                - Closing passage
+                - Final emotional impact
+                - Notes on any adaptation from the plan
+
+            The final narrative must be complete, consistent, and ready for the reader.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
+            ==================================================
+
+            Maintain continuity across every established generation step.
+
+            Ensure:
+
+                - Characters behave, sound, and develop consistently.
+                - The world and its rules remain consistent.
+                - The timeline remains consistent.
+                - The story structure and plot progression are respected.
+                - Twists, foreshadowing, and reveals pay off correctly.
+                - Scenes and dialogue are faithfully compiled.
+                - The page plan is honored.
+                - No contradiction exists between any generation steps.
+                - The final book honors the established story type, audience, and genre.
+
+            If a conflict exists between established steps, resolve it in favor of the earliest authoritative foundation and preserve the strongest narrative direction.
+
+            ==================================================
+            PUBLICATION QUALITY
+            ==================================================
+
+            Compile the book with the judgment of an experienced professional editor and publication specialist.
+
+            Write with:
+
+                - Natural and confident editorial judgment
+                - Complete and coherent storytelling
+                - Specific and meaningful content
+                - Strong continuity control
+                - Polished and consistent prose
+                - Publication-standard formatting
+                - Reader-focused presentation
+                - Attention to production details
+
+            Avoid:
+
+                - Missing or incomplete chapters
+                - Contradictions between steps
+                - Inconsistent character voice
+                - Disjointed narrative flow
+                - Placeholder or generic content
+                - Formatting that blocks conversion
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The complete story book should:
+
+                - Include all established generated data.
+                - Preserve full story and character continuity.
+                - Preserve world and timeline continuity.
+                - Present a complete and coherent narrative.
+                - Provide a clear publication-ready format.
+                - Be ready for eBook and PDF conversion.
+                - Support illustration integration.
+                - Honor the established story type, audience, and genre.
+                - Feel finished, polished, and production ready.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            {
+                \"complete_story_book\": {
+                    \"book_title\": \"\",
+                    \"book_subtitle\": \"\",
+                    \"book_summary\": \"\",
+                    \"table_of_contents\": [],
+                    \"front_matter\": [],
+                    \"introduction\": \"\",
+                    \"chapters\": [
+                        {
+                            \"chapter_number\": 1,
+                            \"chapter_title\": \"\",
+                            \"chapter_summary\": \"\",
+                            \"chapter_content\": \"\",
+                            \"scenes_included\": [],
+                            \"dialogue_included\": [],
+                            \"characters_featured\": [],
+                            \"locations_featured\": [],
+                            \"emotional_beat\": \"\",
+                            \"continuity_notes\": \"\"
+                        }
+                    ],
+                    \"back_matter\": [],
+                    \"author_note\": \"\",
+                    \"story_synopsis\": \"\",
+                    \"character_index\": [],
+                    \"world_glossary\": [],
+                    \"timeline_appendix\": [],
+                    \"integration_notes\": [],
+                    \"continuity_summary\": \"\",
+                    \"story_type_audience_genre_notes\": \"\"
+                },
+                \"publication_ready_format\": {
+                    \"document_structure\": \"\",
+                    \"chapter_hierarchy\": \"\",
+                    \"page_structure\": \"\",
+                    \"front_matter_formatting\": \"\",
+                    \"body_formatting\": \"\",
+                    \"back_matter_formatting\": \"\",
+                    \"typography_guidance\": \"\",
+                    \"illustration_placement_guidance\": \"\",
+                    \"image_specifications\": \"\",
+                    \"accessibility_guidance\": \"\",
+                    \"metadata\": {
+                        \"title\": \"\",
+                        \"author\": \"\",
+                        \"language\": \"\",
+                        \"genre\": [],
+                        \"audience\": \"\",
+                        \"keywords\": []
+                    },
+                    \"copyright_and_legal\": \"\",
+                    \"isbn_guidance\": \"\",
+                    \"ebook_conversion_notes\": [],
+                    \"pdf_conversion_notes\": [],
+                    \"print_considerations\": [],
+                    \"formatting_consistency_rules\": []
+                },
+                \"final_narrative\": {
+                    \"opening_passage\": \"\",
+                    \"full_narrative\": \"\",
+                    \"chapter_narratives\": [
+                        {
+                            \"chapter_number\": 1,
+                            \"chapter_title\": \"\",
+                            \"narrative\": \"\"
+                        }
+                    ],
+                    \"scene_prose_connections\": [],
+                    \"dialogue_weaving_notes\": \"\",
+                    \"twists_and_reveals_payoff\": [],
+                    \"pacing_alignment\": \"\",
+                    \"character_arc_resolution\": [],
+                    \"climax\": \"\",
+                    \"resolution\": \"\",
+                    \"closing_passage\": \"\",
+                    \"emotional_impact\": \"\",
+                    \"adaptation_notes\": []
+                }
+            }
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - Every established generation step is included and respected.
+                - Story and character continuity is preserved.
+                - World and timeline continuity is preserved.
+                - The complete book is coherent and finished.
+                - The publication-ready format supports eBook and PDF conversion.
+                - The final narrative is complete and polished.
+                - No contradiction exists between generation steps.
+                - The result is faithful to the established story.
                 - The output is valid JSON only.
                 - Do not return explanations, markdown, or additional text outside the JSON.
         ";

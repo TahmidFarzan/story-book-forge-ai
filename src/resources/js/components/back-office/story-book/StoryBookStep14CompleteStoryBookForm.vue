@@ -25,18 +25,18 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const pagePlanGeneratorForm = useForm({
+const completeStoryBookGeneratorForm = useForm({
     additional_information: null,
     ai_brain_id: null,
 });
 
 const validate = () => {
-    pagePlanGeneratorForm.clearErrors();
+    completeStoryBookGeneratorForm.clearErrors();
 
     let valid = true;
 
-    if (!pagePlanGeneratorForm.ai_brain_id) {
-        pagePlanGeneratorForm.setError(
+    if (!completeStoryBookGeneratorForm.ai_brain_id) {
+        completeStoryBookGeneratorForm.setError(
             "ai_brain_id",
             "AI Brain selection is required",
         );
@@ -47,12 +47,16 @@ const validate = () => {
 };
 
 const handleSuccess = () => {
-    pagePlanGeneratorForm.clearErrors();
+    completeStoryBookGeneratorForm.clearErrors();
     emit("completed", storyBook);
 };
 
 const submit = () => {
-    if (!isUpdate.value || pagePlanGeneratorForm.processing || !validate()) {
+    if (
+        !isUpdate.value ||
+        completeStoryBookGeneratorForm.processing ||
+        !validate()
+    ) {
         return;
     }
 
@@ -63,11 +67,11 @@ const submit = () => {
     };
 
     inertiaRoute.patch(
-        route("back-office.story-books.regenerate.page-plan", {
+        route("back-office.story-books.regenerate.complete-story-book", {
             slug: storyBook?.slug,
         }),
         {
-            ...pagePlanGeneratorForm.data(),
+            ...completeStoryBookGeneratorForm.data(),
             _method: "patch",
         },
         requestConfig,
@@ -79,27 +83,43 @@ const submit = () => {
     <div class="space-y-6">
         <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
             <div>
-                <p v-if="pagePlanGeneratorForm.errors.additional_information">
-                    {{ pagePlanGeneratorForm.errors.additional_information }}
+                <p
+                    v-if="
+                        completeStoryBookGeneratorForm.errors
+                            .additional_information
+                    "
+                >
+                    {{
+                        completeStoryBookGeneratorForm.errors
+                            .additional_information
+                    }}
                 </p>
             </div>
 
             <div>
                 <label class="block text-sm font-medium mb-1">
-                    Page Plan Additional Information
+                    Complete Story Book Additional Information
                 </label>
 
                 <textarea
-                    v-model="pagePlanGeneratorForm.additional_information"
+                    v-model="
+                        completeStoryBookGeneratorForm.additional_information
+                    "
                     rows="3"
                     placeholder="Any additional context or instructions for the AI..."
                     class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
                 ></textarea>
 
                 <p
-                    v-if="pagePlanGeneratorForm.errors.additional_information"
+                    v-if="
+                        completeStoryBookGeneratorForm.errors
+                            .additional_information
+                    "
                 >
-                    {{ pagePlanGeneratorForm.errors.additional_information }}
+                    {{
+                        completeStoryBookGeneratorForm.errors
+                            .additional_information
+                    }}
                 </p>
             </div>
         </div>
@@ -111,29 +131,29 @@ const submit = () => {
             </div>
 
             <p class="text-sm text-gray-500">
-                Select the AI model that will generate the page plan.
+                Select the AI model that will compile the complete story book.
             </p>
 
             <div
                 class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
             >
                 <InfiniteScrollApiSelect
-                    :form="pagePlanGeneratorForm"
+                    :form="completeStoryBookGeneratorForm"
                     fieldName="ai_brain_id"
                     :selectedItem="storyBook?.ai_brain"
                     :apiUrl="route('search.ai-brains')"
                     :multiple="false"
                     placeholder="Select AI Brain"
-                    :error="pagePlanGeneratorForm.errors.ai_brain_id"
+                    :error="completeStoryBookGeneratorForm.errors.ai_brain_id"
                     class="ai-brain-select"
                 />
             </div>
 
             <p
-                v-if="pagePlanGeneratorForm.errors.ai_brain_id"
+                v-if="completeStoryBookGeneratorForm.errors.ai_brain_id"
                 class="text-red-500 text-sm"
             >
-                {{ pagePlanGeneratorForm.errors.ai_brain_id }}
+                {{ completeStoryBookGeneratorForm.errors.ai_brain_id }}
             </p>
         </div>
 
@@ -141,11 +161,13 @@ const submit = () => {
             <button
                 type="button"
                 @click="submit"
-                :disabled="!isUpdate || pagePlanGeneratorForm.processing"
+                :disabled="
+                    !isUpdate || completeStoryBookGeneratorForm.processing
+                "
                 class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
                 <FontAwesomeIcon
-                    v-if="pagePlanGeneratorForm.processing"
+                    v-if="completeStoryBookGeneratorForm.processing"
                     icon="spinner"
                     spin
                 />
@@ -153,9 +175,9 @@ const submit = () => {
                 <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
 
                 {{
-                    pagePlanGeneratorForm.processing
-                        ? "Generating..."
-                        : "Generate Page Plan"
+                    completeStoryBookGeneratorForm.processing
+                        ? "Compiling..."
+                        : "Generate Complete Story Book"
                 }}
             </button>
         </div>

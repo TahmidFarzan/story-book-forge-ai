@@ -25,22 +25,18 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const storyBookDialoguePlanForm = useForm({
-    dialogue_plans: storyBook?.dialogue_plans
-        ? typeof storyBook.dialogue_plans === "string"
-            ? storyBook.dialogue_plans
-            : JSON.stringify(storyBook.dialogue_plans, null, 2)
-        : "",
-    ai_brain_id: storyBook?.ai_brain_id ?? null,
+const dialoguePlanGeneratorForm = useForm({
+    additional_information: null,
+    ai_brain_id: null,
 });
 
 const validate = () => {
-    storyBookDialoguePlanForm.clearErrors();
+    dialoguePlanGeneratorForm.clearErrors();
 
     let valid = true;
 
-    if (!storyBookDialoguePlanForm.ai_brain_id) {
-        storyBookDialoguePlanForm.setError(
+    if (!dialoguePlanGeneratorForm.ai_brain_id) {
+        dialoguePlanGeneratorForm.setError(
             "ai_brain_id",
             "AI Brain selection is required",
         );
@@ -51,12 +47,12 @@ const validate = () => {
 };
 
 const handleSuccess = () => {
-    storyBookDialoguePlanForm.clearErrors();
+    dialoguePlanGeneratorForm.clearErrors();
     emit("completed", storyBook);
 };
 
 const submit = () => {
-    if (storyBookDialoguePlanForm.processing || !validate()) {
+    if (!isUpdate.value || dialoguePlanGeneratorForm.processing || !validate()) {
         return;
     }
 
@@ -66,20 +62,16 @@ const submit = () => {
         onSuccess: handleSuccess,
     };
 
-    if (isUpdate.value) {
-        inertiaRoute.patch(
-            route("back-office.story-books.regenerate.dialogue-plan", {
-                slug: storyBook?.slug,
-            }),
-            { ...storyBookDialoguePlanForm.data(), _method: "patch" },
-            requestConfig,
-        );
-    } else {
-        storyBookDialoguePlanForm.post(
-            route("back-office.story-books.generate.dialogue-plan"),
-            requestConfig,
-        );
-    }
+    inertiaRoute.patch(
+        route("back-office.story-books.regenerate.dialogue-plan", {
+            slug: storyBook?.slug,
+        }),
+        {
+            ...dialoguePlanGeneratorForm.data(),
+            _method: "patch",
+        },
+        requestConfig,
+    );
 };
 </script>
 
@@ -87,20 +79,27 @@ const submit = () => {
     <div class="space-y-6">
         <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
             <div>
-                <label class="block text-sm font-medium mb-1"
-                    >Dialogue Plan</label
-                >
+                <p v-if="dialoguePlanGeneratorForm.errors.additional_information">
+                    {{ dialoguePlanGeneratorForm.errors.additional_information }}
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">
+                    Dialogue Plan Additional Information
+                </label>
+
                 <textarea
-                    v-model="storyBookDialoguePlanForm.dialogue_plans"
-                    rows="10"
-                    placeholder="Enter dialogue plan details..."
+                    v-model="dialoguePlanGeneratorForm.additional_information"
+                    rows="3"
+                    placeholder="Any additional context or instructions for the AI..."
                     class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
                 ></textarea>
+
                 <p
-                    v-if="storyBookDialoguePlanForm.errors.dialogue_plans"
-                    class="text-red-500 text-sm mt-1"
+                    v-if="dialoguePlanGeneratorForm.errors.additional_information"
                 >
-                    {{ storyBookDialoguePlanForm.errors.dialogue_plans }}
+                    {{ dialoguePlanGeneratorForm.errors.additional_information }}
                 </p>
             </div>
         </div>
@@ -110,28 +109,31 @@ const submit = () => {
                 <FontAwesomeIcon icon="brain" class="text-purple-600" />
                 <h3 class="text-base font-semibold">AI Brain Configuration</h3>
             </div>
+
             <p class="text-sm text-gray-500">
                 Select the AI model that will generate the dialogue plans.
             </p>
+
             <div
                 class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
             >
                 <InfiniteScrollApiSelect
-                    :form="storyBookDialoguePlanForm"
+                    :form="dialoguePlanGeneratorForm"
                     fieldName="ai_brain_id"
                     :selectedItem="storyBook?.ai_brain"
                     :apiUrl="route('search.ai-brains')"
                     :multiple="false"
                     placeholder="Select AI Brain"
-                    :error="storyBookDialoguePlanForm.errors.ai_brain_id"
+                    :error="dialoguePlanGeneratorForm.errors.ai_brain_id"
                     class="ai-brain-select"
                 />
             </div>
+
             <p
-                v-if="storyBookDialoguePlanForm.errors.ai_brain_id"
+                v-if="dialoguePlanGeneratorForm.errors.ai_brain_id"
                 class="text-red-500 text-sm"
             >
-                {{ storyBookDialoguePlanForm.errors.ai_brain_id }}
+                {{ dialoguePlanGeneratorForm.errors.ai_brain_id }}
             </p>
         </div>
 
@@ -139,20 +141,19 @@ const submit = () => {
             <button
                 type="button"
                 @click="submit"
-                :disabled="storyBookDialoguePlanForm.processing"
+                :disabled="!isUpdate || dialoguePlanGeneratorForm.processing"
                 class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
                 <FontAwesomeIcon
-                    v-if="storyBookDialoguePlanForm.processing"
+                    v-if="dialoguePlanGeneratorForm.processing"
                     icon="spinner"
                     spin
                 />
-                <FontAwesomeIcon
-                    v-else
-                    icon="wand-magic-sparkles"
-                />
+
+                <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
+
                 {{
-                    storyBookDialoguePlanForm.processing
+                    dialoguePlanGeneratorForm.processing
                         ? "Generating..."
                         : "Generate Dialogue Plan"
                 }}
