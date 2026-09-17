@@ -244,6 +244,7 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
                 Route::patch('creature', [StoryBookController::class, 'generateCreature'])->name('creature');
                 Route::patch('system', [StoryBookController::class, 'generateSystem'])->name('system');
                 Route::patch('timeline', [StoryBookController::class, 'generateTimeline'])->name('timeline');
+                Route::patch('story-structure', [StoryBookController::class, 'generateStoryStructure'])->name('story-structure');
                 Route::patch('twists-and-foreshadowing', [StoryBookController::class, 'generateTwistsAndForeshadowing'])->name('twists-and-foreshadowing');
                 Route::patch('scene-plan', [StoryBookController::class, 'generateScenePlan'])->name('scene-plan');
                 Route::patch('dialogue-plan', [StoryBookController::class, 'generateDialoguePlan'])->name('dialogue-plan');
@@ -258,6 +259,9 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
                 Route::patch('creature', [StoryBookController::class, 'generateCreature'])->name('creature');
                 Route::patch('system', [StoryBookController::class, 'generateSystem'])->name('system');
                 Route::patch('timeline', [StoryBookController::class, 'generateTimeline'])->name('timeline');
+                Route::patch('story-structure', [StoryBookController::class, 'generateStoryStructure'])->name('story-structure');
+                Route::patch('twists-and-foreshadowing', [StoryBookController::class, 'generateTwistsAndForeshadowing'])->name('twists-and-foreshadowing');
+                Route::patch('scene-plan', [StoryBookController::class, 'generateScenePlan'])->name('scene-plan');
             });
 
             Route::delete('delete', [StoryBookController::class, 'delete'])->name('delete');

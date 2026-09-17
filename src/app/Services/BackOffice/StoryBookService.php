@@ -9,8 +9,11 @@ use App\Http\Requests\StoryBookCreaturesRequest;
 use App\Http\Requests\StoryBookFactionsRequest;
 use App\Http\Requests\StoryBookFoundationRequest;
 use App\Http\Requests\StoryBookLocationsRequest;
+use App\Http\Requests\StoryBookScenePlanRequest;
+use App\Http\Requests\StoryBookStoryStructureRequest;
 use App\Http\Requests\StoryBookSystemsRequest;
 use App\Http\Requests\StoryBookTimelineRequest;
+use App\Http\Requests\StoryBookTwistsAndForeshadowingRequest;
 use App\Http\Requests\StoryBookWorldVibeRequest;
 use App\Models\StoryBook;
 use Exception;
@@ -449,6 +452,123 @@ class StoryBookService
         }
     }
 
+    public function generateStoryStructure(StoryBookStoryStructureRequest $request, StoryBook $storyBook): array
+    {
+        try {
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STORY_STRUCTURE_GENERATOR));
+            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
+
+            $requestInputs = $this->storyStructureRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
+
+            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+
+            $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
+                $storyStructureObject = $this->extractStoryStructureFromResponse($apiResponse);
+                $storyBook->story_structure = $storyStructureObject;
+                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->save();
+
+                return $storyBook;
+            });
+
+            return [
+                'story_book' => $storyBook,
+                'status' => 'success',
+                'message' => 'Story structure generated successfully.',
+            ];
+        } catch (Exception $exception) {
+
+            Log::error('Failed to generate Story structure', [
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return [
+                'story_book' => null,
+                'status' => 'error',
+                'message' => 'Failed to generate Story structure. Please try again.',
+            ];
+        }
+    }
+
+    public function generateTwistsAndForeshadowing(StoryBookTwistsAndForeshadowingRequest $request, StoryBook $storyBook): array
+    {
+        try {
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_TWISTS_AND_FORESHADOWING_GENERATOR));
+            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
+
+            $requestInputs = $this->twistsAndForeshadowingRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
+
+            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+
+            $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
+                $twistsObject = $this->extractTwistsAndForeshadowingFromResponse($apiResponse);
+                $storyBook->twists_and_foreshadowing = $twistsObject;
+                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->save();
+
+                return $storyBook;
+            });
+
+            return [
+                'story_book' => $storyBook,
+                'status' => 'success',
+                'message' => 'Story twists and foreshadowing generated successfully.',
+            ];
+        } catch (Exception $exception) {
+
+            Log::error('Failed to generate Story twists and foreshadowing', [
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return [
+                'story_book' => null,
+                'status' => 'error',
+                'message' => 'Failed to generate Story twists and foreshadowing. Please try again.',
+            ];
+        }
+    }
+
+    public function generateScenePlan(StoryBookScenePlanRequest $request, StoryBook $storyBook): array
+    {
+        try {
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_SCENE_PLAN_GENERATOR));
+            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
+
+            $requestInputs = $this->scenePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
+
+            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+
+            $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
+                $scenePlanObject = $this->extractScenePlanFromResponse($apiResponse);
+                $storyBook->scene_plans = $scenePlanObject;
+                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->save();
+
+                return $storyBook;
+            });
+
+            return [
+                'story_book' => $storyBook,
+                'status' => 'success',
+                'message' => 'Story scene plan generated successfully.',
+            ];
+        } catch (Exception $exception) {
+
+            Log::error('Failed to generate Story scene plan', [
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return [
+                'story_book' => null,
+                'status' => 'error',
+                'message' => 'Failed to generate Story scene plan. Please try again.',
+            ];
+        }
+    }
+
     public function delete(StoryBook $storyBook): array
     {
 
@@ -686,6 +806,96 @@ class StoryBookService
             'factions' => $formatedFactions,
             'creatures' => $formatedCreatures,
             'systems' => $formatedSystems,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function storyStructureRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    {
+        $requestInputs = [];
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function twistsAndForeshadowingRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    {
+        $requestInputs = [];
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'story_structure' => $formatedStoryStructure,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function scenePlanRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    {
+        $requestInputs = [];
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
+        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'story_structure' => $formatedStoryStructure,
+            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
             'additional_information' => $additionalInformation,
         ];
 
@@ -988,6 +1198,135 @@ class StoryBookService
             'major_events' => $decoded['major_events'] ?? [],
             'milestones' => $decoded['milestones'] ?? [],
             'historical_flow' => $decoded['historical_flow'] ?? [],
+        ];
+    }
+
+    private function extractStoryStructureFromResponse($apiResponse): object
+    {
+        $content = data_get(
+            $apiResponse,
+            'choices.0.message.content'
+        );
+
+        if (! is_string($content) || trim($content) === '') {
+            throw new Exception('Invalid AI response structure.');
+        }
+
+        $content = trim($content);
+
+        $content = preg_replace(
+            '/^```(?:json)?\s*|\s*```$/i',
+            '',
+            $content
+        );
+
+        $content = trim($content);
+
+        $decoded = json_decode(
+            $content,
+            true
+        );
+
+        if (
+            json_last_error() !== JSON_ERROR_NONE ||
+            ! is_array($decoded)
+        ) {
+            throw new Exception(
+                'AI response is not valid JSON: '.json_last_error_msg()
+            );
+        }
+
+        return (object) [
+            'story_outline' => $decoded['story_outline'] ?? [],
+            'acts_and_chapters' => $decoded['acts_and_chapters'] ?? [],
+            'plot_progression' => $decoded['plot_progression'] ?? [],
+            'pacing_guide' => $decoded['pacing_guide'] ?? [],
+        ];
+    }
+
+    private function extractTwistsAndForeshadowingFromResponse($apiResponse): object
+    {
+        $content = data_get(
+            $apiResponse,
+            'choices.0.message.content'
+        );
+
+        if (! is_string($content) || trim($content) === '') {
+            throw new Exception('Invalid AI response structure.');
+        }
+
+        $content = trim($content);
+
+        $content = preg_replace(
+            '/^```(?:json)?\s*|\s*```$/i',
+            '',
+            $content
+        );
+
+        $content = trim($content);
+
+        $decoded = json_decode(
+            $content,
+            true
+        );
+
+        if (
+            json_last_error() !== JSON_ERROR_NONE ||
+            ! is_array($decoded)
+        ) {
+            throw new Exception(
+                'AI response is not valid JSON: '.json_last_error_msg()
+            );
+        }
+
+        return (object) [
+            'twists' => $decoded['twists'] ?? [],
+            'foreshadowing' => $decoded['foreshadowing'] ?? [],
+            'hidden_clues' => $decoded['hidden_clues'] ?? [],
+            'reveal_points' => $decoded['reveal_points'] ?? [],
+        ];
+    }
+
+    private function extractScenePlanFromResponse($apiResponse): object
+    {
+        $content = data_get(
+            $apiResponse,
+            'choices.0.message.content'
+        );
+
+        if (! is_string($content) || trim($content) === '') {
+            throw new Exception('Invalid AI response structure.');
+        }
+
+        $content = trim($content);
+
+        $content = preg_replace(
+            '/^```(?:json)?\s*|\s*```$/i',
+            '',
+            $content
+        );
+
+        $content = trim($content);
+
+        $decoded = json_decode(
+            $content,
+            true
+        );
+
+        if (
+            json_last_error() !== JSON_ERROR_NONE ||
+            ! is_array($decoded)
+        ) {
+            throw new Exception(
+                'AI response is not valid JSON: '.json_last_error_msg()
+            );
+        }
+
+        return (object) [
+            'scene_list' => $decoded['scene_list'] ?? [],
+            'scene_objectives' => $decoded['scene_objectives'] ?? [],
+            'locations' => $decoded['locations'] ?? [],
+            'pov_and_tone' => $decoded['pov_and_tone'] ?? [],
         ];
     }
 }

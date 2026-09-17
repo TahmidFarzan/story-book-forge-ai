@@ -25,22 +25,18 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const storyBookTwistsAndForeshadowingForm = useForm({
-    twists_and_foreshadowing: storyBook?.twists_and_foreshadowing
-        ? typeof storyBook.twists_and_foreshadowing === "string"
-            ? storyBook.twists_and_foreshadowing
-            : JSON.stringify(storyBook.twists_and_foreshadowing, null, 2)
-        : "",
-    ai_brain_id: storyBook?.ai_brain_id ?? null,
+const storyStructureGeneratorForm = useForm({
+    additional_information: null,
+    ai_brain_id: null,
 });
 
 const validate = () => {
-    storyBookTwistsAndForeshadowingForm.clearErrors();
+    storyStructureGeneratorForm.clearErrors();
 
     let valid = true;
 
-    if (!storyBookTwistsAndForeshadowingForm.ai_brain_id) {
-        storyBookTwistsAndForeshadowingForm.setError(
+    if (!storyStructureGeneratorForm.ai_brain_id) {
+        storyStructureGeneratorForm.setError(
             "ai_brain_id",
             "AI Brain selection is required",
         );
@@ -51,12 +47,16 @@ const validate = () => {
 };
 
 const handleSuccess = () => {
-    storyBookTwistsAndForeshadowingForm.clearErrors();
+    storyStructureGeneratorForm.clearErrors();
     emit("completed", storyBook);
 };
 
 const submit = () => {
-    if (storyBookTwistsAndForeshadowingForm.processing || !validate()) {
+    if (
+        !isUpdate.value ||
+        storyStructureGeneratorForm.processing ||
+        !validate()
+    ) {
         return;
     }
 
@@ -66,24 +66,16 @@ const submit = () => {
         onSuccess: handleSuccess,
     };
 
-    if (isUpdate.value) {
-        inertiaRoute.patch(
-            route(
-                "back-office.story-books.regenerate.twists-and-foreshadowing",
-                { slug: storyBook?.slug },
-            ),
-            {
-                ...storyBookTwistsAndForeshadowingForm.data(),
-                _method: "patch",
-            },
-            requestConfig,
-        );
-    } else {
-        storyBookTwistsAndForeshadowingForm.post(
-            route("back-office.story-books.generate.twists-and-foreshadowing"),
-            requestConfig,
-        );
-    }
+    inertiaRoute.patch(
+        route("back-office.story-books.regenerate.story-structure", {
+            slug: storyBook?.slug,
+        }),
+        {
+            ...storyStructureGeneratorForm.data(),
+            _method: "patch",
+        },
+        requestConfig,
+    );
 };
 </script>
 
@@ -91,22 +83,42 @@ const submit = () => {
     <div class="space-y-6">
         <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
             <div>
-                <label class="block text-sm font-medium mb-1"
-                    >Twists &amp; Foreshadowing</label
-                >
-                <textarea
-                    v-model="storyBookTwistsAndForeshadowingForm.twists_and_foreshadowing"
-                    rows="10"
-                    placeholder="Enter twists & foreshadowing details..."
-                    class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
-                ></textarea>
                 <p
-                    v-if="storyBookTwistsAndForeshadowingForm.errors.twists_and_foreshadowing"
-                    class="text-red-500 text-sm mt-1"
+                    v-if="
+                        storyStructureGeneratorForm.errors
+                            .additional_information
+                    "
                 >
                     {{
-                        storyBookTwistsAndForeshadowingForm.errors
-                            .twists_and_foreshadowing
+                        storyStructureGeneratorForm.errors
+                            .additional_information
+                    }}
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">
+                    Story Structure Additional Information
+                </label>
+
+                <textarea
+                    v-model="
+                        storyStructureGeneratorForm.additional_information
+                    "
+                    rows="3"
+                    placeholder="Any additional context or instructions for the AI..."
+                    class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
+                ></textarea>
+
+                <p
+                    v-if="
+                        storyStructureGeneratorForm.errors
+                            .additional_information
+                    "
+                >
+                    {{
+                        storyStructureGeneratorForm.errors
+                            .additional_information
                     }}
                 </p>
             </div>
@@ -117,31 +129,31 @@ const submit = () => {
                 <FontAwesomeIcon icon="brain" class="text-purple-600" />
                 <h3 class="text-base font-semibold">AI Brain Configuration</h3>
             </div>
+
             <p class="text-sm text-gray-500">
-                Select the AI model that will generate the twists and
-                foreshadowing.
+                Select the AI model that will generate the story structure.
             </p>
+
             <div
                 class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
             >
                 <InfiniteScrollApiSelect
-                    :form="storyBookTwistsAndForeshadowingForm"
+                    :form="storyStructureGeneratorForm"
                     fieldName="ai_brain_id"
                     :selectedItem="storyBook?.ai_brain"
                     :apiUrl="route('search.ai-brains')"
                     :multiple="false"
                     placeholder="Select AI Brain"
-                    :error="
-                        storyBookTwistsAndForeshadowingForm.errors.ai_brain_id
-                    "
+                    :error="storyStructureGeneratorForm.errors.ai_brain_id"
                     class="ai-brain-select"
                 />
             </div>
+
             <p
-                v-if="storyBookTwistsAndForeshadowingForm.errors.ai_brain_id"
+                v-if="storyStructureGeneratorForm.errors.ai_brain_id"
                 class="text-red-500 text-sm"
             >
-                {{ storyBookTwistsAndForeshadowingForm.errors.ai_brain_id }}
+                {{ storyStructureGeneratorForm.errors.ai_brain_id }}
             </p>
         </div>
 
@@ -149,22 +161,23 @@ const submit = () => {
             <button
                 type="button"
                 @click="submit"
-                :disabled="storyBookTwistsAndForeshadowingForm.processing"
+                :disabled="
+                    !isUpdate || storyStructureGeneratorForm.processing
+                "
                 class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
                 <FontAwesomeIcon
-                    v-if="storyBookTwistsAndForeshadowingForm.processing"
+                    v-if="storyStructureGeneratorForm.processing"
                     icon="spinner"
                     spin
                 />
-                <FontAwesomeIcon
-                    v-else
-                    icon="wand-magic-sparkles"
-                />
+
+                <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
+
                 {{
-                    storyBookTwistsAndForeshadowingForm.processing
+                    storyStructureGeneratorForm.processing
                         ? "Generating..."
-                        : "Generate Twists & Foreshadowing"
+                        : "Generate Story Structure"
                 }}
             </button>
         </div>
