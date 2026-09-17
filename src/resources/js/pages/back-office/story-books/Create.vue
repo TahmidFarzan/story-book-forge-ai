@@ -95,7 +95,7 @@ const STEP_DEFINITIONS = [
     {
         number: "01",
         title: "Foundation",
-        text: "Create the core story foundation with its title, subtitle, plot, theme, genre, and tone.",
+        text: "Create the core story foundation with its title, subtitle, foundation, theme, genre, and tone.",
         icon: ["fas", "lightbulb"],
     },
     {

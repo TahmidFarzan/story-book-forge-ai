@@ -23,7 +23,7 @@ class AiPromptGeneratorHelper
 
                 1. Story Book Title
                 2. Story Book Subtitle
-                3. Story Book Plot Foundation
+                3. Story Book Foundation
 
             ==================================================
             LANGUAGE REQUIREMENT
@@ -203,7 +203,7 @@ class AiPromptGeneratorHelper
             {
                 \"story_book_title\": \"\",
                 \"story_book_subtitle\": \"\",
-                \"story_book_plot\": {
+                \"story_book_foundation\": {
 
                     \"premise\": \"\",
                     \"story_concept\": \"\",
@@ -255,7 +255,7 @@ class AiPromptGeneratorHelper
 
                 - Title represents the story.
                 - Subtitle supports the title.
-                - Plot is detailed and expandable.
+                - Foundation is detailed and expandable.
                 - Story direction is clear.
                 - Conflict and stakes are meaningful.
                 - Characters have believable motivations and goals.
@@ -289,7 +289,7 @@ class AiPromptGeneratorHelper
 
             The following Story Book foundation is authoritative:
 
-            {{plot}}
+            {{foundation}}
 
             Use this Story Book foundation as the primary source for all character decisions.
 
@@ -322,7 +322,7 @@ class AiPromptGeneratorHelper
             CHARACTER-SPECIFIC INFORMATION
             ==================================================
 
-            {{character_additional_information}}
+            {{additional_information}}
 
             Character-specific information is optional.
 
@@ -341,7 +341,7 @@ class AiPromptGeneratorHelper
                 - Strong character relationships
                 - Emotional depth
                 - Meaningful character development
-                - The established plot and themes
+                - The established foundation and themes
 
             Regardless of the input, maintain consistency with the established Story Book foundation.
 
@@ -655,7 +655,7 @@ class AiPromptGeneratorHelper
 
             Ensure:
 
-                - Character motivations support the plot.
+                - Character motivations support the foundation.
                 - Character goals support story progression.
                 - Character relationships support conflict and emotional development.
                 - Character arcs support the established themes.
@@ -665,7 +665,7 @@ class AiPromptGeneratorHelper
                 - Characters do not contradict established story information.
                 - Character actions remain consistent with their established personalities and motivations.
 
-            If the plot foundation leaves something unspecified, make a strong creative decision that best supports the existing story.
+            If the foundation foundation leaves something unspecified, make a strong creative decision that best supports the existing story.
 
             ==================================================
             FUTURE STORY DEVELOPMENT
@@ -730,7 +730,7 @@ class AiPromptGeneratorHelper
 
             The character foundation should:
 
-                - Fit the established Story Book plot.
+                - Fit the established Story Book foundation.
                 - Strengthen the existing narrative.
                 - Create believable characters.
                 - Give major characters clear motivations.
@@ -742,7 +742,7 @@ class AiPromptGeneratorHelper
                 - Support future scene and chapter generation.
                 - Maintain thematic coherence.
                 - Maintain emotional continuity.
-                - Maintain consistency with the established setting and plot.
+                - Maintain consistency with the established setting and foundation.
                 - Naturally incorporate character-specific information.
                 - Avoid unnecessary characters.
                 - Make every major character narratively purposeful.
@@ -811,7 +811,7 @@ class AiPromptGeneratorHelper
 
             Before returning the result, ensure:
 
-                - Characters directly support the established plot.
+                - Characters directly support the established foundation.
                 - The protagonist is strongly connected to the central conflict.
                 - Major characters have believable motivations.
                 - Major characters have meaningful goals.
@@ -825,7 +825,7 @@ class AiPromptGeneratorHelper
                 - Characters are distinct from one another.
                 - No unnecessary character is included.
                 - Character-specific information is naturally incorporated.
-                - No contradiction exists with the established plot.
+                - No contradiction exists with the established foundation.
                 - The result is detailed enough for future story generation.
                 - The writing feels professionally developed.
                 - The characters feel original, natural, emotionally authentic, and intentional.

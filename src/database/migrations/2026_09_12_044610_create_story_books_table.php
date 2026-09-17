@@ -29,7 +29,7 @@ return new class extends Migration
 
 
 
-            $table->jsonb('plot')->nullable();
+            $table->jsonb('foundation')->nullable();
 
             $table->jsonb('characters')->nullable();
             $table->jsonb('world_bible')->nullable();

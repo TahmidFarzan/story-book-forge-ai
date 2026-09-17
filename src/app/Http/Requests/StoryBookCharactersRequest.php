@@ -23,12 +23,12 @@ class StoryBookCharactersRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'character_additional_information' => [
+            'additional_information' => [
                 'nullable',
                 'string',
             ],
 
-            'plot' => [
+            'foundation' => [
                 'required',
             ],
         ];
@@ -37,8 +37,8 @@ class StoryBookCharactersRequest extends FormRequest
     public function messages()
     {
         return [
-            'plot.required'  => 'Plot is required.',
-            'character_additional_information.string'  => 'Character additional information must be a string.',
+            'foundation.required'  => 'Foundation is required.',
+            'additional_information.string'  => 'Additional Iinformation must be a string.',
         ];
     }
 }

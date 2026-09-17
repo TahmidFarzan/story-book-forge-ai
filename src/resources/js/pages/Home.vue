@@ -81,7 +81,7 @@ const steps = [
     {
         number: '01',
         title: 'Foundation',
-        text: 'Create the core story foundation with a title, subtitle, plot, theme, genre, and tone.',
+        text: 'Create the core story foundation with a title, subtitle, foundation, theme, genre, and tone.',
         icon: ['fas', 'lightbulb'],
     },
     {

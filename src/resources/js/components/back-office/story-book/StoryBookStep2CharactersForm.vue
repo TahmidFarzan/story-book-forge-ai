@@ -26,12 +26,12 @@ const { storyBook } = defineProps({
 const isUpdate = computed(() => !!storyBook?.id);
 
 const charactersGeneratorForm = useForm({
-    plot: storyBook?.plot
-        ? typeof storyBook.plot === "string"
-            ? storyBook.plot
-            : JSON.stringify(storyBook.plot)
+    foundation: storyBook?.foundation
+        ? typeof storyBook.foundation === "string"
+            ? storyBook.foundation
+            : JSON.stringify(storyBook.foundation)
         : null,
-    character_additional_information: null,
+    additional_information: null,
     ai_brain_id: null,
 });
 
@@ -48,8 +48,8 @@ const validate = () => {
         valid = false;
     }
 
-    if (!charactersGeneratorForm.plot) {
-        charactersGeneratorForm.setError("plot", "Plot is required");
+    if (!charactersGeneratorForm.foundation) {
+        charactersGeneratorForm.setError("foundation", "Foundation is required");
         valid = false;
     }
 
@@ -89,8 +89,8 @@ const submit = () => {
     <div class="space-y-6">
         <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
             <div>
-                <p v-if="charactersGeneratorForm.errors.plot">
-                    {{ charactersGeneratorForm.errors.plot }}
+                <p v-if="charactersGeneratorForm.errors.foundation">
+                    {{ charactersGeneratorForm.errors.foundation }}
                 </p>
             </div>
 
@@ -101,7 +101,7 @@ const submit = () => {
 
                 <textarea
                     v-model="
-                        charactersGeneratorForm.character_additional_information
+                        charactersGeneratorForm.additional_information
                     "
                     rows="3"
                     placeholder="Any additional context or instructions for the AI..."
@@ -111,12 +111,12 @@ const submit = () => {
                 <p
                     v-if="
                         charactersGeneratorForm.errors
-                            .character_additional_information
+                            .additional_information
                     "
                 >
                     {{
                         charactersGeneratorForm.errors
-                            .character_additional_information
+                            .additional_information
                     }}
                 </p>
             </div>

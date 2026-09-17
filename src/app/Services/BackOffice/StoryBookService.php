@@ -125,7 +125,7 @@ class StoryBookService
 
                 $storyBook->title     = $foundationObject->title;
                 $storyBook->sub_title = $foundationObject->subtitle;
-                $storyBook->plot      = $foundationObject->plot;
+                $storyBook->foundation      = $foundationObject->foundation;
 
                 $storyBook->audience_id   = $request->input("audience_id");
                 $storyBook->story_book_type_id = $request->input("story_book_type_id");
@@ -176,7 +176,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_CHARACTER_GENERATOR));
             $aiBrain  = $this->aiBrainService->findById($request->input("ai_brain_id"));
 
-            $requestInputs = $this->charactersRequestInputsFormatter($storyBook, $request->input("character_additional_information", "Auto"));
+            $requestInputs = $this->charactersRequestInputsFormatter($storyBook, $request->input("additional_information", "Auto"));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
@@ -273,7 +273,7 @@ class StoryBookService
         return (object) [
             'title' => $decoded['story_book_title'] ?? null,
             'subtitle' => $decoded['story_book_subtitle'] ?? null,
-            'plot' => $decoded['story_book_plot'] ?? null,
+            'foundation' => $decoded['story_book_foundation'] ?? null,
         ];
     }
 
@@ -314,14 +314,14 @@ class StoryBookService
     }
 
 
-    private function charactersRequestInputsFormatter(StoryBook $storyBook, string $characterAdditionalInformation): array
+    private function charactersRequestInputsFormatter(StoryBook $storyBook, string $additionalIinformation): array
     {
         $requestInputs = array();
 
-        $formatedPlot = json_encode($storyBook->plot, JSON_PRETTY_PRINT);
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
         $requestInputs = [
-            "plot" => $formatedPlot,
-            "character_additional_information" => $characterAdditionalInformation,
+            "foundation" => $formatedFoundation,
+            "additional_information" => $additionalIinformation,
         ];
 
         return $requestInputs;
