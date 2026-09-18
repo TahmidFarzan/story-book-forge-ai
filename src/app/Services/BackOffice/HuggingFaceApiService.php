@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services\BackOffice;
 
 use Exception;
@@ -9,24 +8,22 @@ class HuggingFaceApiService
 {
     protected int $defaultTimeout = 120;
 
-    public function sendPostRequest(
-        string $url,
-        string $apiKey,
-        string $model,
-        mixed $data = null,
-        ?int $maxOutputTokens = null,
-        ?int $timeout = null
-    ): array {
+    public function sendPostRequest(string $url, string $apiKey, string $model, mixed $data = null, ?int $maxOutputTokens = null, ?int $timeout = null): array
+    {
+        $requestTimeout = $timeout ?? $this->defaultTimeout;
+
+        set_time_limit($requestTimeout);
+
         $payload = $this->buildPayload(
             $model,
             $data,
             $maxOutputTokens
         );
 
-        $endpoint = rtrim($url, '/') . '/chat/completions';
+        $endpoint = rtrim($url, '/');
 
         $response = Http::timeout(
-            $timeout ?? $this->defaultTimeout
+            $requestTimeout
         )
             ->withToken($apiKey)
             ->acceptJson()
@@ -44,12 +41,8 @@ class HuggingFaceApiService
         return $response->json();
     }
 
-    public function sendGetRequest(
-        string $url,
-        string $apiKey,
-        array $params = [],
-        ?int $timeout = null
-    ): array {
+    public function sendGetRequest(string $url, string $apiKey, array $params = [], ?int $timeout = null): array
+    {
         $response = Http::timeout(
             $timeout ?? $this->defaultTimeout
         )
@@ -69,18 +62,15 @@ class HuggingFaceApiService
         return $response->json();
     }
 
-    private function buildPayload(
-        string $model,
-        mixed $data = null,
-        ?int $maxOutputTokens = null
-    ): array {
+    private function buildPayload(string $model, mixed $data = null, ?int $maxOutputTokens = null): array
+    {
         $content = $this->buildContent($data);
 
         $payload = [
-            'model' => $model,
+            'model'    => $model,
             'messages' => [
                 [
-                    'role' => 'user',
+                    'role'    => 'user',
                     'content' => $content,
                 ],
             ],
