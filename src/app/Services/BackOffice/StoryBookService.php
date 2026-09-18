@@ -757,7 +757,7 @@ class StoryBookService
         ];
     }
 
-    private function foundationRequestInputsFormatter(int|string $languageId, int|string $audienceId, int|string $storyBookTypeId, array $genreIds, string $additionalInformation): array
+    private function foundationRequestInputsFormatter(int|string $languageId, int|string $audienceId, int|string $storyBookTypeId, array $genreIds, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -793,20 +793,20 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function charactersRequestInputsFormatter(StoryBook $storyBook, string $additionalIinformation): array
+    private function charactersRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
         $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
         $requestInputs = [
             'foundation' => $formatedFoundation,
-            'additional_information' => $additionalIinformation,
+            'additional_information' => $additionalInformation,
         ];
 
         return $requestInputs;
     }
 
-    private function worldBibleRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function worldBibleRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -822,7 +822,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function locationsRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function locationsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -840,7 +840,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function factionsRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function factionsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -860,7 +860,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function creaturesRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function creaturesRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -882,7 +882,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function systemsRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function systemsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -906,7 +906,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function timelineRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function timelineRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -932,7 +932,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function storyStructureRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function storyStructureRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -960,7 +960,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function twistsAndForeshadowingRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function twistsAndForeshadowingRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -990,7 +990,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function scenePlanRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function scenePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1022,7 +1022,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function dialoguePlanRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function dialoguePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1056,7 +1056,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function pagePlanRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function pagePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1092,7 +1092,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function completeStoryBookRequestInputsFormatter(StoryBook $storyBook, string $additionalInformation): array
+    private function completeStoryBookRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
