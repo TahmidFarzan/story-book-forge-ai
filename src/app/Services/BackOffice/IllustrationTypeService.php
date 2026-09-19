@@ -29,6 +29,12 @@ class IllustrationTypeService
         ])->where('slug', $slug)->firstOrFail();
     }
 
+    public function findById(string|int $id): IllustrationType
+    {
+        return IllustrationType::where('id', $id)->firstOrFail();
+    }
+
+
     public function search(Request $request)
     {
         $perPage = $request->input('per_page', 10);
