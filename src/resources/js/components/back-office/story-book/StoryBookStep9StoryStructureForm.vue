@@ -1,5 +1,6 @@
 <script setup>
 import InfiniteScrollApiSelect from "@/components/common/multi-select/InfiniteScrollApiSelect.vue";
+import { AiBrainOutputTypes } from "@/composables/useAiBrain";
 
 import { computed } from "vue";
 import { useForm, router as inertiaRoute } from "@inertiajs/vue3";
@@ -29,6 +30,12 @@ const storyStructureGeneratorForm = useForm({
     additional_information: null,
     ai_brain_id: null,
 });
+
+function buildAiBrainSearchUrl() {
+    return route("search.ai-brains", {
+        ai_brain_output_type_code: AiBrainOutputTypes.Text,
+    });
+}
 
 const validate = () => {
     storyStructureGeneratorForm.clearErrors();
@@ -141,7 +148,7 @@ const submit = () => {
                     :form="storyStructureGeneratorForm"
                     fieldName="ai_brain_id"
                     :selectedItem="storyBook?.ai_brain"
-                    :apiUrl="route('search.ai-brains')"
+                    :apiUrl="buildAiBrainSearchUrl()"
                     :multiple="false"
                     placeholder="Select AI Brain"
                     :error="storyStructureGeneratorForm.errors.ai_brain_id"
