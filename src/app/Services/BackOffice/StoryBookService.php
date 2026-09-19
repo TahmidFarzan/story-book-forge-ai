@@ -923,7 +923,7 @@ class StoryBookService
 
         $language = $this->languageService->findByIdsOrEnglish($languageId);
         $audience = $this->audienceService->findById($audienceId);
-        $storyBookType = $this->audienceService->findById($storyBookTypeId);
+        $storyBookType = $this->storyBookTypeService->findById($storyBookTypeId);
         $genres = $this->genreService->findByIdsOrRandom($genreIds);
 
         $genrePromptInstruction = '';

@@ -29,6 +29,11 @@ class StoryBookTypeService
         ])->where('slug', $slug)->firstOrFail();
     }
 
+    public function findById(string | int $id): StoryBookType
+    {
+        return StoryBookType::where('id', $id)->firstOrFail();
+    }
+
     public function search(Request $request)
     {
         $perPage = $request->input('per_page', 10);
