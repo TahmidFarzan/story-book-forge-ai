@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoryBookSystemsRequest extends FormRequest
+class StoryBookStep10TwistsAndForeshadowingRequest extends FormRequest
 {
     public function authorize(): bool
     {

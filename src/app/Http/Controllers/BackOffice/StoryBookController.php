@@ -3,22 +3,22 @@
 namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoryBookCharactersRequest;
-use App\Http\Requests\StoryBookCreaturesRequest;
-use App\Http\Requests\StoryBookDialoguePlanRequest;
-use App\Http\Requests\StoryBookFactionsRequest;
-use App\Http\Requests\StoryBookFoundationRequest;
-use App\Http\Requests\StoryBookLocationsRequest;
-use App\Http\Requests\StoryBookPagePlanRequest;
-use App\Http\Requests\StoryBookScenePlanRequest;
+use App\Http\Requests\StoryBookStep2CharactersRequest;
+use App\Http\Requests\StoryBookStep6CreatureRequest;
+use App\Http\Requests\StoryBookStep12DialoguePlanRequest;
+use App\Http\Requests\StoryBookStep5FactionsRequest;
+use App\Http\Requests\StoryBookStep1FoundationRequest;
+use App\Http\Requests\StoryBookStep4LocationsRequest;
+use App\Http\Requests\StoryBookStep13PagePlanRequest;
+use App\Http\Requests\StoryBookStep11ScenePlanRequest;
 use App\Http\Requests\StoryBookStep14_1PageNarrationRequest;
 use App\Http\Requests\StoryBookStep14_2IllustrationPlanningRequest;
 use App\Http\Requests\StoryBookStep14_3IllustrationGenerationRequest;
-use App\Http\Requests\StoryBookStoryStructureRequest;
-use App\Http\Requests\StoryBookSystemsRequest;
-use App\Http\Requests\StoryBookTimelineRequest;
-use App\Http\Requests\StoryBookTwistsAndForeshadowingRequest;
-use App\Http\Requests\StoryBookWorldVibeRequest;
+use App\Http\Requests\StoryBookStep9StoryStructureRequest;
+use App\Http\Requests\StoryBookStep7SystemRequest;
+use App\Http\Requests\StoryBookStep8TimelineRequest;
+use App\Http\Requests\StoryBookStep10TwistsAndForeshadowingRequest;
+use App\Http\Requests\StoryBookStep3WorldVibeRequest;
 use App\Services\BackOffice\StoryBookService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,12 +66,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function createFoundation(StoryBookFoundationRequest $request): RedirectResponse
+    public function createStep1Foundation(StoryBookStep1FoundationRequest $request): RedirectResponse
     {
         $storyBook = $this->storyBookService->new();
         Gate::authorize('create', $storyBook);
 
-        $result = $this->storyBookService->generateFoundation($request, $storyBook);
+        $result = $this->storyBookService->generateStep1Foundation($request, $storyBook);
 
         if ($result['story_book']?->slug) {
             return to_route('back-office.story-books.edit', ['slug' => $result['story_book']?->slug])->with('flash_message', [
@@ -86,12 +86,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateFoundation(StoryBookFoundationRequest $request, string $slug): RedirectResponse
+    public function generateStep1Foundation(StoryBookStep1FoundationRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateFoundation($request, $storyBook);
+        $result = $this->storyBookService->generateStep1Foundation($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $slug])->with('flash_message', [
             'message' => $result['message'],
@@ -99,12 +99,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateCharacters(StoryBookCharactersRequest $request, string $slug): RedirectResponse
+    public function generateStep2Characters(StoryBookStep2CharactersRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateCharacters($request, $storyBook);
+        $result = $this->storyBookService->generateStep2Characters($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -112,12 +112,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateWorldVibe(StoryBookWorldVibeRequest $request, string $slug): RedirectResponse
+    public function generateStep3WorldVibe(StoryBookStep3WorldVibeRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateWorldBible($request, $storyBook);
+        $result = $this->storyBookService->generateStep3WorldVibe($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -125,12 +125,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateLocations(StoryBookLocationsRequest $request, string $slug): RedirectResponse
+    public function generateStep4Locations(StoryBookStep4LocationsRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateLocations($request, $storyBook);
+        $result = $this->storyBookService->generateStep4Locations($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -138,12 +138,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateFactions(StoryBookFactionsRequest $request, string $slug): RedirectResponse
+    public function generateStep5Factions(StoryBookStep5FactionsRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateFactions($request, $storyBook);
+        $result = $this->storyBookService->generateStep5Factions($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -151,12 +151,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateCreature(StoryBookCreaturesRequest $request, string $slug): RedirectResponse
+    public function generateStep6Creature(StoryBookStep6CreatureRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateCreatures($request, $storyBook);
+        $result = $this->storyBookService->generateStep6Creature($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -164,12 +164,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateSystem(StoryBookSystemsRequest $request, string $slug): RedirectResponse
+    public function generateStep7System(StoryBookStep7SystemRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateSystems($request, $storyBook);
+        $result = $this->storyBookService->generateStep7System($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -177,12 +177,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateTimeline(StoryBookTimelineRequest $request, string $slug): RedirectResponse
+    public function generateStep8Timeline(StoryBookStep8TimelineRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateTimeline($request, $storyBook);
+        $result = $this->storyBookService->generateStep8Timeline($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -190,12 +190,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateStoryStructure(StoryBookStoryStructureRequest $request, string $slug): RedirectResponse
+    public function generateStep9StoryStructure(StoryBookStep9StoryStructureRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateStoryStructure($request, $storyBook);
+        $result = $this->storyBookService->generateStep9StoryStructure($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -203,12 +203,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateTwistsAndForeshadowing(StoryBookTwistsAndForeshadowingRequest $request, string $slug): RedirectResponse
+    public function generateStep10TwistsAndForeshadowing(StoryBookStep10TwistsAndForeshadowingRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateTwistsAndForeshadowing($request, $storyBook);
+        $result = $this->storyBookService->generateStep10TwistsAndForeshadowing($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -216,12 +216,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateScenePlan(StoryBookScenePlanRequest $request, string $slug): RedirectResponse
+    public function generateStep11ScenePlan(StoryBookStep11ScenePlanRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateScenePlan($request, $storyBook);
+        $result = $this->storyBookService->generateStep11ScenePlan($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -229,12 +229,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateDialoguePlan(StoryBookDialoguePlanRequest $request, string $slug): RedirectResponse
+    public function generateStep12DialoguePlan(StoryBookStep12DialoguePlanRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateDialoguePlan($request, $storyBook);
+        $result = $this->storyBookService->generateStep12DialoguePlan($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],
@@ -242,12 +242,12 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generatePagePlan(StoryBookPagePlanRequest $request, string $slug): RedirectResponse
+    public function generateStep13PagePlan(StoryBookStep13PagePlanRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generatePagePlan($request, $storyBook);
+        $result = $this->storyBookService->generateStep13PagePlan($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],

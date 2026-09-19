@@ -72,7 +72,7 @@ const submit = () => {
     };
 
     inertiaRoute.patch(
-        route("back-office.story-books.regenerate.world-vibe", {
+        route("back-office.story-books.regenerate.step3-world-vibe", {
             slug: storyBook?.slug,
         }),
         {

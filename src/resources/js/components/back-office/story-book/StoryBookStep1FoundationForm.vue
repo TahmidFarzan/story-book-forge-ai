@@ -137,7 +137,7 @@ const submit = () => {
 
     if (isUpdate.value) {
         inertiaRoute.patch(
-            route("back-office.story-books.generate.foundation", {
+            route("back-office.story-books.generate.step1-foundation", {
                 slug: storyBook?.slug,
             }),
             { ...foundationGeneratorForm.data(), _method: "patch" },
@@ -145,7 +145,7 @@ const submit = () => {
         );
     } else {
         foundationGeneratorForm.post(
-            route("back-office.story-books.create.foundation"),
+            route("back-office.story-books.create.step1-foundation"),
             requestConfig,
         );
     }

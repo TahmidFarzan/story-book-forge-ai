@@ -80,7 +80,7 @@ const submit = () => {
     };
 
     inertiaRoute.patch(
-        route("back-office.story-books.regenerate.characters", {
+        route("back-office.story-books.regenerate.step2-characters", {
             slug: storyBook?.slug,
         }),
         {

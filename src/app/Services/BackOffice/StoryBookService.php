@@ -5,22 +5,22 @@ namespace App\Services\BackOffice;
 use App\Helpers\AiPromptGeneratorHelper;
 use App\Helpers\MediaHelper;
 use App\Helpers\StoryBookHelper;
-use App\Http\Requests\StoryBookCharactersRequest;
-use App\Http\Requests\StoryBookCreaturesRequest;
-use App\Http\Requests\StoryBookDialoguePlanRequest;
-use App\Http\Requests\StoryBookFactionsRequest;
-use App\Http\Requests\StoryBookFoundationRequest;
-use App\Http\Requests\StoryBookLocationsRequest;
-use App\Http\Requests\StoryBookPagePlanRequest;
-use App\Http\Requests\StoryBookScenePlanRequest;
+use App\Http\Requests\StoryBookStep2CharactersRequest;
+use App\Http\Requests\StoryBookStep6CreatureRequest;
+use App\Http\Requests\StoryBookStep12DialoguePlanRequest;
+use App\Http\Requests\StoryBookStep5FactionsRequest;
+use App\Http\Requests\StoryBookStep1FoundationRequest;
+use App\Http\Requests\StoryBookStep4LocationsRequest;
+use App\Http\Requests\StoryBookStep13PagePlanRequest;
+use App\Http\Requests\StoryBookStep11ScenePlanRequest;
 use App\Http\Requests\StoryBookStep14_1PageNarrationRequest;
 use App\Http\Requests\StoryBookStep14_2IllustrationPlanningRequest;
 use App\Http\Requests\StoryBookStep14_3IllustrationGenerationRequest;
-use App\Http\Requests\StoryBookStoryStructureRequest;
-use App\Http\Requests\StoryBookSystemsRequest;
-use App\Http\Requests\StoryBookTimelineRequest;
-use App\Http\Requests\StoryBookTwistsAndForeshadowingRequest;
-use App\Http\Requests\StoryBookWorldVibeRequest;
+use App\Http\Requests\StoryBookStep9StoryStructureRequest;
+use App\Http\Requests\StoryBookStep7SystemRequest;
+use App\Http\Requests\StoryBookStep8TimelineRequest;
+use App\Http\Requests\StoryBookStep10TwistsAndForeshadowingRequest;
+use App\Http\Requests\StoryBookStep3WorldVibeRequest;
 use App\Models\AiBrain;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Models\StoryBook;
@@ -128,22 +128,22 @@ class StoryBookService
             ->appends($request->all());
     }
 
-    public function generateFoundation(StoryBookFoundationRequest $request, StoryBook $storyBook): array
+    public function generateStep1Foundation(StoryBookStep1FoundationRequest $request, StoryBook $storyBook): array
     {
         $isNew = empty($storyBook->id);
         $statusEvent = $isNew ? 'save' : 'update';
 
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_FOUNDATION_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->foundationRequestInputsFormatter($request->input('language_id'), $request->input('audience_id'), $request->input('story_book_type_id'), $request->input('genre_ids'), $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step1FoundationRequestInputsFormatter($request->input('language_id'), $request->input('audience_id'), $request->input('story_book_type_id'), $request->input('genre_ids'), $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($request, $apiResponse, $storyBook, $isNew) {
-                $foundationObject = $this->extractFoundationFromResponse($apiResponse);
+                $foundationObject = $this->extractStep1FoundationFromResponse($apiResponse);
 
                 $storyBook->title = $foundationObject->title;
                 $storyBook->sub_title = $foundationObject->subtitle;
@@ -192,19 +192,19 @@ class StoryBookService
         }
     }
 
-    public function generateCharacters(StoryBookCharactersRequest $request, StoryBook $storyBook): array
+    public function generateStep2Characters(StoryBookStep2CharactersRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_CHARACTER_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->charactersRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step2CharactersRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $characterObject = $this->extractCharactersFromResponse($apiResponse);
+                $characterObject = $this->extractStep2CharactersFromResponse($apiResponse);
                 $storyBook->characters = $characterObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -231,19 +231,19 @@ class StoryBookService
         }
     }
 
-    public function generateWorldBible(StoryBookWorldVibeRequest $request, StoryBook $storyBook): array
+    public function generateStep3WorldVibe(StoryBookStep3WorldVibeRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_WORLD_BIBLE_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->worldBibleRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step3WorldVibeRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $worldBibleObject = $this->extractWorldBibleFromResponse($apiResponse);
+                $worldBibleObject = $this->extractStep3WorldVibeFromResponse($apiResponse);
                 $storyBook->world_bible = $worldBibleObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -270,19 +270,19 @@ class StoryBookService
         }
     }
 
-    public function generateLocations(StoryBookLocationsRequest $request, StoryBook $storyBook): array
+    public function generateStep4Locations(StoryBookStep4LocationsRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_LOCATION_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->locationsRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step4LocationsRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $locationsObject = $this->extractLocationsFromResponse($apiResponse);
+                $locationsObject = $this->extractStep4LocationsFromResponse($apiResponse);
                 $storyBook->locations = $locationsObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -309,19 +309,19 @@ class StoryBookService
         }
     }
 
-    public function generateFactions(StoryBookFactionsRequest $request, StoryBook $storyBook): array
+    public function generateStep5Factions(StoryBookStep5FactionsRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_FACTION_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->factionsRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step5FactionsRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $factionsObject = $this->extractFactionsFromResponse($apiResponse);
+                $factionsObject = $this->extractStep5FactionsFromResponse($apiResponse);
                 $storyBook->factions = $factionsObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -348,19 +348,19 @@ class StoryBookService
         }
     }
 
-    public function generateCreatures(StoryBookCreaturesRequest $request, StoryBook $storyBook): array
+    public function generateStep6Creature(StoryBookStep6CreatureRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_CREATURE_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->creaturesRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step6CreatureRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $creaturesObject = $this->extractCreaturesFromResponse($apiResponse);
+                $creaturesObject = $this->extractStep6CreatureFromResponse($apiResponse);
                 $storyBook->creatures = $creaturesObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -387,19 +387,19 @@ class StoryBookService
         }
     }
 
-    public function generateSystems(StoryBookSystemsRequest $request, StoryBook $storyBook): array
+    public function generateStep7System(StoryBookStep7SystemRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_SYSTEM_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->systemsRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step7SystemRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $systemsObject = $this->extractSystemsFromResponse($apiResponse);
+                $systemsObject = $this->extractStep7SystemFromResponse($apiResponse);
                 $storyBook->systems = $systemsObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -426,19 +426,19 @@ class StoryBookService
         }
     }
 
-    public function generateTimeline(StoryBookTimelineRequest $request, StoryBook $storyBook): array
+    public function generateStep8Timeline(StoryBookStep8TimelineRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_TIMELINE_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->timelineRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step8TimelineRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $timelineObject = $this->extractTimelineFromResponse($apiResponse);
+                $timelineObject = $this->extractStep8TimelineFromResponse($apiResponse);
                 $storyBook->timeline = $timelineObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -465,19 +465,19 @@ class StoryBookService
         }
     }
 
-    public function generateStoryStructure(StoryBookStoryStructureRequest $request, StoryBook $storyBook): array
+    public function generateStep9StoryStructure(StoryBookStep9StoryStructureRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STORY_STRUCTURE_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->storyStructureRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step9StoryStructureRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $storyStructureObject = $this->extractStoryStructureFromResponse($apiResponse);
+                $storyStructureObject = $this->extractStep9StoryStructureFromResponse($apiResponse);
                 $storyBook->story_structure = $storyStructureObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -504,19 +504,19 @@ class StoryBookService
         }
     }
 
-    public function generateTwistsAndForeshadowing(StoryBookTwistsAndForeshadowingRequest $request, StoryBook $storyBook): array
+    public function generateStep10TwistsAndForeshadowing(StoryBookStep10TwistsAndForeshadowingRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_TWISTS_AND_FORESHADOWING_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->twistsAndForeshadowingRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step10TwistsAndForeshadowingRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $twistsObject = $this->extractTwistsAndForeshadowingFromResponse($apiResponse);
+                $twistsObject = $this->extractStep10TwistsAndForeshadowingFromResponse($apiResponse);
                 $storyBook->twists_and_foreshadowing = $twistsObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -543,19 +543,19 @@ class StoryBookService
         }
     }
 
-    public function generateScenePlan(StoryBookScenePlanRequest $request, StoryBook $storyBook): array
+    public function generateStep11ScenePlan(StoryBookStep11ScenePlanRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_SCENE_PLAN_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->scenePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step11ScenePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $scenePlanObject = $this->extractScenePlanFromResponse($apiResponse);
+                $scenePlanObject = $this->extractStep11ScenePlanFromResponse($apiResponse);
                 $storyBook->scene_plans = $scenePlanObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -582,19 +582,19 @@ class StoryBookService
         }
     }
 
-    public function generateDialoguePlan(StoryBookDialoguePlanRequest $request, StoryBook $storyBook): array
+    public function generateStep12DialoguePlan(StoryBookStep12DialoguePlanRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_DIALOGUE_PLAN_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->dialoguePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step12DialoguePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $dialoguePlanObject = $this->extractDialoguePlanFromResponse($apiResponse);
+                $dialoguePlanObject = $this->extractStep12DialoguePlanFromResponse($apiResponse);
                 $storyBook->dialogue_plans = $dialoguePlanObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -621,19 +621,19 @@ class StoryBookService
         }
     }
 
-    public function generatePagePlan(StoryBookPagePlanRequest $request, StoryBook $storyBook): array
+    public function generateStep13PagePlan(StoryBookStep13PagePlanRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_PAGE_PLAN_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->pagePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step13PagePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $pagePlanObject = $this->extractPagePlanFromResponse($apiResponse);
+                $pagePlanObject = $this->extractStep13PagePlanFromResponse($apiResponse);
                 $storyBook->page_plan = $pagePlanObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -666,13 +666,13 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->pageNarrationRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step14_1PageNarrationRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $pages = $this->extractPagesFromResponse($apiResponse);
+                $pages = $this->extractStep14_1PagesFromResponse($apiResponse);
                 $storyBook->pages = $pages;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -706,13 +706,13 @@ class StoryBookService
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
             $illustrationType = $this->illustrationTypeService->findById($request->input('illustration_type_id'));
 
-            $requestInputs = $this->illustrationPlanningRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->step14_2IllustrationPlanningRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook, $illustrationType) {
-                $illustrationPlanning = $this->extractIllustrationPlanningFromResponse($apiResponse, (array) ($storyBook->pages ?? []));
+                $illustrationPlanning = $this->extractStep14_2IllustrationPlanningFromResponse($apiResponse, (array) ($storyBook->pages ?? []));
                 $storyBook->pages = $this->applyIllustrationPlanningToPages((array) ($storyBook->pages ?? []), $illustrationPlanning, $illustrationType->prompt_instruction);
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -751,7 +751,7 @@ class StoryBookService
             $page = $this->findPageByNo($storyBook, $pageNo);
 
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3_ILLUSTRATION_GENERATOR));
-            $requestInputs = $this->pageIllustrationRequestInputsFormatter($storyBook, $page);
+            $requestInputs = $this->step14_3PageIllustrationRequestInputsFormatter($storyBook, $page);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $image = $this->huggingFaceApiService->sendImageRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->timeout_seconds);
@@ -811,7 +811,7 @@ class StoryBookService
         }
     }
 
-    private function extractFoundationFromResponse($apiResponse): object
+    private function extractStep1FoundationFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -853,7 +853,7 @@ class StoryBookService
         ];
     }
 
-    private function foundationRequestInputsFormatter(int|string $languageId, int|string $audienceId, int|string $storyBookTypeId, array $genreIds, string|null $additionalInformation): array
+    private function step1FoundationRequestInputsFormatter(int|string $languageId, int|string $audienceId, int|string $storyBookTypeId, array $genreIds, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -889,7 +889,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function charactersRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step2CharactersRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -902,7 +902,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function worldBibleRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step3WorldVibeRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -918,7 +918,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function locationsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step4LocationsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -936,7 +936,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function factionsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step5FactionsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -956,7 +956,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function creaturesRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step6CreatureRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -978,7 +978,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function systemsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step7SystemRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1002,7 +1002,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function timelineRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step8TimelineRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1028,7 +1028,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function storyStructureRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step9StoryStructureRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1056,7 +1056,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function twistsAndForeshadowingRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step10TwistsAndForeshadowingRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1086,7 +1086,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function scenePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step11ScenePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1118,7 +1118,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function dialoguePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step12DialoguePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1152,7 +1152,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function pagePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step13PagePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1188,7 +1188,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function pageNarrationRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step14_1PageNarrationRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1226,7 +1226,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function illustrationPlanningRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function step14_2IllustrationPlanningRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1271,7 +1271,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function extractIllustrationPlanningFromResponse($apiResponse, array $existingPages): array
+    private function extractStep14_2IllustrationPlanningFromResponse($apiResponse, array $existingPages): array
     {
         $content = data_get(
             $apiResponse,
@@ -1429,7 +1429,7 @@ class StoryBookService
         throw new Exception("Story book page {$pageNo} not found.");
     }
 
-    private function pageIllustrationRequestInputsFormatter(StoryBook $storyBook, array $page): array
+    private function step14_3PageIllustrationRequestInputsFormatter(StoryBook $storyBook, array $page): array
     {
         $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
         $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
@@ -1515,7 +1515,7 @@ class StoryBookService
         return $media;
     }
 
-    private function extractCharactersFromResponse($apiResponse): object
+    private function extractStep2CharactersFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1556,7 +1556,7 @@ class StoryBookService
         ];
     }
 
-    private function extractWorldBibleFromResponse($apiResponse): object
+    private function extractStep3WorldVibeFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1599,7 +1599,7 @@ class StoryBookService
         ];
     }
 
-    private function extractLocationsFromResponse($apiResponse): object
+    private function extractStep4LocationsFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1642,7 +1642,7 @@ class StoryBookService
         ];
     }
 
-    private function extractFactionsFromResponse($apiResponse): object
+    private function extractStep5FactionsFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1685,7 +1685,7 @@ class StoryBookService
         ];
     }
 
-    private function extractCreaturesFromResponse($apiResponse): object
+    private function extractStep6CreatureFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1728,7 +1728,7 @@ class StoryBookService
         ];
     }
 
-    private function extractSystemsFromResponse($apiResponse): object
+    private function extractStep7SystemFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1771,7 +1771,7 @@ class StoryBookService
         ];
     }
 
-    private function extractTimelineFromResponse($apiResponse): object
+    private function extractStep8TimelineFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1814,7 +1814,7 @@ class StoryBookService
         ];
     }
 
-    private function extractStoryStructureFromResponse($apiResponse): object
+    private function extractStep9StoryStructureFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1857,7 +1857,7 @@ class StoryBookService
         ];
     }
 
-    private function extractTwistsAndForeshadowingFromResponse($apiResponse): object
+    private function extractStep10TwistsAndForeshadowingFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1900,7 +1900,7 @@ class StoryBookService
         ];
     }
 
-    private function extractScenePlanFromResponse($apiResponse): object
+    private function extractStep11ScenePlanFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1943,7 +1943,7 @@ class StoryBookService
         ];
     }
 
-    private function extractDialoguePlanFromResponse($apiResponse): object
+    private function extractStep12DialoguePlanFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -1986,7 +1986,7 @@ class StoryBookService
         ];
     }
 
-    private function extractPagePlanFromResponse($apiResponse): object
+    private function extractStep13PagePlanFromResponse($apiResponse): object
     {
         $content = data_get(
             $apiResponse,
@@ -2029,7 +2029,7 @@ class StoryBookService
         ];
     }
 
-    private function extractPagesFromResponse($apiResponse): array
+    private function extractStep14_1PagesFromResponse($apiResponse): array
     {
         $content = data_get(
             $apiResponse,

@@ -74,7 +74,7 @@ const submit = () => {
     };
 
     inertiaRoute.patch(
-        route("back-office.story-books.regenerate.twists-and-foreshadowing", {
+        route("back-office.story-books.regenerate.step10-twists-and-foreshadowing", {
             slug: storyBook?.slug,
         }),
         {
