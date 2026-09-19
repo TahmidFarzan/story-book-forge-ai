@@ -94,49 +94,49 @@ class HuggingFaceApiService
     private function formatAIResponseByStep(string $stepName, array $response, array $stepData = []): object
     {
         switch ($stepName) {
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1:
                 return $this->formatStep1FoundationResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2:
                 return $this->formatStep2CharactersResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3:
                 return $this->formatStep3WorldVibeResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4:
                 return $this->formatStep4LocationsResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5:
                 return $this->formatStep5FactionsResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6:
                 return $this->formatStep6CreaturesResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7:
                 return $this->formatStep7SystemResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8:
                 return $this->formatStep8TimelineResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9:
                 return $this->formatStep9StoryStructureResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10:
                 return $this->formatStep10TwistsAndForeshadowingResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11:
                 return $this->formatStep11ScenePlanResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12:
                 return $this->formatStep12DialoguePlanResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13:
                 return $this->formatStep13PagePlanResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1:
                 return $this->formatStep14_1PagesResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR:
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2:
                 return $this->formatStep14_2IllustrationPlanningResponse($response, $stepData);
 
             default:
@@ -376,37 +376,37 @@ class HuggingFaceApiService
     public function formatRequestInputs(string $stepName, array $inputs): array
     {
         return match ($stepName) {
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR => $this->step1FoundationRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1 => $this->step1FoundationRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR => $this->step2CharactersRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2 => $this->step2CharactersRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR => $this->step3WorldVibeRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3 => $this->step3WorldVibeRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR => $this->step4LocationsRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4 => $this->step4LocationsRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR => $this->step5FactionsRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5 => $this->step5FactionsRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR => $this->step6CreatureRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6 => $this->step6CreatureRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR => $this->step7SystemRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7 => $this->step7SystemRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR => $this->step8TimelineRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8 => $this->step8TimelineRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR => $this->step9StoryStructureRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9 => $this->step9StoryStructureRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR => $this->step10TwistsAndForeshadowingRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10 => $this->step10TwistsAndForeshadowingRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR => $this->step11ScenePlanRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11 => $this->step11ScenePlanRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR => $this->step12DialoguePlanRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12 => $this->step12DialoguePlanRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR => $this->step13PagePlanRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13 => $this->step13PagePlanRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR => $this->step14_1PageNarrationRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1 => $this->step14_1PageNarrationRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR => $this->step14_2IllustrationPlanningRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2 => $this->step14_2IllustrationPlanningRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3_ILLUSTRATION_GENERATOR => $this->step14_3PageIllustrationRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3 => $this->step14_3PageIllustrationRequestInputsFormatter($inputs),
         };
     }
 

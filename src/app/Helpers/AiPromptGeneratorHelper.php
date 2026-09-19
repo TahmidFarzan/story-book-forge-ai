@@ -4,39 +4,39 @@ namespace App\Helpers;
 
 class AiPromptGeneratorHelper
 {
-    public const AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR = 'Foundation Generator';
+    public const AI_PROMPT_NAME_STEP1 = 'Foundation Generator';
 
-    public const AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR = 'Character Generator';
+    public const AI_PROMPT_NAME_STEP2 = 'Character Generator';
 
-    public const AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR = 'World Bible Generator';
+    public const AI_PROMPT_NAME_STEP3 = 'World Bible Generator';
 
-    public const AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR = 'Location Generator';
+    public const AI_PROMPT_NAME_STEP4 = 'Location Generator';
 
-    public const AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR = 'Faction Generator';
+    public const AI_PROMPT_NAME_STEP5 = 'Faction Generator';
 
-    public const AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR = 'Creature Generator';
+    public const AI_PROMPT_NAME_STEP6 = 'Creature Generator';
 
-    public const AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR = 'System Generator';
+    public const AI_PROMPT_NAME_STEP7 = 'System Generator';
 
-    public const AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR = 'Timeline Generator';
+    public const AI_PROMPT_NAME_STEP8 = 'Timeline Generator';
 
-    public const AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR = 'Story Structure Generator';
+    public const AI_PROMPT_NAME_STEP9 = 'Story Structure Generator';
 
-    public const AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR = 'Twists And Foreshadowing Generator';
+    public const AI_PROMPT_NAME_STEP10 = 'Twists And Foreshadowing Generator';
 
-    public const AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR = 'Scene Plan Generator';
+    public const AI_PROMPT_NAME_STEP11 = 'Scene Plan Generator';
 
-    public const AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR = 'Dialogue Plan Generator';
+    public const AI_PROMPT_NAME_STEP12 = 'Dialogue Plan Generator';
 
-    public const AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR = 'Page Plan Generator';
+    public const AI_PROMPT_NAME_STEP13 = 'Page Plan Generator';
 
-    public const AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR = 'Step 14.1 Page Narration Generator';
+    public const AI_PROMPT_NAME_STEP_14_1 = 'Step 14.1 Page Narration Generator';
 
-    public const AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR = 'Step 14.2 Illustration Planning Generator';
+    public const AI_PROMPT_NAME_STEP_14_2 = 'Step 14.2 Illustration Planning Generator';
 
-    public const AI_PROMPT_NAME_STEP_14_3_ILLUSTRATION_GENERATOR = 'Step 14.3 Illustration Generator';
+    public const AI_PROMPT_NAME_STEP_14_3 = 'Step 14.3 Illustration Generator';
 
-    public static function step1FoundationGenerator(): string
+    public static function step1Prompt(): string
     {
         $prompt = "
             You are a professional story development AI.
@@ -311,7 +311,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step2CharactersGenerator(): string
+    public static function step2Prompt(): string
     {
         $prompt = "
             You are a professional story character development AI, character designer, narrative character strategist, and story development specialist.
@@ -885,7 +885,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step3WorldVibeGenerator(): string
+    public static function step3Prompt(): string
     {
         $prompt = "
             You are a professional story world development AI, world-building specialist, narrative environment strategist, and story development expert.
@@ -1290,7 +1290,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step4LocationsGenerator(): string
+    public static function step4Prompt(): string
     {
         $prompt = "
             You are a professional story world location development AI, map design specialist, setting strategist, and story development expert.
@@ -1672,7 +1672,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step5FactionsGenerator(): string
+    public static function step5Prompt(): string
     {
         $prompt = "
             You are a professional story faction development AI, world politics specialist, group dynamics strategist, and story development expert.
@@ -2091,7 +2091,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step6CreatureGenerator(): string
+    public static function step6Prompt(): string
     {
         $prompt = "
             You are a professional story creature development AI, creature designer, ecology specialist, and story development expert.
@@ -2488,7 +2488,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step7SystemGenerator(): string
+    public static function step7Prompt(): string
     {
         $prompt = "
             You are a professional story system development AI, magic and technology designer, rules strategist, and story development expert.
@@ -2892,7 +2892,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step8TimelineGenerator(): string
+    public static function step8Prompt(): string
     {
         $prompt = "
             You are a professional story timeline development AI, chronology specialist, history architect, and story development expert.
@@ -3288,7 +3288,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step9StoryStructureGenerator(): string
+    public static function step9Prompt(): string
     {
         $prompt = "
             You are a professional story structure development AI, narrative architect, plot designer, and story development expert.
@@ -3709,7 +3709,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step10TwistsAndForeshadowingGenerator(): string
+    public static function step10Prompt(): string
     {
         $prompt = "
             You are a professional story twist development AI, narrative surprise designer, foreshadowing specialist, and story development expert.
@@ -4109,7 +4109,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step11ScenePlanGenerator(): string
+    public static function step11Prompt(): string
     {
         $prompt = "
             You are a professional scene planning AI, scene designer, story sequencing specialist, and story development expert.
@@ -4520,7 +4520,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step12DialoguePlanGenerator(): string
+    public static function step12Prompt(): string
     {
         $prompt = "
             You are a professional dialogue development AI, character voice specialist, conversation designer, and story development expert.
@@ -4927,7 +4927,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step13PagePlanGenerator(): string
+    public static function step13Prompt(): string
     {
         $prompt = "
             You are a professional page layout AI, illustrated book designer, page pacing specialist, and story development expert.
@@ -5328,9 +5328,7 @@ class AiPromptGeneratorHelper
         ";
 
         return $prompt;
-    }
-
-public static function step14_1PageNarrationGenerator(): string
+    }    public static function step14_1Prompt(): string
     {
         $prompt = "
             You are a professional story narration AI, illustrated book narrator, page writing specialist, and story development expert.
@@ -5619,7 +5617,7 @@ public static function step14_1PageNarrationGenerator(): string
         return $prompt;
     }
 
-    public static function step14_2IllustrationPlanningGenerator(): string
+    public static function step14_2Prompt(): string
     {
         $prompt = "
             You are a professional illustration planning AI, visual storytelling specialist, and story development expert.
@@ -5924,7 +5922,7 @@ public static function step14_1PageNarrationGenerator(): string
         return $prompt;
     }
 
-    public static function step14_3IllustrationGenerator(): string
+    public static function step14_3Prompt(): string
     {
         $prompt = "
             You are a professional story book illustration image generator and visual storytelling specialist.
