@@ -142,8 +142,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story foundation');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($request, $apiResponse, $storyBook, $isNew) {
-                $foundationObject = $this->extractStep1FoundationFromResponse($apiResponse);
+                $foundationObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR, $apiResponse);
 
                 $storyBook->title = $foundationObject->title;
                 $storyBook->sub_title = $foundationObject->subtitle;
@@ -204,8 +210,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story characters');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $characterObject = $this->extractStep2CharactersFromResponse($apiResponse);
+                $characterObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR, $apiResponse);
                 $storyBook->characters = $characterObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -244,8 +256,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story world bible');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $worldBibleObject = $this->extractStep3WorldVibeFromResponse($apiResponse);
+                $worldBibleObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR, $apiResponse);
                 $storyBook->world_bible = $worldBibleObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -284,8 +302,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story locations');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $locationsObject = $this->extractStep4LocationsFromResponse($apiResponse);
+                $locationsObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR, $apiResponse);
                 $storyBook->locations = $locationsObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -324,8 +348,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story factions');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $factionsObject = $this->extractStep5FactionsFromResponse($apiResponse);
+                $factionsObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR, $apiResponse);
                 $storyBook->factions = $factionsObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -364,8 +394,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story creatures');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $creaturesObject = $this->extractStep6CreatureFromResponse($apiResponse);
+                $creaturesObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR, $apiResponse);
                 $storyBook->creatures = $creaturesObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -404,8 +440,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story systems');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $systemsObject = $this->extractStep7SystemFromResponse($apiResponse);
+                $systemsObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR, $apiResponse);
                 $storyBook->systems = $systemsObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -444,8 +486,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story timeline');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $timelineObject = $this->extractStep8TimelineFromResponse($apiResponse);
+                $timelineObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR, $apiResponse);
                 $storyBook->timeline = $timelineObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -484,8 +532,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story structure');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $storyStructureObject = $this->extractStep9StoryStructureFromResponse($apiResponse);
+                $storyStructureObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR, $apiResponse);
                 $storyBook->story_structure = $storyStructureObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -524,8 +578,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story twists and foreshadowing');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $twistsObject = $this->extractStep10TwistsAndForeshadowingFromResponse($apiResponse);
+                $twistsObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR, $apiResponse);
                 $storyBook->twists_and_foreshadowing = $twistsObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -564,8 +624,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story scene plan');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $scenePlanObject = $this->extractStep11ScenePlanFromResponse($apiResponse);
+                $scenePlanObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR, $apiResponse);
                 $storyBook->scene_plans = $scenePlanObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -604,8 +670,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story dialogue plan');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $dialoguePlanObject = $this->extractStep12DialoguePlanFromResponse($apiResponse);
+                $dialoguePlanObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR, $apiResponse);
                 $storyBook->dialogue_plans = $dialoguePlanObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -644,8 +716,14 @@ class StoryBookService
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story page plan');
 
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
+
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $pagePlanObject = $this->extractStep13PagePlanFromResponse($apiResponse);
+                $pagePlanObject = $this->huggingFaceApiService->processAIResponse(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR, $apiResponse);
                 $storyBook->page_plan = $pagePlanObject;
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
@@ -683,6 +761,12 @@ class StoryBookService
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story page narration');
+
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $pages = $this->extractStep14_1PagesFromResponse($apiResponse);
@@ -724,6 +808,12 @@ class StoryBookService
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, 'Story illustration planning');
+
+            if (! $apiResponse['success']) {
+                throw new Exception($apiResponse['message']);
+            }
+
+            $apiResponse = $apiResponse['data'];
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook, $illustrationType) {
                 $illustrationPlanning = $this->extractStep14_2IllustrationPlanningFromResponse($apiResponse, (array) ($storyBook->pages ?? []));
@@ -825,16 +915,6 @@ class StoryBookService
                 'message' => 'Failed to delete story. Please try again.',
             ];
         }
-    }
-
-    private function extractStep1FoundationFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'title' => $apiResponse['story_book_title'] ?? null,
-            'subtitle' => $apiResponse['story_book_subtitle'] ?? null,
-            'foundation' => $apiResponse['story_book_foundation'] ?? null,
-        ];
     }
 
     private function step1FoundationRequestInputsFormatter(int|string $languageId, int|string $audienceId, int|string $storyBookTypeId, array $genreIds, string|null $additionalInformation): array
@@ -1465,136 +1545,6 @@ class StoryBookService
         ]);
 
         return $media;
-    }
-
-    private function extractStep2CharactersFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'characters' => $apiResponse['characters'] ?? [],
-            'relationship_dynamics' => $apiResponse['relationship_dynamics'] ?? [],
-        ];
-    }
-
-    private function extractStep3WorldVibeFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'world_overview' => $apiResponse['world_overview'] ?? [],
-            'world_rules' => $apiResponse['world_rules'] ?? [],
-            'culture_and_history' => $apiResponse['culture_and_history'] ?? [],
-            'lore' => $apiResponse['lore'] ?? [],
-        ];
-    }
-
-    private function extractStep4LocationsFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'locations' => $apiResponse['locations'] ?? [],
-            'regions' => $apiResponse['regions'] ?? [],
-            'landmarks' => $apiResponse['landmarks'] ?? [],
-            'environment_details' => $apiResponse['environment_details'] ?? [],
-        ];
-    }
-
-    private function extractStep5FactionsFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'factions' => $apiResponse['factions'] ?? [],
-            'goals_and_values' => $apiResponse['goals_and_values'] ?? [],
-            'conflicts' => $apiResponse['conflicts'] ?? [],
-            'alliances' => $apiResponse['alliances'] ?? [],
-        ];
-    }
-
-    private function extractStep6CreatureFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'creatures' => $apiResponse['creatures'] ?? [],
-            'abilities' => $apiResponse['abilities'] ?? [],
-            'behaviors' => $apiResponse['behaviors'] ?? [],
-            'ecosystem_role' => $apiResponse['ecosystem_role'] ?? [],
-        ];
-    }
-
-    private function extractStep7SystemFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'systems' => $apiResponse['systems'] ?? [],
-            'mechanics' => $apiResponse['mechanics'] ?? [],
-            'limitations' => $apiResponse['limitations'] ?? [],
-            'rules' => $apiResponse['rules'] ?? [],
-        ];
-    }
-
-    private function extractStep8TimelineFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'timeline' => $apiResponse['timeline'] ?? [],
-            'major_events' => $apiResponse['major_events'] ?? [],
-            'milestones' => $apiResponse['milestones'] ?? [],
-            'historical_flow' => $apiResponse['historical_flow'] ?? [],
-        ];
-    }
-
-    private function extractStep9StoryStructureFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'story_outline' => $apiResponse['story_outline'] ?? [],
-            'acts_and_chapters' => $apiResponse['acts_and_chapters'] ?? [],
-            'plot_progression' => $apiResponse['plot_progression'] ?? [],
-            'pacing_guide' => $apiResponse['pacing_guide'] ?? [],
-        ];
-    }
-
-    private function extractStep10TwistsAndForeshadowingFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'twists' => $apiResponse['twists'] ?? [],
-            'foreshadowing' => $apiResponse['foreshadowing'] ?? [],
-            'hidden_clues' => $apiResponse['hidden_clues'] ?? [],
-            'reveal_points' => $apiResponse['reveal_points'] ?? [],
-        ];
-    }
-
-    private function extractStep11ScenePlanFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'scene_list' => $apiResponse['scene_list'] ?? [],
-            'scene_objectives' => $apiResponse['scene_objectives'] ?? [],
-            'locations' => $apiResponse['locations'] ?? [],
-            'pov_and_tone' => $apiResponse['pov_and_tone'] ?? [],
-        ];
-    }
-
-    private function extractStep12DialoguePlanFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'dialogue_bank' => $apiResponse['dialogue_bank'] ?? [],
-            'character_voice' => $apiResponse['character_voice'] ?? [],
-            'conversation_flow' => $apiResponse['conversation_flow'] ?? [],
-            'key_dialogues' => $apiResponse['key_dialogues'] ?? [],
-        ];
-    }
-
-    private function extractStep13PagePlanFromResponse($apiResponse): object
-    {
-
-        return (object) [
-            'page_layout' => $apiResponse['page_layout'] ?? [],
-            'page_descriptions' => $apiResponse['page_descriptions'] ?? [],
-            'illustration_notes' => $apiResponse['illustration_notes'] ?? [],
-            'key_points' => $apiResponse['key_points'] ?? [],
-        ];
     }
 
     private function extractStep14_1PagesFromResponse($apiResponse): array

@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\BackOffice;
 
+use App\Helpers\AiPromptGeneratorHelper;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -15,41 +16,108 @@ class HuggingFaceApiService
 
         set_time_limit($requestTimeout);
 
-        $payload = $this->buildPayload(
-            $model,
-            $data,
-            $maxOutputTokens
-        );
+        $payload = $this->buildPayload($model,$data,$maxOutputTokens);
 
         $endpoint = rtrim($url, '/');
 
         try {
-            $response = Http::timeout(
-                $requestTimeout
-            )
-                ->withToken($apiKey)
-                ->acceptJson()
-                ->post(
-                    $endpoint,
-                    $payload
-                );
+            $response = Http::timeout($requestTimeout)
+            ->withToken($apiKey)
+            ->acceptJson()
+            ->post($endpoint, $payload);
         } catch (Exception $exception) {
-            throw new Exception(
-                'Hugging Face API request failed: '.$exception->getMessage(),
-                0,
-                $exception
+            return $this->formatErrorResponse(
+                'Hugging Face API request failed: ' . $exception->getMessage()
             );
         }
 
+        return $this->formatAIResponse($response, $context);
+    }
+
+    private function formatAIResponse($response, string $context = ''): array
+    {
         if (! $response->successful()) {
-            throw new Exception(
+            return $this->formatErrorResponse(
                 $this->formatApiErrorResponse($response)
             );
         }
 
-        $apiResponse = $this->parseJsonResponse($response);
+        try {
+            $apiResponse = $this->parseJsonResponse($response);
 
-        return $this->decodeAiResponseContent($apiResponse, $context);
+            $data = $this->decodeAiResponseContent($apiResponse, $context);
+        } catch (Exception $exception) {
+            return $this->formatErrorResponse(
+                $exception->getMessage()
+            );
+        }
+
+        return $this->formatSuccessResponse($data);
+    }
+
+    private function formatSuccessResponse(array $data): array
+    {
+        return [
+            'success' => true,
+            'message' => 'AI response generated successfully',
+            'data'    => $data,
+        ];
+    }
+
+    private function formatErrorResponse(string $message): array
+    {
+        return [
+            'success' => false,
+            'message' => $message,
+            'data'    => null,
+        ];
+    }
+
+    public function processAIResponse(string $promptName, array $apiResponse): object
+    {
+        $fields = $this->aiResponseFormats()[$promptName] ?? [];
+
+        if ($fields === []) {
+            return (object) $apiResponse;
+        }
+
+        $result = [];
+
+        foreach ($fields as $source => $definition) {
+            if (is_int($source)) {
+                $result[$definition] = $apiResponse[$definition] ?? [];
+                continue;
+            }
+
+            $default = array_key_exists('default', $definition) ? $definition['default'] : [];
+
+            $result[$definition['key'] ?? $source] = $apiResponse[$source] ?? $default;
+        }
+
+        return (object) $result;
+    }
+
+    private function aiResponseFormats(): array
+    {
+        return [
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR                => [
+                'story_book_title'      => ['key' => 'title', 'default' => null],
+                'story_book_subtitle'   => ['key' => 'subtitle', 'default' => null],
+                'story_book_foundation' => ['key' => 'foundation', 'default' => null],
+            ],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR                => ['characters', 'relationship_dynamics'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR                => ['world_overview', 'world_rules', 'culture_and_history', 'lore'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR                 => ['locations', 'regions', 'landmarks', 'environment_details'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR                  => ['factions', 'goals_and_values', 'conflicts', 'alliances'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR                  => ['creatures', 'abilities', 'behaviors', 'ecosystem_role'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR                    => ['systems', 'mechanics', 'limitations', 'rules'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR                  => ['timeline', 'major_events', 'milestones', 'historical_flow'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR           => ['story_outline', 'acts_and_chapters', 'plot_progression', 'pacing_guide'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR => ['twists', 'foreshadowing', 'hidden_clues', 'reveal_points'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR               => ['scene_list', 'scene_objectives', 'locations', 'pov_and_tone'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR            => ['dialogue_bank', 'character_voice', 'conversation_flow', 'key_dialogues'],
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR                => ['page_layout', 'page_descriptions', 'illustration_notes', 'key_points'],
+        ];
     }
 
     public function sendGetRequest(string $url, string $apiKey, array $params = [], ?int $timeout = null): array
@@ -66,7 +134,7 @@ class HuggingFaceApiService
                 );
         } catch (Exception $exception) {
             throw new Exception(
-                'Hugging Face API request failed: '.$exception->getMessage(),
+                'Hugging Face API request failed: ' . $exception->getMessage(),
                 0,
                 $exception
             );
@@ -107,7 +175,7 @@ class HuggingFaceApiService
                 );
         } catch (Exception $exception) {
             throw new Exception(
-                'Hugging Face API request failed: '.$exception->getMessage(),
+                'Hugging Face API request failed: ' . $exception->getMessage(),
                 0,
                 $exception
             );
@@ -186,7 +254,7 @@ class HuggingFaceApiService
         $content = trim($content);
 
         $firstBrace = strpos($content, '{');
-        $lastBrace = strrpos($content, '}');
+        $lastBrace  = strrpos($content, '}');
 
         if ($firstBrace !== false && $lastBrace !== false && $lastBrace > $firstBrace) {
             $content = substr($content, $firstBrace, $lastBrace - $firstBrace + 1);
@@ -214,7 +282,7 @@ class HuggingFaceApiService
 
         if (! is_array($decoded)) {
             throw new Exception(
-                'Hugging Face API response is not valid JSON: '.json_last_error_msg().' (HTTP '.$response->status().')'
+                'Hugging Face API response is not valid JSON: ' . json_last_error_msg() . ' (HTTP ' . $response->status() . ')'
             );
         }
 
@@ -228,10 +296,10 @@ class HuggingFaceApiService
         $body = trim($response->body());
 
         if ($body === '') {
-            return 'Hugging Face API error ('.$status.'): Request failed with an empty response.';
+            return 'Hugging Face API error (' . $status . '): Request failed with an empty response.';
         }
 
-        return 'Hugging Face API error ('.$status.'): '.$this->formatApiErrorMessage($body);
+        return 'Hugging Face API error (' . $status . '): ' . $this->formatApiErrorMessage($body);
     }
 
     private function formatApiErrorMessage(string $body): string
@@ -254,7 +322,7 @@ class HuggingFaceApiService
         $estimatedTime = $decoded['estimated_time'] ?? null;
 
         if (! is_null($estimatedTime) && trim((string) $estimatedTime) !== '') {
-            $message .= '. Estimated time: '.trim((string) $estimatedTime).' seconds';
+            $message .= '. Estimated time: ' . trim((string) $estimatedTime) . ' seconds';
         }
 
         return $message;
@@ -264,10 +332,10 @@ class HuggingFaceApiService
     {
         $stepLabel = $context !== '' ? $context : 'AI generation';
 
-        $message = $stepLabel." generation failed.\n\nJSON Error:\n".$jsonError;
+        $message = $stepLabel . " generation failed.\n\nJSON Error:\n" . $jsonError;
 
         if ($content !== '') {
-            $message .= "\n\nAPI Response:\n".Str::limit($content, 600);
+            $message .= "\n\nAPI Response:\n" . Str::limit($content, 600);
         }
 
         return $message;
@@ -395,16 +463,16 @@ class HuggingFaceApiService
                 : $candidate;
 
             return [
-                'type' => 'base64',
+                'type'      => 'base64',
                 'extension' => $this->extensionFromMime($dataUriMatch[1]),
-                'encoded' => $encoded,
+                'encoded'   => $encoded,
             ];
         }
 
         if (preg_match('/^https?:\/\/\S+$/i', $candidate)) {
             return [
-                'type' => 'url',
-                'url' => $candidate,
+                'type'      => 'url',
+                'url'       => $candidate,
                 'extension' => $this->extensionFromUrl($candidate),
             ];
         }
@@ -416,9 +484,9 @@ class HuggingFaceApiService
             $this->isLikelyImageBase64($candidate)
         ) {
             return [
-                'type' => 'base64',
+                'type'      => 'base64',
                 'extension' => 'png',
-                'encoded' => $candidate,
+                'encoded'   => $candidate,
             ];
         }
 
@@ -439,9 +507,9 @@ class HuggingFaceApiService
         ) {
             if ($this->isLikelyImageBase64($trimmed)) {
                 return [
-                    'type' => 'base64',
+                    'type'      => 'base64',
                     'extension' => $this->extensionFromMime($contentType),
-                    'encoded' => $trimmed,
+                    'encoded'   => $trimmed,
                 ];
             }
 
@@ -449,9 +517,9 @@ class HuggingFaceApiService
         }
 
         return [
-            'type' => 'base64',
+            'type'      => 'base64',
             'extension' => $this->extensionFromMime($contentType),
-            'encoded' => base64_encode($body),
+            'encoded'   => base64_encode($body),
         ];
     }
 
@@ -466,10 +534,10 @@ class HuggingFaceApiService
         $signature = substr($decoded, 0, 12);
 
         return str_starts_with($signature, "\x89PNG\r\n\x1a\n")
-            || str_starts_with($signature, "\xFF\xD8\xFF")
-            || str_starts_with($signature, 'GIF87a')
-            || str_starts_with($signature, 'GIF89a')
-            || str_starts_with($signature, 'RIFF');
+        || str_starts_with($signature, "\xFF\xD8\xFF")
+        || str_starts_with($signature, 'GIF87a')
+        || str_starts_with($signature, 'GIF89a')
+        || str_starts_with($signature, 'RIFF');
     }
 
     private function extensionFromMime(string $mime): string
@@ -482,12 +550,12 @@ class HuggingFaceApiService
 
         return match ($mime) {
             'image/jpeg', 'image/jpg' => 'jpg',
-            'image/gif' => 'gif',
-            'image/webp' => 'webp',
-            'image/avif' => 'avif',
+            'image/gif'     => 'gif',
+            'image/webp'    => 'webp',
+            'image/avif'    => 'avif',
             'image/svg+xml' => 'svg',
-            'image/bmp' => 'bmp',
-            default => 'png',
+            'image/bmp'     => 'bmp',
+            default         => 'png',
         };
     }
 
