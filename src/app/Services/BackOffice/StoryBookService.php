@@ -37,28 +37,16 @@ class StoryBookService
 
     protected AiPromptService $aiPromptService;
 
-    protected AudienceService $audienceService;
-
-    protected GenreService $genreService;
-
     protected IllustrationTypeService $illustrationTypeService;
-
-    protected StoryBookTypeService $storyBookTypeService;
 
     protected HuggingFaceApiService $huggingFaceApiService;
 
-    protected LanguageService $languageService;
-
-    public function __construct(AiBrainService $aiBrainService, AiPromptService $aiPromptService, AudienceService $audienceService, GenreService $genreService, IllustrationTypeService $illustrationTypeService, StoryBookTypeService $storyBookTypeService, HuggingFaceApiService $huggingFaceApiService, LanguageService $languageService)
+    public function __construct(AiBrainService $aiBrainService, AiPromptService $aiPromptService, IllustrationTypeService $illustrationTypeService, HuggingFaceApiService $huggingFaceApiService)
     {
         $this->aiBrainService = $aiBrainService;
         $this->aiPromptService = $aiPromptService;
-        $this->audienceService = $audienceService;
-        $this->genreService = $genreService;
         $this->illustrationTypeService = $illustrationTypeService;
-        $this->storyBookTypeService = $storyBookTypeService;
         $this->huggingFaceApiService = $huggingFaceApiService;
-        $this->languageService = $languageService;
     }
 
     public function new(): StoryBook
@@ -137,7 +125,13 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step1FoundationRequestInputsFormatter($request->input('language_id'), $request->input('audience_id'), $request->input('story_book_type_id'), $request->input('genre_ids'), $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR, [
+                'language_id' => $request->input('language_id'),
+                'audience_id' => $request->input('audience_id'),
+                'story_book_type_id' => $request->input('story_book_type_id'),
+                'genre_ids' => $request->input('genre_ids'),
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR);
@@ -203,7 +197,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step2CharactersRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR);
@@ -248,7 +245,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step3WorldVibeRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR);
@@ -293,7 +293,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step4LocationsRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR);
@@ -338,7 +341,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step5FactionsRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR);
@@ -383,7 +389,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step6CreatureRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR);
@@ -428,7 +437,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step7SystemRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR);
@@ -473,7 +485,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step8TimelineRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR);
@@ -518,7 +533,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step9StoryStructureRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR);
@@ -563,7 +581,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step10TwistsAndForeshadowingRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR);
@@ -608,7 +629,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step11ScenePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR);
@@ -653,7 +677,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step12DialoguePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR);
@@ -698,7 +725,10 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step13PagePlanRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR);
@@ -763,424 +793,6 @@ class StoryBookService
         }
     }
 
-    private function step1FoundationRequestInputsFormatter(int|string $languageId, int|string $audienceId, int|string $storyBookTypeId, array $genreIds, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $language = $this->languageService->findByIdsOrEnglish($languageId);
-        $audience = $this->audienceService->findById($audienceId);
-        $storyBookType = $this->storyBookTypeService->findById($storyBookTypeId);
-        $genres = $this->genreService->findByIdsOrRandom($genreIds);
-
-        $genrePromptInstruction = '';
-        foreach ($genres as $genre) {
-
-            $gInstruction = trim($genre->prompt_instruction);
-
-            if (! str_ends_with($gInstruction, '.')) {
-                $gInstruction .= '.';
-            }
-
-            if ($genrePromptInstruction !== '') {
-                $genrePromptInstruction .= ' ';
-            }
-
-            $genrePromptInstruction .= $gInstruction;
-        }
-
-        $requestInputs = [
-            'language' => $language?->name,
-            'additional_information' => $additionalInformation,
-            'genre_prompt_instruction' => $genrePromptInstruction,
-            'audience_instruction' => $audience->prompt_instruction,
-            'story_book_type_instruction' => $storyBookType->prompt_instruction,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step2CharactersRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step3WorldVibeRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step4LocationsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step5FactionsRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step6CreatureRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step7SystemRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'creatures' => $formatedCreatures,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step8TimelineRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
-        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'creatures' => $formatedCreatures,
-            'systems' => $formatedSystems,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step9StoryStructureRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
-        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
-        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'creatures' => $formatedCreatures,
-            'systems' => $formatedSystems,
-            'timeline' => $formatedTimeline,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step10TwistsAndForeshadowingRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
-        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
-        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
-        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'creatures' => $formatedCreatures,
-            'systems' => $formatedSystems,
-            'timeline' => $formatedTimeline,
-            'story_structure' => $formatedStoryStructure,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step11ScenePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
-        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
-        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
-        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
-        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'creatures' => $formatedCreatures,
-            'systems' => $formatedSystems,
-            'timeline' => $formatedTimeline,
-            'story_structure' => $formatedStoryStructure,
-            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step12DialoguePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
-        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
-        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
-        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
-        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
-        $formatedScenePlans = json_encode($storyBook->scene_plans, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'creatures' => $formatedCreatures,
-            'systems' => $formatedSystems,
-            'timeline' => $formatedTimeline,
-            'story_structure' => $formatedStoryStructure,
-            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
-            'scene_plans' => $formatedScenePlans,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step13PagePlanRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
-        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
-        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
-        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
-        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
-        $formatedScenePlans = json_encode($storyBook->scene_plans, JSON_PRETTY_PRINT);
-        $formatedDialoguePlans = json_encode($storyBook->dialogue_plans, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'creatures' => $formatedCreatures,
-            'systems' => $formatedSystems,
-            'timeline' => $formatedTimeline,
-            'story_structure' => $formatedStoryStructure,
-            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
-            'scene_plans' => $formatedScenePlans,
-            'dialogue_plans' => $formatedDialoguePlans,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step14_1PageNarrationRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
-        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
-        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
-        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
-        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
-        $formatedScenePlans = json_encode($storyBook->scene_plans, JSON_PRETTY_PRINT);
-        $formatedDialoguePlans = json_encode($storyBook->dialogue_plans, JSON_PRETTY_PRINT);
-        $formatedPagePlan = json_encode($storyBook->page_plan, JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'creatures' => $formatedCreatures,
-            'systems' => $formatedSystems,
-            'timeline' => $formatedTimeline,
-            'story_structure' => $formatedStoryStructure,
-            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
-            'scene_plans' => $formatedScenePlans,
-            'dialogue_plans' => $formatedDialoguePlans,
-            'page_plan' => $formatedPagePlan,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
-    private function step14_2IllustrationPlanningRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
-    {
-        $requestInputs = [];
-
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
-        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
-        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
-        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
-        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
-        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
-        $formatedScenePlans = json_encode($storyBook->scene_plans, JSON_PRETTY_PRINT);
-        $formatedDialoguePlans = json_encode($storyBook->dialogue_plans, JSON_PRETTY_PRINT);
-        $formatedPagePlan = json_encode($storyBook->page_plan, JSON_PRETTY_PRINT);
-
-        $pages = (array) ($storyBook->pages ?? []);
-        $formatedPages = json_encode(array_values(array_map(fn (array $page) => [
-            'no' => $page['no'] ?? null,
-            'narration' => $page['narration'] ?? null,
-        ], $pages)), JSON_PRETTY_PRINT);
-
-        $requestInputs = [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'factions' => $formatedFactions,
-            'creatures' => $formatedCreatures,
-            'systems' => $formatedSystems,
-            'timeline' => $formatedTimeline,
-            'story_structure' => $formatedStoryStructure,
-            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
-            'scene_plans' => $formatedScenePlans,
-            'dialogue_plans' => $formatedDialoguePlans,
-            'page_plan' => $formatedPagePlan,
-            'pages' => $formatedPages,
-            'additional_information' => $additionalInformation,
-        ];
-
-        return $requestInputs;
-    }
-
     private function applyIllustrationPlanningToPages(array $existingPages, array $illustrationPlanning, string $illustrationTypePromptInstruction): array
     {
         $illustrationPlanningByNo = [];
@@ -1235,36 +847,16 @@ class StoryBookService
         throw new Exception("Story book page {$pageNo} not found.");
     }
 
-    private function step14_3PageIllustrationRequestInputsFormatter(StoryBook $storyBook, array $page): array
-    {
-        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
-        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
-        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
-        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
-
-        $formatedPage = json_encode([
-            'no' => $page['no'] ?? null,
-            'narration' => $page['narration'] ?? null,
-            'illustration_prompt' => $page['illustration_prompt'] ?? null,
-        ], JSON_PRETTY_PRINT);
-
-        return [
-            'foundation' => $formatedFoundation,
-            'characters' => $formatedCharacters,
-            'world_bible' => $formatedWorldBible,
-            'locations' => $formatedLocations,
-            'illustration_type_prompt_instruction' => $page['illustration_type_prompt_instruction'] ?? 'No additional visual style instruction.',
-            'page' => $formatedPage,
-        ];
-    }
-
     public function generateStep14_1PageNarration(StoryBookStep14_1PageNarrationRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->step14_1PageNarrationRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR);
@@ -1310,7 +902,10 @@ class StoryBookService
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
             $illustrationType = $this->illustrationTypeService->findById($request->input('illustration_type_id'));
 
-            $requestInputs = $this->step14_2IllustrationPlanningRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR, [
+                'story_book' => $storyBook,
+                'additional_information' => $request->input('additional_information', 'Auto'),
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR, ['existing_pages' => (array) ($storyBook->pages ?? [])]);
@@ -1362,7 +957,10 @@ class StoryBookService
             $page = $this->findPageByNo($storyBook, $pageNo);
 
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3_ILLUSTRATION_GENERATOR));
-            $requestInputs = $this->step14_3PageIllustrationRequestInputsFormatter($storyBook, $page);
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3_ILLUSTRATION_GENERATOR, [
+                'story_book' => $storyBook,
+                'page' => $page,
+            ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $image = $this->huggingFaceApiService->sendImageRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->timeout_seconds);

@@ -8,7 +8,23 @@ use Illuminate\Support\Str;
 
 class HuggingFaceApiService
 {
+    protected AudienceService $audienceService;
+
+    protected GenreService $genreService;
+
+    protected LanguageService $languageService;
+
+    protected StoryBookTypeService $storyBookTypeService;
+
     protected int $defaultTimeout = 120;
+
+    public function __construct(AudienceService $audienceService, GenreService $genreService, LanguageService $languageService, StoryBookTypeService $storyBookTypeService)
+    {
+        $this->audienceService = $audienceService;
+        $this->genreService = $genreService;
+        $this->languageService = $languageService;
+        $this->storyBookTypeService = $storyBookTypeService;
+    }
 
     public function sendPostRequest(string $url, string $apiKey, string $model, mixed $data = null, ?int $maxOutputTokens = null, ?int $timeout = null, string $stepName = '', array $stepData = []): array
     {
@@ -355,6 +371,529 @@ class HuggingFaceApiService
         ksort($result);
 
         return (object) ['pages' => array_values($result)];
+    }
+
+    public function formatRequestInputs(string $stepName, array $inputs): array
+    {
+        return match ($stepName) {
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR => $this->step1FoundationRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR => $this->step2CharactersRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR => $this->step3WorldVibeRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR => $this->step4LocationsRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR => $this->step5FactionsRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR => $this->step6CreatureRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR => $this->step7SystemRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR => $this->step8TimelineRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR => $this->step9StoryStructureRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR => $this->step10TwistsAndForeshadowingRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR => $this->step11ScenePlanRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR => $this->step12DialoguePlanRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR => $this->step13PagePlanRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR => $this->step14_1PageNarrationRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR => $this->step14_2IllustrationPlanningRequestInputsFormatter($inputs),
+
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3_ILLUSTRATION_GENERATOR => $this->step14_3PageIllustrationRequestInputsFormatter($inputs),
+        };
+    }
+
+    private function step1FoundationRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $language = $this->languageService->findByIdsOrEnglish($inputs['language_id'] ?? null);
+        $audience = $this->audienceService->findById($inputs['audience_id'] ?? null);
+        $storyBookType = $this->storyBookTypeService->findById($inputs['story_book_type_id'] ?? null);
+        $genres = $this->genreService->findByIdsOrRandom($inputs['genre_ids'] ?? []);
+
+        $genrePromptInstruction = '';
+        foreach ($genres as $genre) {
+
+            $gInstruction = trim($genre->prompt_instruction);
+
+            if (! str_ends_with($gInstruction, '.')) {
+                $gInstruction .= '.';
+            }
+
+            if ($genrePromptInstruction !== '') {
+                $genrePromptInstruction .= ' ';
+            }
+
+            $genrePromptInstruction .= $gInstruction;
+        }
+
+        $requestInputs = [
+            'language' => $language?->name,
+            'additional_information' => $inputs['additional_information'] ?? null,
+            'genre_prompt_instruction' => $genrePromptInstruction,
+            'audience_instruction' => $audience->prompt_instruction,
+            'story_book_type_instruction' => $storyBookType->prompt_instruction,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step2CharactersRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step3WorldVibeRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step4LocationsRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step5FactionsRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step6CreatureRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step7SystemRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step8TimelineRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step9StoryStructureRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step10TwistsAndForeshadowingRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'story_structure' => $formatedStoryStructure,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step11ScenePlanRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
+        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'story_structure' => $formatedStoryStructure,
+            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step12DialoguePlanRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
+        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
+        $formatedScenePlans = json_encode($storyBook->scene_plans, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'story_structure' => $formatedStoryStructure,
+            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
+            'scene_plans' => $formatedScenePlans,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step13PagePlanRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
+        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
+        $formatedScenePlans = json_encode($storyBook->scene_plans, JSON_PRETTY_PRINT);
+        $formatedDialoguePlans = json_encode($storyBook->dialogue_plans, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'story_structure' => $formatedStoryStructure,
+            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
+            'scene_plans' => $formatedScenePlans,
+            'dialogue_plans' => $formatedDialoguePlans,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step14_1PageNarrationRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
+        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
+        $formatedScenePlans = json_encode($storyBook->scene_plans, JSON_PRETTY_PRINT);
+        $formatedDialoguePlans = json_encode($storyBook->dialogue_plans, JSON_PRETTY_PRINT);
+        $formatedPagePlan = json_encode($storyBook->page_plan, JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'story_structure' => $formatedStoryStructure,
+            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
+            'scene_plans' => $formatedScenePlans,
+            'dialogue_plans' => $formatedDialoguePlans,
+            'page_plan' => $formatedPagePlan,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step14_2IllustrationPlanningRequestInputsFormatter(array $inputs): array
+    {
+        $requestInputs = [];
+
+        $storyBook = $inputs['story_book'];
+        $additionalInformation = $inputs['additional_information'] ?? null;
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
+        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
+        $formatedScenePlans = json_encode($storyBook->scene_plans, JSON_PRETTY_PRINT);
+        $formatedDialoguePlans = json_encode($storyBook->dialogue_plans, JSON_PRETTY_PRINT);
+        $formatedPagePlan = json_encode($storyBook->page_plan, JSON_PRETTY_PRINT);
+
+        $pages = (array) ($storyBook->pages ?? []);
+        $formatedPages = json_encode(array_values(array_map(fn (array $page) => [
+            'no' => $page['no'] ?? null,
+            'narration' => $page['narration'] ?? null,
+        ], $pages)), JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'story_structure' => $formatedStoryStructure,
+            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
+            'scene_plans' => $formatedScenePlans,
+            'dialogue_plans' => $formatedDialoguePlans,
+            'page_plan' => $formatedPagePlan,
+            'pages' => $formatedPages,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function step14_3PageIllustrationRequestInputsFormatter(array $inputs): array
+    {
+        $storyBook = $inputs['story_book'];
+        $page = $inputs['page'];
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+
+        $formatedPage = json_encode([
+            'no' => $page['no'] ?? null,
+            'narration' => $page['narration'] ?? null,
+            'illustration_prompt' => $page['illustration_prompt'] ?? null,
+        ], JSON_PRETTY_PRINT);
+
+        return [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'illustration_type_prompt_instruction' => $page['illustration_type_prompt_instruction'] ?? 'No additional visual style instruction.',
+            'page' => $formatedPage,
+        ];
     }
 
     public function sendGetRequest(string $url, string $apiKey, array $params = [], ?int $timeout = null): array
