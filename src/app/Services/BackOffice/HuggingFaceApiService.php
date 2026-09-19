@@ -3,12 +3,13 @@ namespace App\Services\BackOffice;
 
 use Exception;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class HuggingFaceApiService
 {
     protected int $defaultTimeout = 120;
 
-    public function sendPostRequest(string $url, string $apiKey, string $model, mixed $data = null, ?int $maxOutputTokens = null, ?int $timeout = null): array
+    public function sendPostRequest(string $url, string $apiKey, string $model, mixed $data = null, ?int $maxOutputTokens = null, ?int $timeout = null, string $context = ''): array
     {
         $requestTimeout = $timeout ?? $this->defaultTimeout;
 
@@ -22,44 +23,62 @@ class HuggingFaceApiService
 
         $endpoint = rtrim($url, '/');
 
-        $response = Http::timeout(
-            $requestTimeout
-        )
-            ->withToken($apiKey)
-            ->acceptJson()
-            ->post(
-                $endpoint,
-                $payload
-            );
-
-        if (! $response->successful()) {
+        try {
+            $response = Http::timeout(
+                $requestTimeout
+            )
+                ->withToken($apiKey)
+                ->acceptJson()
+                ->post(
+                    $endpoint,
+                    $payload
+                );
+        } catch (Exception $exception) {
             throw new Exception(
-                $response->body()
+                'Hugging Face API request failed: '.$exception->getMessage(),
+                0,
+                $exception
             );
         }
 
-        return $response->json();
+        if (! $response->successful()) {
+            throw new Exception(
+                $this->formatApiErrorResponse($response)
+            );
+        }
+
+        $apiResponse = $this->parseJsonResponse($response);
+
+        return $this->decodeAiResponseContent($apiResponse, $context);
     }
 
     public function sendGetRequest(string $url, string $apiKey, array $params = [], ?int $timeout = null): array
     {
-        $response = Http::timeout(
-            $timeout ?? $this->defaultTimeout
-        )
-            ->withToken($apiKey)
-            ->acceptJson()
-            ->get(
-                rtrim($url, '/'),
-                $params
-            );
-
-        if (! $response->successful()) {
+        try {
+            $response = Http::timeout(
+                $timeout ?? $this->defaultTimeout
+            )
+                ->withToken($apiKey)
+                ->acceptJson()
+                ->get(
+                    rtrim($url, '/'),
+                    $params
+                );
+        } catch (Exception $exception) {
             throw new Exception(
-                $response->body()
+                'Hugging Face API request failed: '.$exception->getMessage(),
+                0,
+                $exception
             );
         }
 
-        return $response->json();
+        if (! $response->successful()) {
+            throw new Exception(
+                $this->formatApiErrorResponse($response)
+            );
+        }
+
+        return $this->parseJsonResponse($response);
     }
 
     public function sendImageRequest(string $url, string $apiKey, string $model, mixed $data = null, ?int $timeout = null): array
@@ -76,26 +95,34 @@ class HuggingFaceApiService
 
         $endpoint = rtrim($url, '/');
 
-        $response = Http::timeout(
-            $requestTimeout
-        )
-            ->withToken($apiKey)
-            ->acceptJson()
-            ->post(
-                $endpoint,
-                $payload
+        try {
+            $response = Http::timeout(
+                $requestTimeout
+            )
+                ->withToken($apiKey)
+                ->acceptJson()
+                ->post(
+                    $endpoint,
+                    $payload
+                );
+        } catch (Exception $exception) {
+            throw new Exception(
+                'Hugging Face API request failed: '.$exception->getMessage(),
+                0,
+                $exception
             );
+        }
 
         if (! $response->successful()) {
             throw new Exception(
-                $response->body()
+                $this->formatApiErrorResponse($response)
             );
         }
 
         return $this->extractImageResponse($response);
     }
 
-    public function decodeAiResponseContent($apiResponse): array
+    public function decodeAiResponseContent($apiResponse, string $context = ''): array
     {
         $content = data_get(
             $apiResponse,
@@ -103,7 +130,12 @@ class HuggingFaceApiService
         );
 
         if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
+            throw new Exception(
+                $this->buildDecodeErrorMessage(
+                    $context,
+                    'AI response is empty or invalid structure.'
+                )
+            );
         }
 
         $content = $this->sanitizeAiJsonResponseContent($content);
@@ -118,7 +150,11 @@ class HuggingFaceApiService
             ! is_array($decoded)
         ) {
             throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
+                $this->buildDecodeErrorMessage(
+                    $context,
+                    json_last_error_msg(),
+                    $content
+                )
             );
         }
 
@@ -159,6 +195,82 @@ class HuggingFaceApiService
         $content = preg_replace('/[\x00-\x1F\x7F]/', '', $content);
 
         return trim($content);
+    }
+
+    private function parseJsonResponse($response): array
+    {
+        $body = $response->body();
+
+        if (trim($body) === '') {
+            throw new Exception(
+                'Hugging Face API returned an empty response.'
+            );
+        }
+
+        $decoded = json_decode(
+            $body,
+            true
+        );
+
+        if (! is_array($decoded)) {
+            throw new Exception(
+                'Hugging Face API response is not valid JSON: '.json_last_error_msg().' (HTTP '.$response->status().')'
+            );
+        }
+
+        return $decoded;
+    }
+
+    private function formatApiErrorResponse($response): string
+    {
+        $status = $response->status();
+
+        $body = trim($response->body());
+
+        if ($body === '') {
+            return 'Hugging Face API error ('.$status.'): Request failed with an empty response.';
+        }
+
+        return 'Hugging Face API error ('.$status.'): '.$this->formatApiErrorMessage($body);
+    }
+
+    private function formatApiErrorMessage(string $body): string
+    {
+        $decoded = json_decode(
+            $body,
+            true
+        );
+
+        if (! is_array($decoded)) {
+            return $body;
+        }
+
+        $error = $decoded['error'] ?? null;
+
+        $message = (is_string($error) && trim($error) !== '')
+            ? trim($error)
+            : $body;
+
+        $estimatedTime = $decoded['estimated_time'] ?? null;
+
+        if (! is_null($estimatedTime) && trim((string) $estimatedTime) !== '') {
+            $message .= '. Estimated time: '.trim((string) $estimatedTime).' seconds';
+        }
+
+        return $message;
+    }
+
+    private function buildDecodeErrorMessage(string $context, string $jsonError, string $content = ''): string
+    {
+        $stepLabel = $context !== '' ? $context : 'AI generation';
+
+        $message = $stepLabel." generation failed.\n\nJSON Error:\n".$jsonError;
+
+        if ($content !== '') {
+            $message .= "\n\nAPI Response:\n".Str::limit($content, 600);
+        }
+
+        return $message;
     }
 
     private function extractImageResponse($response): array
