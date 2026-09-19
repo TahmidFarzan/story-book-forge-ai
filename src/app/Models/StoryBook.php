@@ -60,7 +60,6 @@ class StoryBook extends Model  implements  HasMedia
 {
     use HasFactory, HasSlug, LogsActivity, InteractsWithMedia;
 
-    protected $appends = [];
     protected $appends = ['media_collection_name',];
 
     protected function casts(): array
