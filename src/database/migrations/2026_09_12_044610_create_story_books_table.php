@@ -40,7 +40,7 @@ return new class extends Migration
             $table->jsonb('scene_plans')->nullable();
             $table->jsonb('dialogue_plans')->nullable();
             $table->jsonb('page_plan')->nullable();
-            $table->jsonb('complete_story_book')->nullable();
+            $table->jsonb('pages')->nullable();
 
             $table->string('status', 50)->nullable();
             $table->string('slug')->unique();

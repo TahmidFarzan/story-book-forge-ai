@@ -8,7 +8,7 @@ import StoryBookStep5FactionsForm from "@/components/back-office/story-book/Stor
 import StoryBookStep1FoundationForm from "@/components/back-office/story-book/StoryBookStep1FoundationForm.vue";
 import StoryBookStep4LocationsForm from "@/components/back-office/story-book/StoryBookStep4LocationsForm.vue";
 import StoryBookStep13PagePlanForm from "@/components/back-office/story-book/StoryBookStep13PagePlanForm.vue";
-import StoryBookStep14CompleteStoryBookForm from "@/components/back-office/story-book/StoryBookStep14CompleteStoryBookForm.vue";
+import StoryBookStep14IllustratedStoryBookForm from "@/components/back-office/story-book/StoryBookStep14IllustratedStoryBookForm.vue";
 import StoryBookStep11ScenePlanForm from "@/components/back-office/story-book/StoryBookStep11ScenePlanForm.vue";
 import StoryBookStep9StoryStructureForm from "@/components/back-office/story-book/StoryBookStep9StoryStructureForm.vue";
 import StoryBookStep7SystemForm from "@/components/back-office/story-book/StoryBookStep7SystemForm.vue";
@@ -176,8 +176,8 @@ const STEP_DEFINITIONS = [
     },
     {
         number: "14",
-        title: "Complete Story Book",
-        text: "Compile all generated modules into a complete, publication-ready story book.",
+        title: "Illustrated Story Book",
+        text: "Build the illustrated story book pages with narration, illustration planning, and one illustration per page.",
         icon: ["fas", "book-open"],
     },
 ];
@@ -482,7 +482,7 @@ const goPrev = () => {
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep14CompleteStoryBookForm
+                        <StoryBookStep14IllustratedStoryBookForm
                             v-else-if="activeStep === 14"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"

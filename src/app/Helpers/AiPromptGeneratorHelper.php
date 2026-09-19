@@ -30,7 +30,11 @@ class AiPromptGeneratorHelper
 
     public const AI_PROMPT_NAME_PAGE_PLAN_GENERATOR = 'Page Plan Generator';
 
-    public const AI_PROMPT_NAME_COMPLETE_STORY_BOOK_GENERATOR = 'Complete Story Book Generator';
+    public const AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR = 'Step 14.1 Page Narration Generator';
+
+    public const AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR = 'Step 14.2 Illustration Planning Generator';
+
+    public const AI_PROMPT_NAME_STEP_14_3_ILLUSTRATION_GENERATOR = 'Step 14.3 Illustration Generator';
 
     public static function foundationGenerator(): string
     {
@@ -5196,16 +5200,295 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function completeStoryBookGenerator(): string
+public static function step14_1PageNarrationGenerator(): string
     {
         $prompt = "
-            You are a professional book compilation AI, senior editor, continuity specialist, and publication formatting expert.
+            You are a professional story narration AI, illustrated book narrator, page writing specialist, and story development expert.
 
-            Your task is to compile every established generation step into a complete, consistent, publication-ready Story Book.
+            Your task is to generate the page narration for every page of a professionally developed illustrated Story Book.
 
-            This final step must preserve continuity across the entire story, unify all established creative direction, and produce a finished book structure ready for eBook and PDF conversion.
+            This step focuses on writing the narration text that will appear on each page of the final illustrated Story Book, based on the established page plan and the story context it depends on.
 
-            The final compilation must feel cohesive, polished, publication ready, and naturally built from everything established before it.
+            The narration must feel original, natural, page-paced, and perfectly connected to the established story.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            The following established Story Book foundation is authoritative:
+
+            {{foundation}}
+
+            The following established characters are authoritative:
+
+            {{characters}}
+
+            The following established World Bible is authoritative:
+
+            {{world_bible}}
+
+            The following established story structure is authoritative:
+
+            {{story_structure}}
+
+            The following established twists and foreshadowing are authoritative:
+
+            {{twists_and_foreshadowing}}
+
+            The following established scene plans are authoritative:
+
+            {{scene_plans}}
+
+            The following established dialogue plans are authoritative:
+
+            {{dialogue_plans}}
+
+            The following established page plan is authoritative:
+
+            {{page_plan}}
+
+            Use the established page plan as the primary source for every page's narration.
+
+            Maintain consistency with the established story, world, characters, structure, scenes, dialogue, and pages.
+
+            Do not unnecessarily change, contradict, or replace the established creative direction.
+
+            ==================================================
+            NARRATION-SPECIFIC INFORMATION
+            ==================================================
+
+            {{additional_information}}
+
+            Narration-specific information is optional.
+
+            If the value is 'Auto', null, empty, or contains no meaningful narration requirements, independently make all necessary narration decisions based on the established story context.
+
+            'Auto' means the AI has full creative freedom to determine the narration. Do not interpret 'Auto' as a narration requirement or narration detail.
+
+            If specific narration information is provided, use it as creative direction and naturally incorporate the relevant requirements into the narration.
+
+            When making independent narration decisions, prioritize:
+
+                - Story consistency
+                - Page plan fidelity
+                - Page pacing and readability
+                - Emotional progression
+                - Audience-appropriate language
+                - Illustration-friendly text
+                - Continuity across pages
+
+            Regardless of the input, maintain consistency with the established story context.
+
+            ==================================================
+            PRIMARY RESPONSIBILITY
+            ==================================================
+
+            Generate the narration for every page of the illustrated Story Book.
+
+            The output must contain exactly one page object for every page in the established page plan layout.
+
+            The final number of page objects must exactly match the number of pages in the established page plan layout.
+
+            Do NOT invent additional pages.
+
+            Do NOT skip any planned page.
+
+            Do NOT return placeholder, empty, or filler narration for any page.
+
+            ==================================================
+            PAGE NARRATION
+            ==================================================
+
+            Write the narration text for every page of the illustrated Story Book.
+
+            For each page establish:
+
+                - no: the page number, starting at 1 and increasing by exactly 1 for every following page
+                - narration: the narration text that appears on the page
+
+            The narration represents what the reader actually experiences on that page.
+
+            It is NOT a screenplay.
+
+            It is NOT a dialogue-only script.
+
+            It is NOT an image prompt.
+
+            It is NOT an explanation of what the AI should draw.
+
+            It is the actual story narration associated with that page.
+
+            The narration must:
+
+                - Match the page plan's narrative content for that page.
+                - Follow the established scene, dialogue, and emotional direction.
+                - Be written for the page only, not as a long chapter passage.
+                - Read naturally and feel like polished storybook prose.
+                - Advance the story while also describing the visible moment of the page.
+                - Remain short enough that the page still leaves strong space for its illustration.
+                - Use language appropriate for the established audience.
+                - Stay consistent with the characters, world, timeline, and story continuity.
+                - Connect smoothly to the narration of the previous page and the next page.
+
+            If dialogue is appropriate for a page, dialogue may naturally appear inside the narration, but the output remains page narration rather than a dialogue plan.
+
+            ==================================================
+            ILLUSTRATION AWARENESS
+            ==================================================
+
+            The narration will later be used as input for illustration prompt generation.
+
+            Therefore, every page should describe enough meaningful story action, character activity, setting, or emotional moment that a later AI can derive a coherent illustration from it.
+
+            However, the narration must NOT contain image-generation instructions.
+
+            Do NOT mention camera angles.
+
+            Do NOT mention art styles.
+
+            Do NOT mention rendering.
+
+            Do NOT mention IllustrationType.
+
+            Do NOT mention illustration prompts.
+
+            Do NOT use the narration block to instruct any future drawing or illustration behavior.
+
+            Illustration planning belongs to a later stage, not to this page narration.
+
+            ==================================================
+            CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
+            ==================================================
+
+            Maintain consistency with the established foundation, characters, World Bible, locations, factions, creatures, systems, timeline, story structure, twists, scene plans, dialogue plans, and page plan.
+
+            Ensure:
+
+                - Every page from the page plan receives one narration entry.
+                - Narration follows the scene order established by the page plan.
+                - Dialogue woven into narration matches the dialogue plan.
+                - Twists and reveals are narrated at the correct story moments.
+                - Page pacing matches the established pacing guidance.
+                - No narration contradicts established story information.
+
+            If the established context leaves a narration decision unspecified, make a strong creative decision that best serves the existing story.
+
+            ==================================================
+            FUTURE STORY DEVELOPMENT
+            ==================================================
+
+            Design the page narration so it can support the illustration generation steps.
+
+            The page narration should be detailed enough for future generation of:
+
+                - Illustration prompts for each page
+                - Final page text and typography
+                - The complete publication-ready illustrated Story Book
+
+            Maintain narration consistency so future generations can use it as a reliable reference.
+
+            ==================================================
+            WRITING QUALITY
+            ==================================================
+
+            Write the narration with the judgment of an experienced professional storybook writer.
+
+            Write with:
+
+                - Natural and confident creative judgment
+                - Strong page-level pacing
+                - Specific and meaningful details
+                - Believable emotional progression
+                - Audience awareness
+                - Fresh and distinctive language
+                - Visual storytelling that invites illustration
+
+            Avoid:
+
+                - Generic or filler narration
+                - Page narration that contradicts the established story
+                - Excessively long passages that crowd the page
+                - Inconsistent character voice
+                - Pages that skip important story information
+
+            ==================================================
+            QUALITY REQUIREMENTS
+            ==================================================
+
+            The page narration should:
+
+                - Fit the established Story Book foundation, characters, and world.
+                - Fit the established scene, dialogue, and page plans.
+                - Cover the complete story page by page.
+                - Read naturally and professionally.
+                - Leave clear room for page illustrations.
+                - Protect essential story and character information.
+                - Support the final illustrated Story Book compilation.
+                - Feel original, natural, emotionally engaging, and polished.
+
+            ==================================================
+            OUTPUT FORMAT
+            ==================================================
+
+            Return ONLY valid JSON.
+
+            The entire response must be a single JSON object with a pages array:
+
+            {
+                \"pages\": [
+                    {
+                        \"no\": 1,
+                        \"narration\": \"\"
+                    }
+                ]
+            }
+
+            Every page object must have exactly two fields:
+
+                - \"no\": the page number. It is an integer, starts at 1, and must be strictly sequential (1, 2, 3, ...) with no gaps, no repeats, and no extra numbering.
+                - \"narration\": the page narration. It must be a non-empty string containing the actual story narration for that page.
+
+            The number of page objects in the pages array must exactly equal the number of pages in the established page plan layout.
+
+            Do NOT wrap the JSON in Markdown code fences.
+
+            Do NOT include any explanatory text before or after the JSON.
+
+            Do NOT include any illustration, image, or rendering instructions anywhere in the output.
+
+            ==================================================
+            FINAL CHECK
+            ==================================================
+
+            Before returning the result, ensure:
+
+                - Every page from the page plan has exactly one narration entry.
+                - Page numbers are unique and complete.
+                - Narration directly follows the established page plan and scenes.
+                - The narration reads as polished storybook prose.
+                - The narration leaves room for page illustrations.
+                - No narration contradicts the established story or world.
+                - The narration is appropriate for the established audience.
+                - The narration is detailed enough for illustration generation.
+                - The writing feels professionally developed.
+                - The narration feels original, natural, and intentional.
+                - The output is valid JSON only.
+                - Do not return explanations, markdown, or additional text outside the JSON.
+        ";
+
+        return $prompt;
+    }
+
+    public static function step14_2IllustrationPlanningGenerator(): string
+    {
+        $prompt = "
+            You are a professional illustration planning AI, visual storytelling specialist, and story development expert.
+
+            Your task is to generate the illustration prompt for every page of a professionally developed illustrated Story Book.
+
+            This step focuses on determining what each page's illustration should depict so that a later image-generation stage can produce the actual artwork.
+
+            The illustration prompt must feel visual, precise, directly useful to an image-generation model, and fully consistent with the established story.
 
             ==================================================
             ESTABLISHED STORY CONTEXT
@@ -5263,40 +5546,39 @@ class AiPromptGeneratorHelper
 
             {{page_plan}}
 
-            Use every established generation step as the primary source for the final compilation.
+            The following existing page narration is authoritative and is the primary source for what each illustration must depict:
 
-            Maintain consistency with the established story, world, characters, structure, scenes, dialogue, and pages.
+            {{pages}}
+
+            Use the existing page narration as the primary source for deciding what appears in each illustration.
+
+            Maintain consistency with the established story, world, characters, locations, and page plan.
 
             Do not unnecessarily change, contradict, or replace the established creative direction.
 
-            Produce a complete book that faithfully represents the established story.
-
             ==================================================
-            COMPILATION-SPECIFIC INFORMATION
+            ILLUSTRATION-PLANNING-SPECIFIC INFORMATION
             ==================================================
 
             {{additional_information}}
 
-            Compilation-specific information is optional.
+            Illustration-planning-specific information is optional.
 
-            If the value is 'Auto', null, empty, or contains no meaningful compilation requirements, independently make all necessary compilation decisions based on the established story context.
+            If the value is 'Auto', null, empty, or contains no meaningful illustration requirements, independently make all necessary illustration-planning decisions based on the established story context.
 
-            'Auto' means the AI has full creative freedom to determine the final presentation. Do not interpret 'Auto' as a compilation requirement or compilation detail.
+            'Auto' means the AI has full creative freedom to determine what each illustration should depict. Do not interpret 'Auto' as an illustration requirement or detail.
 
-            If specific compilation information is provided, use it as creative direction and naturally incorporate the relevant requirements into the final book.
+            If specific illustration information is provided, use it as creative direction and naturally incorporate the relevant requirements into the illustration prompts.
 
-            When making independent compilation decisions, prioritize:
+            When making independent illustration-planning decisions, prioritize:
 
                 - Story consistency
-                - Character continuity
-                - World continuity
-                - Timeline integrity
-                - Narrative completeness
-                - Publication quality
-                - Reader experience
-                - Formatting readiness
-                - Illustration readiness
-                - eBook and PDF compatibility
+                - Character appearance consistency
+                - Location consistency
+                - Visual continuity between consecutive pages
+                - Emotional accuracy
+                - Narrative clarity
+                - Direct usefulness to an image-generation model
 
             Regardless of the input, maintain consistency with the established story context.
 
@@ -5304,157 +5586,140 @@ class AiPromptGeneratorHelper
             PRIMARY RESPONSIBILITY
             ==================================================
 
-            Compile the complete Story Book into a finished, publication-ready work.
+            Generate one illustration prompt for every page of the illustrated Story Book.
 
-            Produce:
+            The output must contain exactly one page object for every page provided in the existing page narration.
 
-                1. Complete Story Book
-                2. Publication Ready Format
-                3. Final Narrative
+            The final number of page objects must exactly match the number of pages provided.
 
-            Every element must remain faithful to the established story and be ready for production.
+            Do NOT invent additional pages.
 
-            ==================================================
-            COMPLETE STORY BOOK
-            ==================================================
+            Do NOT skip any provided page.
 
-            Assemble all generated data into a complete unified book.
-
-            Establish:
-
-                - Book title
-                - Book subtitle
-                - Book summary and blurb
-                - Table of contents
-                - Front matter
-                - Introduction or opening
-                - Complete chapter list
-                - Chapter content assembled from scenes and dialogue
-                - Back matter
-                - Author or closing note
-                - Story synopsis
-                - Character index
-                - World glossary
-                - Timeline appendix
-                - How all generated steps were integrated
-                - How continuity was preserved
-                - How the story type, audience, and genre were honored
-
-            The complete story book must read as a finished, coherent publication.
+            Do NOT return placeholder, empty, or filler illustration prompts for any page.
 
             ==================================================
-            PUBLICATION READY FORMAT
+            PAGE NUMBERING
             ==================================================
 
-            Prepare the book for eBook and PDF conversion.
+            For every page object, the \"no\" field must exactly match the page number of the corresponding existing page.
 
-            Establish:
+            Do NOT renumber the pages.
 
-                - Document structure
-                - Chapter hierarchy and headings
-                - Page structure
-                - Front matter formatting
-                - Body formatting
-                - Back matter formatting
-                - Typography guidance
-                - Illustration placement guidance
-                - Image resolution and format guidance
-                - Accessibility guidance
-                - Metadata (title, author, language, genre, audience, keywords)
-                - Copyright and legal page content
-                - ISBN placeholder guidance
-                - eBook conversion notes
-                - PDF conversion notes
-                - Print considerations
-                - Formatting consistency rules
+            Do NOT reorder the page numbers.
 
-            The publication-ready format must be specific enough to guide final production directly.
+            Preserve the page numbering exactly as provided.
 
             ==================================================
-            FINAL NARRATIVE
+            ILLUSTRATION PROMPT
             ==================================================
 
-            Produce the final continuous narrative of the story.
+            For each page establish:
 
-            Establish:
+                - no: the exact page number of the existing page
+                - illustration_prompt: the visual prompt describing what the illustration for that page must depict
 
-                - Opening passage
-                - Full narrative flow from beginning to end
-                - Chapter-by-chapter narrative
-                - How scenes connect in prose
-                - How dialogue is woven into narrative
-                - How the established twists and reveals pay off
-                - How the established pacing is followed
-                - How character arcs resolve
-                - How the story reaches its established climax
-                - How the story reaches its established resolution
-                - Closing passage
-                - Final emotional impact
-                - Notes on any adaptation from the plan
+            The illustration_prompt is the actual prompt that will later be sent to an Image-output AI Brain.
 
-            The final narrative must be complete, consistent, and ready for the reader.
+            It must describe the visual content of the page directly and concretely as if guiding an image-generation model.
+
+            The illustration prompt should identify the important visual elements needed to depict the page, such as:
+
+                - Subjects present in the scene
+                - Character appearance based on established appearance information
+                - Character actions
+                - Expressions
+                - Poses
+                - Environment
+                - Location
+                - Important objects
+                - Time or context
+                - Atmosphere and mood
+                - Relevant visual storytelling details
+                - Compositionally important relationships between subjects
+
+            The illustration prompt must:
+
+                - Be based primarily on the page narration.
+                - Use established character appearance information so the same characters remain visually consistent across pages.
+                - Use established location and world details so environments remain visually consistent.
+                - Reflect the relevant emotional state and important story events of the page.
+                - Maintain visual continuity with the surrounding pages.
+                - Not contradict established Story Book information.
+                - Not invent unnecessary characters.
+                - Not invent major events that are absent from the narration or the page plan.
+                - Not change the story.
+                - Be a natural visual scene description, not a screenplay, not a dialogue script, and not a story narration recap.
+
+            Do NOT make the illustration prompt excessively verbose purely for length.
+
+            Do NOT include any art style, rendering, or illustration type instructions in the illustration prompt.
+
+            The IllustrationType has already been selected by the user and is applied separately to every page outside this generation.
+
+            Do NOT choose, suggest, change, or refer to any art style, image type, or visual rendering style.
+
+            ==================================================
+            ILLUSTRATION TYPE SEPARATION
+            ==================================================
+
+            The illustration_type_prompt_instruction is NOT part of this generation.
+
+            It comes from the separately selected IllustrationType model and is applied to every page by the application.
+
+            Do NOT return illustration_type_prompt_instruction anywhere in the output.
+
+            Do NOT include the IllustrationType's style instruction inside any illustration_prompt.
+
+            Keep the illustration prompt focused only on describing the scene content.
 
             ==================================================
             CONSISTENCY WITH THE ESTABLISHED STORY AND WORLD
             ==================================================
 
-            Maintain continuity across every established generation step.
+            Maintain consistency with the established foundation, characters, World Bible, locations, factions, creatures, systems, timeline, story structure, twists, scene plans, dialogue plans, and page plan.
 
             Ensure:
 
-                - Characters behave, sound, and develop consistently.
-                - The world and its rules remain consistent.
-                - The timeline remains consistent.
-                - The story structure and plot progression are respected.
-                - Twists, foreshadowing, and reveals pay off correctly.
-                - Scenes and dialogue are faithfully compiled.
-                - The page plan is honored.
-                - No contradiction exists between any generation steps.
-                - The final book honors the established story type, audience, and genre.
+                - Every provided page receives exactly one illustration prompt.
+                - Illustration prompts follow the scene order and content of the page narration.
+                - Characters appear with the appearance established for them.
+                - Locations and environments match the established settings.
+                - No illustration prompt contradicts established story information.
+                - Visual continuity is preserved between consecutive pages.
 
-            If a conflict exists between established steps, resolve it in favor of the earliest authoritative foundation and preserve the strongest narrative direction.
+            If the established context leaves a visual detail unspecified, make a strong creative decision that best serves the existing story.
 
             ==================================================
-            PUBLICATION QUALITY
+            FUTURE ILLUSTRATION GENERATION
             ==================================================
 
-            Compile the book with the judgment of an experienced professional editor and publication specialist.
+            Design the illustration prompts so they can be directly consumed by the later image-generation stage.
 
-            Write with:
+            The later stage will receive for each page:
 
-                - Natural and confident editorial judgment
-                - Complete and coherent storytelling
-                - Specific and meaningful content
-                - Strong continuity control
-                - Polished and consistent prose
-                - Publication-standard formatting
-                - Reader-focused presentation
-                - Attention to production details
+                - narration
+                - illustration_type_prompt_instruction
+                - illustration_prompt
 
-            Avoid:
+            and a selected Image-output AI Brain.
 
-                - Missing or incomplete chapters
-                - Contradictions between steps
-                - Inconsistent character voice
-                - Disjointed narrative flow
-                - Placeholder or generic content
-                - Formatting that blocks conversion
+            Therefore the illustration_prompt must be self-sufficient as a scene description while remaining separate from the illustration type instruction.
 
             ==================================================
             QUALITY REQUIREMENTS
             ==================================================
 
-            The complete story book should:
+            The illustration prompts should:
 
-                - Include all established generated data.
-                - Preserve full story and character continuity.
-                - Preserve world and timeline continuity.
-                - Present a complete and coherent narrative.
-                - Provide a clear publication-ready format.
-                - Be ready for eBook and PDF conversion.
-                - Support illustration integration.
-                - Honor the established story type, audience, and genre.
-                - Feel finished, polished, and production ready.
+                - Fit the established Story Book foundation, characters, and world.
+                - Depict the content of each page's narration.
+                - Be directly useful to an image-generation model.
+                - Maintain character and location consistency across pages.
+                - Preserve visual continuity with surrounding pages.
+                - Avoid unnecessary characters and invented major events.
+                - Feel visually strong, intentional, and professionally art-directed.
+                - Contain no art style, rendering, or illustration type instructions.
 
             ==================================================
             OUTPUT FORMAT
@@ -5462,86 +5727,29 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            The entire response must be a single JSON object with a pages array:
+
             {
-                \"complete_story_book\": {
-                    \"book_title\": \"\",
-                    \"book_subtitle\": \"\",
-                    \"book_summary\": \"\",
-                    \"table_of_contents\": [],
-                    \"front_matter\": [],
-                    \"introduction\": \"\",
-                    \"chapters\": [
-                        {
-                            \"chapter_number\": 1,
-                            \"chapter_title\": \"\",
-                            \"chapter_summary\": \"\",
-                            \"chapter_content\": \"\",
-                            \"scenes_included\": [],
-                            \"dialogue_included\": [],
-                            \"characters_featured\": [],
-                            \"locations_featured\": [],
-                            \"emotional_beat\": \"\",
-                            \"continuity_notes\": \"\"
-                        }
-                    ],
-                    \"back_matter\": [],
-                    \"author_note\": \"\",
-                    \"story_synopsis\": \"\",
-                    \"character_index\": [],
-                    \"world_glossary\": [],
-                    \"timeline_appendix\": [],
-                    \"integration_notes\": [],
-                    \"continuity_summary\": \"\",
-                    \"story_type_audience_genre_notes\": \"\"
-                },
-                \"publication_ready_format\": {
-                    \"document_structure\": \"\",
-                    \"chapter_hierarchy\": \"\",
-                    \"page_structure\": \"\",
-                    \"front_matter_formatting\": \"\",
-                    \"body_formatting\": \"\",
-                    \"back_matter_formatting\": \"\",
-                    \"typography_guidance\": \"\",
-                    \"illustration_placement_guidance\": \"\",
-                    \"image_specifications\": \"\",
-                    \"accessibility_guidance\": \"\",
-                    \"metadata\": {
-                        \"title\": \"\",
-                        \"author\": \"\",
-                        \"language\": \"\",
-                        \"genre\": [],
-                        \"audience\": \"\",
-                        \"keywords\": []
-                    },
-                    \"copyright_and_legal\": \"\",
-                    \"isbn_guidance\": \"\",
-                    \"ebook_conversion_notes\": [],
-                    \"pdf_conversion_notes\": [],
-                    \"print_considerations\": [],
-                    \"formatting_consistency_rules\": []
-                },
-                \"final_narrative\": {
-                    \"opening_passage\": \"\",
-                    \"full_narrative\": \"\",
-                    \"chapter_narratives\": [
-                        {
-                            \"chapter_number\": 1,
-                            \"chapter_title\": \"\",
-                            \"narrative\": \"\"
-                        }
-                    ],
-                    \"scene_prose_connections\": [],
-                    \"dialogue_weaving_notes\": \"\",
-                    \"twists_and_reveals_payoff\": [],
-                    \"pacing_alignment\": \"\",
-                    \"character_arc_resolution\": [],
-                    \"climax\": \"\",
-                    \"resolution\": \"\",
-                    \"closing_passage\": \"\",
-                    \"emotional_impact\": \"\",
-                    \"adaptation_notes\": []
-                }
+                \"pages\": [
+                    {
+                        \"no\": 1,
+                        \"illustration_prompt\": \"\"
+                    }
+                ]
             }
+
+            Every page object must have exactly two fields:
+
+                - \"no\": the exact page number of the corresponding existing page. It must exactly match the established page numbering with no gaps, no repeats, no renumbering, and no extra numbering.
+                - \"illustration_prompt\": a non-empty string describing what the illustration for that page must depict.
+
+            The number of page objects in the pages array must exactly equal the number of pages provided.
+
+            Do NOT wrap the JSON in Markdown code fences.
+
+            Do NOT include any explanatory text before or after the JSON.
+
+            Do NOT include illustration_type_prompt_instruction or any style, rendering, or art direction field anywhere in the JSON.
 
             ==================================================
             FINAL CHECK
@@ -5549,16 +5757,135 @@ class AiPromptGeneratorHelper
 
             Before returning the result, ensure:
 
-                - Every established generation step is included and respected.
-                - Story and character continuity is preserved.
-                - World and timeline continuity is preserved.
-                - The complete book is coherent and finished.
-                - The publication-ready format supports eBook and PDF conversion.
-                - The final narrative is complete and polished.
-                - No contradiction exists between generation steps.
-                - The result is faithful to the established story.
+                - Every provided page has exactly one matching page object.
+                - Page numbers exactly match the established numbering.
+                - Every illustration_prompt is a non-empty string.
+                - Illustration prompts primarily depict the page narration.
+                - Characters and locations remain visually consistent with the established story.
+                - Visual continuity is preserved between consecutive pages.
+                - No illustration prompt contains an art style or rendering instruction.
+                - No illustration prompt contradicts the established story or world.
                 - The output is valid JSON only.
                 - Do not return explanations, markdown, or additional text outside the JSON.
+
+            The illustration style is managed separately by the selected IllustrationType and must never appear in this response.
+        ";
+
+        return $prompt;
+    }
+
+    public static function step14_3IllustrationGenerator(): string
+    {
+        $prompt = "
+            You are a professional story book illustration image generator and visual storytelling specialist.
+
+            Generate ONE single illustration image for exactly ONE page of a professionally developed illustrated Story Book.
+
+            The image is generated from the page narration, the established scene content, and the user-selected illustration type instruction.
+
+            ==================================================
+            ILLUSTRATION TYPE INSTRUCTION
+            ==================================================
+
+            {{illustration_type_prompt_instruction}}
+
+            The illustration type instruction above defines the required visual style and rendering of the image.
+
+            It is chosen by the user and is authoritative.
+
+            The generated image must follow this instruction exactly.
+
+            Do NOT replace, weaken, or ignore the selected illustration type instruction.
+
+            Do NOT select a different illustration style.
+
+            Apply the illustration type instruction faithfully while depicting the page content.
+
+            ==================================================
+            PAGE CONTENT
+            ==================================================
+
+            The authoritative page must be depicted:
+
+            {{page}}
+
+            Depict the established page content exactly as described.
+
+            Do NOT invent major new events, characters, or environments that are not present in the page content or the established story context.
+
+            ==================================================
+            NARRATION
+            ==================================================
+
+            The page narration describes what happens on this page.
+
+            The image must visually correspond to the narration.
+
+            Do NOT rewrite the narration.
+
+            Do NOT alter the story.
+
+            ==================================================
+            ILLUSTRATION PROMPT
+            ==================================================
+
+            The illustration prompt describes the specific visual scene this page must depict.
+
+            The image must visually follow the illustration prompt.
+
+            The illustration prompt and the narration describe the SAME page.
+
+            ==================================================
+            ESTABLISHED STORY CONTEXT
+            ==================================================
+
+            Use the established context only to keep the image visually consistent with the rest of the story:
+
+            {{foundation}}
+
+            {{characters}}
+
+            {{world_bible}}
+
+            {{locations}}
+
+            Keep characters, locations, and world details visually consistent with the established story.
+
+            If the selected illustration type instruction or the page content already fully defines the visual, use those as the primary direction.
+
+            ==================================================
+            GENERATION REQUIREMENTS
+            ==================================================
+
+            Generate exactly one illustration for the page.
+
+            The generated image must:
+
+                - Follow the illustration type instruction exactly.
+                - Depict the content described by the illustration prompt.
+                - Visually correspond to the page narration.
+                - Keep characters, locations, and world elements consistent with the established story.
+                - Be a single coherent, high-quality story book illustration.
+
+            The illustration type instruction controls the style.
+
+            The illustration prompt controls the scene.
+
+            The narration provides story accuracy.
+
+            Combine all three faithfully.
+
+            ==================================================
+            ===> FINAL IMAGE PROMPT <===
+            ==================================================
+
+            Produce the final image prompt only.
+
+            Keep it as a single coherent image prompt that image-generation models can follow directly.
+
+            The final image prompt must preserve the selected illustration type instruction and the established scene content for this page.
+
+            Do NOT output explanations, comments, JSON, or any text other than the final image prompt.
         ";
 
         return $prompt;

@@ -323,8 +323,8 @@ const seeHowUrl = '#how-it-works'
                         <span class="sbfa-step-icon"><FontAwesomeIcon :icon="['fas', 'book-open']" /></span>
                         <span class="sbfa-step-number"><FontAwesomeIcon :icon="['fas', 'check']" /></span>
                     </div>
-                    <h3 class="sbfa-step-title">Complete Story Book</h3>
-                    <p class="sbfa-step-text">Bring every generated module together into one complete story book.</p>
+                    <h3 class="sbfa-step-title">Illustrated Story Book</h3>
+                    <p class="sbfa-step-text">Generate page narration and one illustration per page into a complete illustrated story book.</p>
                 </article>
             </div>
         </div>

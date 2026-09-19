@@ -571,11 +571,27 @@ class SeederHelper
             ],
 
             (object) [
-                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_COMPLETE_STORY_BOOK_GENERATOR,
-                'code' => 'CompleteStoryBookGenerator',
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR,
+                'code' => 'Step14.1PageNarrationGenerator',
                 'step_number' => 14,
                 'depend_on_prompt_ids' => null,
-                'prompt' => AiPromptGeneratorHelper::completeStoryBookGenerator(),
+                'prompt' => AiPromptGeneratorHelper::step14_1PageNarrationGenerator(),
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR,
+                'code' => 'Step14.2IllustrationPlanningGenerator',
+                'step_number' => 14,
+                'depend_on_prompt_ids' => null,
+                'prompt' => AiPromptGeneratorHelper::step14_2IllustrationPlanningGenerator(),
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3_ILLUSTRATION_GENERATOR,
+                'code' => 'Step14.3IllustrationGenerator',
+                'step_number' => 14,
+                'depend_on_prompt_ids' => null,
+                'prompt' => AiPromptGeneratorHelper::step14_3IllustrationGenerator(),
             ],
 
         ]);

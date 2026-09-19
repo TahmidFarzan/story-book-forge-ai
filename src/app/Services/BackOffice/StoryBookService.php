@@ -3,9 +3,9 @@
 namespace App\Services\BackOffice;
 
 use App\Helpers\AiPromptGeneratorHelper;
+use App\Helpers\MediaHelper;
 use App\Helpers\StoryBookHelper;
 use App\Http\Requests\StoryBookCharactersRequest;
-use App\Http\Requests\StoryBookCompleteStoryBookRequest;
 use App\Http\Requests\StoryBookCreaturesRequest;
 use App\Http\Requests\StoryBookDialoguePlanRequest;
 use App\Http\Requests\StoryBookFactionsRequest;
@@ -13,11 +13,16 @@ use App\Http\Requests\StoryBookFoundationRequest;
 use App\Http\Requests\StoryBookLocationsRequest;
 use App\Http\Requests\StoryBookPagePlanRequest;
 use App\Http\Requests\StoryBookScenePlanRequest;
+use App\Http\Requests\StoryBookStep14_1PageNarrationRequest;
+use App\Http\Requests\StoryBookStep14_2IllustrationPlanningRequest;
+use App\Http\Requests\StoryBookStep14_3IllustrationGenerationRequest;
 use App\Http\Requests\StoryBookStoryStructureRequest;
 use App\Http\Requests\StoryBookSystemsRequest;
 use App\Http\Requests\StoryBookTimelineRequest;
 use App\Http\Requests\StoryBookTwistsAndForeshadowingRequest;
 use App\Http\Requests\StoryBookWorldVibeRequest;
+use App\Models\AiBrain;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Models\StoryBook;
 use Exception;
 use Illuminate\Http\Request;
@@ -36,18 +41,21 @@ class StoryBookService
 
     protected GenreService $genreService;
 
+    protected IllustrationTypeService $illustrationTypeService;
+
     protected StoryBookTypeService $storyBookTypeService;
 
     protected HuggingFaceApiService $huggingFaceApiService;
 
     protected LanguageService $languageService;
 
-    public function __construct(AiBrainService $aiBrainService, AiPromptService $aiPromptService, AudienceService $audienceService, GenreService $genreService, StoryBookTypeService $storyBookTypeService, HuggingFaceApiService $huggingFaceApiService, LanguageService $languageService)
+    public function __construct(AiBrainService $aiBrainService, AiPromptService $aiPromptService, AudienceService $audienceService, GenreService $genreService, IllustrationTypeService $illustrationTypeService, StoryBookTypeService $storyBookTypeService, HuggingFaceApiService $huggingFaceApiService, LanguageService $languageService)
     {
         $this->aiBrainService = $aiBrainService;
         $this->aiPromptService = $aiPromptService;
         $this->audienceService = $audienceService;
         $this->genreService = $genreService;
+        $this->illustrationTypeService = $illustrationTypeService;
         $this->storyBookTypeService = $storyBookTypeService;
         $this->huggingFaceApiService = $huggingFaceApiService;
         $this->languageService = $languageService;
@@ -70,6 +78,8 @@ class StoryBookService
 
             'activityLogs' => fn ($query) => $query->latest()->limit(10),
             'activityLogs.causer',
+
+            'storyBookPageImages' => fn ($query) => $query->orderBy('order_column'),
 
             'latestActivityLog',
             'latestActivityLog.causer',
@@ -650,21 +660,21 @@ class StoryBookService
         }
     }
 
-    public function generateCompleteStoryBook(StoryBookCompleteStoryBookRequest $request, StoryBook $storyBook): array
+    public function generateStep14_1PageNarration(StoryBookStep14_1PageNarrationRequest $request, StoryBook $storyBook): array
     {
         try {
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_COMPLETE_STORY_BOOK_GENERATOR));
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->completeStoryBookRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $requestInputs = $this->pageNarrationRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $completeStoryBookObject = $this->extractCompleteStoryBookFromResponse($apiResponse);
-                $storyBook->complete_story_book = $completeStoryBookObject;
-                $storyBook->status = StoryBookHelper::STATUS_COMPLETE;
+                $pages = $this->extractPagesFromResponse($apiResponse);
+                $storyBook->pages = $pages;
+                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -673,18 +683,104 @@ class StoryBookService
             return [
                 'story_book' => $storyBook,
                 'status' => 'success',
-                'message' => 'Complete story book generated successfully.',
+                'message' => 'Story page narration generated successfully.',
             ];
         } catch (Exception $exception) {
 
-            Log::error('Failed to generate complete story book', [
+            Log::error('Failed to generate Story page narration', [
                 'exception' => $exception->getMessage(),
             ]);
 
             return [
                 'story_book' => null,
                 'status' => 'error',
-                'message' => 'Failed to generate complete story book. Please try again.',
+                'message' => 'Failed to generate Story page narration. Please try again.',
+            ];
+        }
+    }
+
+    public function generateStep14_2IllustrationPlanning(StoryBookStep14_2IllustrationPlanningRequest $request, StoryBook $storyBook): array
+    {
+        try {
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR));
+            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
+            $illustrationType = $this->illustrationTypeService->findById($request->input('illustration_type_id'));
+
+            $requestInputs = $this->illustrationPlanningRequestInputsFormatter($storyBook, $request->input('additional_information', 'Auto'));
+            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
+
+            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+
+            $storyBook = DB::transaction(function () use ($apiResponse, $storyBook, $illustrationType) {
+                $illustrationPlanning = $this->extractIllustrationPlanningFromResponse($apiResponse, (array) ($storyBook->pages ?? []));
+                $storyBook->pages = $this->applyIllustrationPlanningToPages((array) ($storyBook->pages ?? []), $illustrationPlanning, $illustrationType->prompt_instruction);
+                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->save();
+
+                return $storyBook;
+            });
+
+            return [
+                'story_book' => $storyBook,
+                'status' => 'success',
+                'message' => 'Story illustration planning generated successfully.',
+            ];
+        } catch (Exception $exception) {
+
+            Log::error('Failed to generate Story illustration planning', [
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return [
+                'story_book' => null,
+                'status' => 'error',
+                'message' => 'Failed to generate Story illustration planning. Please try again.',
+            ];
+        }
+    }
+
+    public function generateStep14_3Illustration(StoryBookStep14_3IllustrationGenerationRequest $request, StoryBook $storyBook): array
+    {
+        try {
+            $pageNo = (int) $request->input('page_no');
+
+            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
+
+            $this->assertImageOutputAiBrain($aiBrain);
+
+            $page = $this->findPageByNo($storyBook, $pageNo);
+
+            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3_ILLUSTRATION_GENERATOR));
+            $requestInputs = $this->pageIllustrationRequestInputsFormatter($storyBook, $page);
+            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
+
+            $image = $this->huggingFaceApiService->sendImageRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->timeout_seconds);
+
+            DB::transaction(function () use ($storyBook, $pageNo, $page, $image) {
+                $this->deleteExistingPageImage($storyBook, $pageNo);
+                $this->storeStoryBookPageImage($storyBook, $page, $pageNo, $image);
+            });
+
+            $storyBook = $storyBook->fresh();
+
+            return [
+                'story_book' => $storyBook,
+                'page_no' => $pageNo,
+                'status' => 'success',
+                'message' => "Story book page {$pageNo} illustration generated successfully.",
+            ];
+        } catch (Exception $exception) {
+
+            Log::error('Failed to generate Story book page illustration', [
+                'page_no' => $request->input('page_no'),
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return [
+                'story_book' => null,
+                'page_no' => $request->input('page_no'),
+                'status' => 'error',
+                'message' => 'Failed to generate the page illustration. Please try again.',
             ];
         }
     }
@@ -1092,7 +1188,7 @@ class StoryBookService
         return $requestInputs;
     }
 
-    private function completeStoryBookRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    private function pageNarrationRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
     {
         $requestInputs = [];
 
@@ -1128,6 +1224,295 @@ class StoryBookService
         ];
 
         return $requestInputs;
+    }
+
+    private function illustrationPlanningRequestInputsFormatter(StoryBook $storyBook, string|null $additionalInformation): array
+    {
+        $requestInputs = [];
+
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+        $formatedFactions = json_encode($storyBook->factions, JSON_PRETTY_PRINT);
+        $formatedCreatures = json_encode($storyBook->creatures, JSON_PRETTY_PRINT);
+        $formatedSystems = json_encode($storyBook->systems, JSON_PRETTY_PRINT);
+        $formatedTimeline = json_encode($storyBook->timeline, JSON_PRETTY_PRINT);
+        $formatedStoryStructure = json_encode($storyBook->story_structure, JSON_PRETTY_PRINT);
+        $formatedTwistsAndForeshadowing = json_encode($storyBook->twists_and_foreshadowing, JSON_PRETTY_PRINT);
+        $formatedScenePlans = json_encode($storyBook->scene_plans, JSON_PRETTY_PRINT);
+        $formatedDialoguePlans = json_encode($storyBook->dialogue_plans, JSON_PRETTY_PRINT);
+        $formatedPagePlan = json_encode($storyBook->page_plan, JSON_PRETTY_PRINT);
+
+        $pages = (array) ($storyBook->pages ?? []);
+        $formatedPages = json_encode(array_values(array_map(fn (array $page) => [
+            'no' => $page['no'] ?? null,
+            'narration' => $page['narration'] ?? null,
+        ], $pages)), JSON_PRETTY_PRINT);
+
+        $requestInputs = [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'factions' => $formatedFactions,
+            'creatures' => $formatedCreatures,
+            'systems' => $formatedSystems,
+            'timeline' => $formatedTimeline,
+            'story_structure' => $formatedStoryStructure,
+            'twists_and_foreshadowing' => $formatedTwistsAndForeshadowing,
+            'scene_plans' => $formatedScenePlans,
+            'dialogue_plans' => $formatedDialoguePlans,
+            'page_plan' => $formatedPagePlan,
+            'pages' => $formatedPages,
+            'additional_information' => $additionalInformation,
+        ];
+
+        return $requestInputs;
+    }
+
+    private function extractIllustrationPlanningFromResponse($apiResponse, array $existingPages): array
+    {
+        $content = data_get(
+            $apiResponse,
+            'choices.0.message.content'
+        );
+
+        if (! is_string($content) || trim($content) === '') {
+            throw new Exception('Invalid AI response structure.');
+        }
+
+        $content = trim($content);
+
+        $content = preg_replace(
+            '/^```(?:json)?\s*|\s*```$/i',
+            '',
+            $content
+        );
+
+        $content = trim($content);
+
+        $decoded = json_decode(
+            $content,
+            true
+        );
+
+        if (
+            json_last_error() !== JSON_ERROR_NONE ||
+            ! is_array($decoded)
+        ) {
+            throw new Exception(
+                'AI response is not valid JSON: '.json_last_error_msg()
+            );
+        }
+
+        $pages = $decoded['pages'] ?? null;
+
+        if (! is_array($pages)) {
+            throw new Exception('AI response does not contain a valid pages array.');
+        }
+
+        $existingByNo = [];
+
+        foreach ($existingPages as $existingPage) {
+            if (! is_array($existingPage)) {
+                continue;
+            }
+
+            $existingByNo[(int) ($existingPage['no'] ?? null)] = true;
+        }
+
+        $expectedCount = count($existingByNo);
+
+        if ($expectedCount === 0) {
+            throw new Exception('Story book has no pages to plan illustrations for.');
+        }
+
+        $result = [];
+        $seenNos = [];
+
+        foreach ($pages as $page) {
+            if (! is_array($page)) {
+                throw new Exception('AI response contains an invalid page object.');
+            }
+
+            $no = $page['no'] ?? null;
+
+            if (! is_numeric($no)) {
+                throw new Exception('AI response contains an invalid page number.');
+            }
+
+            $no = (int) $no;
+
+            if (! isset($existingByNo[$no])) {
+                throw new Exception("AI response contains a page number that does not exist: {$no}.");
+            }
+
+            if (isset($seenNos[$no])) {
+                throw new Exception("AI response contains a duplicate page number: {$no}.");
+            }
+
+            $seenNos[$no] = true;
+
+            $illustrationPrompt = $page['illustration_prompt'] ?? null;
+
+            if (! is_string($illustrationPrompt) || trim($illustrationPrompt) === '') {
+                throw new Exception("AI response contains an empty illustration prompt for page {$no}.");
+            }
+
+            $result[$no] = [
+                'no' => $no,
+                'illustration_prompt' => $illustrationPrompt,
+            ];
+        }
+
+        if (count($result) !== $expectedCount) {
+            throw new Exception('AI response does not return every expected page.');
+        }
+
+        ksort($result);
+
+        return array_values($result);
+    }
+
+    private function applyIllustrationPlanningToPages(array $existingPages, array $illustrationPlanning, string $illustrationTypePromptInstruction): array
+    {
+        $illustrationPlanningByNo = [];
+
+        foreach ($illustrationPlanning as $plannedPage) {
+            $illustrationPlanningByNo[(int) ($plannedPage['no'] ?? null)] = $plannedPage;
+        }
+
+        $updatedPages = [];
+
+        foreach ($existingPages as $existingPage) {
+            $no = (int) ($existingPage['no'] ?? null);
+
+            $page = $existingPage;
+
+            if (isset($illustrationPlanningByNo[$no])) {
+                $page['illustration_prompt'] = $illustrationPlanningByNo[$no]['illustration_prompt'];
+            }
+
+            $page['illustration_type_prompt_instruction'] = $illustrationTypePromptInstruction;
+
+            $updatedPages[] = $page;
+        }
+
+        usort(
+            $updatedPages,
+            fn (array $a, array $b) => (int) ($a['no'] ?? 0) <=> (int) ($b['no'] ?? 0)
+        );
+
+        return $updatedPages;
+    }
+
+    private function assertImageOutputAiBrain(AiBrain $aiBrain): void
+    {
+        $outputTypeCodes = $aiBrain->aiBrainOutputTypes->pluck('code');
+
+        if (! $outputTypeCodes->contains('Image')) {
+            throw new Exception('Selected ai brain is not an image-output ai brain.');
+        }
+    }
+
+    private function findPageByNo(StoryBook $storyBook, int $pageNo): array
+    {
+        $pages = (array) ($storyBook->pages ?? []);
+
+        foreach ($pages as $page) {
+            if (is_array($page) && (int) ($page['no'] ?? null) === $pageNo) {
+                return $page;
+            }
+        }
+
+        throw new Exception("Story book page {$pageNo} not found.");
+    }
+
+    private function pageIllustrationRequestInputsFormatter(StoryBook $storyBook, array $page): array
+    {
+        $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
+        $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
+        $formatedWorldBible = json_encode($storyBook->world_bible, JSON_PRETTY_PRINT);
+        $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
+
+        $formatedPage = json_encode([
+            'no' => $page['no'] ?? null,
+            'narration' => $page['narration'] ?? null,
+            'illustration_prompt' => $page['illustration_prompt'] ?? null,
+        ], JSON_PRETTY_PRINT);
+
+        return [
+            'foundation' => $formatedFoundation,
+            'characters' => $formatedCharacters,
+            'world_bible' => $formatedWorldBible,
+            'locations' => $formatedLocations,
+            'illustration_type_prompt_instruction' => $page['illustration_type_prompt_instruction'] ?? 'No additional visual style instruction.',
+            'page' => $formatedPage,
+        ];
+    }
+
+    private function deleteExistingPageImage(StoryBook $storyBook, int $pageNo): void
+    {
+        $storyBook->storyBookPageImages()
+            ->get()
+            ->filter(fn (Media $media) => (int) ($media->getCustomProperty('page_no') ?? $media->order_column) === $pageNo)
+            ->each(fn (Media $media) => $media->delete());
+    }
+
+    private function storeStoryBookPageImage(StoryBook $storyBook, array $page, int $pageNo, array $image): Media
+    {
+        $mediaBaseName = "{$storyBook->title} Page {$pageNo}";
+
+        $mediaFileName = MediaHelper::generateMediaName($mediaBaseName, $image['extension'], 200);
+
+        $alt = "{$storyBook->title} Page {$pageNo}";
+
+        $narration = Str::limit((string) ($page['narration'] ?? ''), 200);
+
+        $caption = $narration !== '' ? $narration : $alt;
+
+        $customProperties = [
+            'caption' => $caption,
+            'alt' => $alt,
+            'role' => MediaHelper::ROLE_STORY_BOOK_PAGE_IMAGE,
+            'page_no' => $pageNo,
+        ];
+
+        if ($image['type'] === 'url') {
+            $media = $storyBook
+                ->addMediaFromUrl($image['url'])
+                ->usingName($mediaBaseName)
+                ->usingFileName($mediaFileName)
+                ->withCustomProperties($customProperties)
+                ->toMediaCollection($storyBook->media_collection_name);
+        } else {
+            $tempPath = tempnam(sys_get_temp_dir(), 'page_image_');
+
+            file_put_contents(
+                $tempPath,
+                (string) (base64_decode($image['encoded'], true) ?: '')
+            );
+
+            try {
+                $media = $storyBook
+                    ->addMedia($tempPath)
+                    ->usingName($mediaBaseName)
+                    ->usingFileName($mediaFileName)
+                    ->withCustomProperties($customProperties)
+                    ->toMediaCollection($storyBook->media_collection_name);
+            } finally {
+                if (file_exists($tempPath)) {
+                    unlink($tempPath);
+                }
+            }
+        }
+
+        $media->update([
+            'order_column' => $pageNo,
+        ]);
+
+        return $media;
     }
 
     private function extractCharactersFromResponse($apiResponse): object
@@ -1644,7 +2029,7 @@ class StoryBookService
         ];
     }
 
-    private function extractCompleteStoryBookFromResponse($apiResponse): object
+    private function extractPagesFromResponse($apiResponse): array
     {
         $content = data_get(
             $apiResponse,
@@ -1679,10 +2064,32 @@ class StoryBookService
             );
         }
 
-        return (object) [
-            'complete_story_book' => $decoded['complete_story_book'] ?? [],
-            'publication_ready_format' => $decoded['publication_ready_format'] ?? [],
-            'final_narrative' => $decoded['final_narrative'] ?? [],
-        ];
+        $pages = $decoded['pages'] ?? [];
+
+        if (! is_array($pages)) {
+            $pages = [];
+        }
+
+        $normalizedPages = [];
+
+        foreach ($pages as $index => $page) {
+            if (! is_array($page)) {
+                continue;
+            }
+
+            $normalizedPages[] = [
+                'no' => (int) ($page['no'] ?? $index + 1),
+                'narration' => $page['narration'] ?? null,
+                'illustration_type_prompt_instruction' => null,
+                'illustration_prompt' => null,
+            ];
+        }
+
+        usort(
+            $normalizedPages,
+            fn (array $a, array $b) => $a['no'] <=> $b['no']
+        );
+
+        return $normalizedPages;
     }
 }

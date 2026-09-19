@@ -4,7 +4,6 @@ namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoryBookCharactersRequest;
-use App\Http\Requests\StoryBookCompleteStoryBookRequest;
 use App\Http\Requests\StoryBookCreaturesRequest;
 use App\Http\Requests\StoryBookDialoguePlanRequest;
 use App\Http\Requests\StoryBookFactionsRequest;
@@ -12,6 +11,9 @@ use App\Http\Requests\StoryBookFoundationRequest;
 use App\Http\Requests\StoryBookLocationsRequest;
 use App\Http\Requests\StoryBookPagePlanRequest;
 use App\Http\Requests\StoryBookScenePlanRequest;
+use App\Http\Requests\StoryBookStep14_1PageNarrationRequest;
+use App\Http\Requests\StoryBookStep14_2IllustrationPlanningRequest;
+use App\Http\Requests\StoryBookStep14_3IllustrationGenerationRequest;
 use App\Http\Requests\StoryBookStoryStructureRequest;
 use App\Http\Requests\StoryBookSystemsRequest;
 use App\Http\Requests\StoryBookTimelineRequest;
@@ -253,12 +255,38 @@ class StoryBookController extends Controller
         ]);
     }
 
-    public function generateCompleteStoryBook(StoryBookCompleteStoryBookRequest $request, string $slug): RedirectResponse
+    public function generateStep14_1PageNarration(StoryBookStep14_1PageNarrationRequest $request, string $slug): RedirectResponse
     {
         $storyBook = $this->storyBookService->find($slug);
         Gate::authorize('update', $storyBook);
 
-        $result = $this->storyBookService->generateCompleteStoryBook($request, $storyBook);
+        $result = $this->storyBookService->generateStep14_1PageNarration($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function generateStep14_2IllustrationPlanning(StoryBookStep14_2IllustrationPlanningRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateStep14_2IllustrationPlanning($request, $storyBook);
+
+        return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
+            'message' => $result['message'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function generateStep14_3Illustration(StoryBookStep14_3IllustrationGenerationRequest $request, string $slug): RedirectResponse
+    {
+        $storyBook = $this->storyBookService->find($slug);
+        Gate::authorize('update', $storyBook);
+
+        $result = $this->storyBookService->generateStep14_3Illustration($request, $storyBook);
 
         return to_route('back-office.story-books.edit', ['slug' => $storyBook?->slug])->with('flash_message', [
             'message' => $result['message'],

@@ -1,5 +1,6 @@
 <script setup>
 import InfiniteScrollApiSelect from "@/components/common/multi-select/InfiniteScrollApiSelect.vue";
+import { AiBrainOutputTypes } from "@/composables/useAiBrain";
 
 import { computed } from "vue";
 import { useForm, router as inertiaRoute } from "@inertiajs/vue3";
@@ -7,12 +8,20 @@ import { useForm, router as inertiaRoute } from "@inertiajs/vue3";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library as FontAwesomeLibrary } from "@fortawesome/fontawesome-svg-core";
 import {
+    faBookOpen,
     faBrain,
+    faFileLines,
     faSpinner,
     faWandMagicSparkles,
 } from "@fortawesome/free-solid-svg-icons";
 
-FontAwesomeLibrary.add(faBrain, faSpinner, faWandMagicSparkles);
+FontAwesomeLibrary.add(
+    faBookOpen,
+    faBrain,
+    faFileLines,
+    faSpinner,
+    faWandMagicSparkles,
+);
 
 const emit = defineEmits(["completed"]);
 
@@ -25,18 +34,20 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const completeStoryBookGeneratorForm = useForm({
+const pages = computed(() => storyBook?.pages ?? []);
+
+const pageNarrationGeneratorForm = useForm({
     additional_information: null,
     ai_brain_id: null,
 });
 
 const validate = () => {
-    completeStoryBookGeneratorForm.clearErrors();
+    pageNarrationGeneratorForm.clearErrors();
 
     let valid = true;
 
-    if (!completeStoryBookGeneratorForm.ai_brain_id) {
-        completeStoryBookGeneratorForm.setError(
+    if (!pageNarrationGeneratorForm.ai_brain_id) {
+        pageNarrationGeneratorForm.setError(
             "ai_brain_id",
             "AI Brain selection is required",
         );
@@ -46,15 +57,22 @@ const validate = () => {
     return valid;
 };
 
+function buildAiBrainSearchUrl() {
+    return route("search.ai-brains", {
+        ai_brain_output_type_code: AiBrainOutputTypes.Text,
+    });
+}
+
+
 const handleSuccess = () => {
-    completeStoryBookGeneratorForm.clearErrors();
+    pageNarrationGeneratorForm.clearErrors();
     emit("completed", storyBook);
 };
 
 const submit = () => {
     if (
         !isUpdate.value ||
-        completeStoryBookGeneratorForm.processing ||
+        pageNarrationGeneratorForm.processing ||
         !validate()
     ) {
         return;
@@ -67,11 +85,11 @@ const submit = () => {
     };
 
     inertiaRoute.patch(
-        route("back-office.story-books.regenerate.complete-story-book", {
+        route("back-office.story-books.regenerate.step14-1.page-narration", {
             slug: storyBook?.slug,
         }),
         {
-            ...completeStoryBookGeneratorForm.data(),
+            ...pageNarrationGeneratorForm.data(),
             _method: "patch",
         },
         requestConfig,
@@ -85,12 +103,12 @@ const submit = () => {
             <div>
                 <p
                     v-if="
-                        completeStoryBookGeneratorForm.errors
+                        pageNarrationGeneratorForm.errors
                             .additional_information
                     "
                 >
                     {{
-                        completeStoryBookGeneratorForm.errors
+                        pageNarrationGeneratorForm.errors
                             .additional_information
                     }}
                 </p>
@@ -98,12 +116,12 @@ const submit = () => {
 
             <div>
                 <label class="block text-sm font-medium mb-1">
-                    Complete Story Book Additional Information
+                    Page Narration Additional Information
                 </label>
 
                 <textarea
                     v-model="
-                        completeStoryBookGeneratorForm.additional_information
+                        pageNarrationGeneratorForm.additional_information
                     "
                     rows="3"
                     placeholder="Any additional context or instructions for the AI..."
@@ -112,12 +130,12 @@ const submit = () => {
 
                 <p
                     v-if="
-                        completeStoryBookGeneratorForm.errors
+                        pageNarrationGeneratorForm.errors
                             .additional_information
                     "
                 >
                     {{
-                        completeStoryBookGeneratorForm.errors
+                        pageNarrationGeneratorForm.errors
                             .additional_information
                     }}
                 </p>
@@ -131,43 +149,79 @@ const submit = () => {
             </div>
 
             <p class="text-sm text-gray-500">
-                Select the AI model that will compile the complete story book.
+                Select the AI model that will generate the page narration.
             </p>
 
             <div
                 class="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-blue-50"
             >
                 <InfiniteScrollApiSelect
-                    :form="completeStoryBookGeneratorForm"
+                    :form="pageNarrationGeneratorForm"
                     fieldName="ai_brain_id"
                     :selectedItem="storyBook?.ai_brain"
-                    :apiUrl="route('search.ai-brains')"
+                    :apiUrl="buildAiBrainSearchUrl()"
                     :multiple="false"
                     placeholder="Select AI Brain"
-                    :error="completeStoryBookGeneratorForm.errors.ai_brain_id"
+                    :error="pageNarrationGeneratorForm.errors.ai_brain_id"
                     class="ai-brain-select"
                 />
             </div>
 
             <p
-                v-if="completeStoryBookGeneratorForm.errors.ai_brain_id"
+                v-if="pageNarrationGeneratorForm.errors.ai_brain_id"
                 class="text-red-500 text-sm"
             >
-                {{ completeStoryBookGeneratorForm.errors.ai_brain_id }}
+                {{ pageNarrationGeneratorForm.errors.ai_brain_id }}
             </p>
+        </div>
+
+        <div
+            v-if="pages.length"
+            class="bg-white border rounded-xl p-5 shadow-sm space-y-3"
+        >
+            <div class="flex items-center gap-2">
+                <FontAwesomeIcon icon="book-open" class="text-blue-600" />
+                <h3 class="text-base font-semibold">Generated Pages</h3>
+            </div>
+
+            <p class="text-sm text-gray-500">
+                The narration is generated one page at a time and stored with
+                the story book.
+            </p>
+
+            <ul class="space-y-2">
+                <li
+                    v-for="page in pages"
+                    :key="page.no"
+                    class="rounded-lg border border-gray-100 bg-gray-50 p-3"
+                >
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700"
+                        >
+                            {{ page.no }}
+                        </span>
+                        <FontAwesomeIcon
+                            icon="file-lines"
+                            class="text-xs text-gray-400"
+                        />
+                    </div>
+                    <p class="mt-2 text-sm text-gray-700">
+                        {{ page.narration || "Narration pending." }}
+                    </p>
+                </li>
+            </ul>
         </div>
 
         <div class="flex justify-end">
             <button
                 type="button"
                 @click="submit"
-                :disabled="
-                    !isUpdate || completeStoryBookGeneratorForm.processing
-                "
+                :disabled="!isUpdate || pageNarrationGeneratorForm.processing"
                 class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
                 <FontAwesomeIcon
-                    v-if="completeStoryBookGeneratorForm.processing"
+                    v-if="pageNarrationGeneratorForm.processing"
                     icon="spinner"
                     spin
                 />
@@ -175,9 +229,9 @@ const submit = () => {
                 <FontAwesomeIcon v-else icon="wand-magic-sparkles" />
 
                 {{
-                    completeStoryBookGeneratorForm.processing
-                        ? "Compiling..."
-                        : "Generate Complete Story Book"
+                    pageNarrationGeneratorForm.processing
+                        ? "Generating..."
+                        : "Generate Page Narration"
                 }}
             </button>
         </div>

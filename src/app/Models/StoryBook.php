@@ -51,7 +51,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
     'dialogue_plans',
     'page_plan',
     'pages',
-    'complete_story_book',
     'created_by_id',
 ])]
 #[UsePolicy(StoryBookPolicy::class)]
@@ -80,7 +79,7 @@ class StoryBook extends Model  implements  HasMedia
             'scene_plans' => 'array',
             'dialogue_plans' => 'array',
             'page_plan' => 'array',
-            'complete_story_book' => 'array',
+            'pages' => 'array',
 
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -114,7 +113,7 @@ class StoryBook extends Model  implements  HasMedia
                 'scene_plans',
                 'dialogue_plans',
                 'page_plan',
-                'complete_story_book',
+                'pages',
                 'chapter_plan',
             ])
             ->useLogName('StoryBook')

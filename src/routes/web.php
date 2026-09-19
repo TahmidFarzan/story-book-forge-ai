@@ -249,7 +249,17 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
                 Route::patch('scene-plan', [StoryBookController::class, 'generateScenePlan'])->name('scene-plan');
                 Route::patch('dialogue-plan', [StoryBookController::class, 'generateDialoguePlan'])->name('dialogue-plan');
                 Route::patch('page-plan', [StoryBookController::class, 'generatePagePlan'])->name('page-plan');
-                Route::patch('complete-story-book', [StoryBookController::class, 'generateCompleteStoryBook'])->name('complete-story-book');
+                Route::prefix('step14-1')->name('step14-1.')->group(function () {
+                    Route::patch('page-narration', [StoryBookController::class, 'generateStep14_1PageNarration'])->name('page-narration');
+                });
+
+                Route::prefix('step14-2')->name('step14-2.')->group(function () {
+                    Route::patch('illustration-planning', [StoryBookController::class, 'generateStep14_2IllustrationPlanning'])->name('illustration-planning');
+                });
+
+                Route::prefix('step14-3')->name('step14-3.')->group(function () {
+                    Route::patch('illustration', [StoryBookController::class, 'generateStep14_3Illustration'])->name('illustration');
+                });
             });
 
             Route::prefix('regenerate')->name('regenerate.')->group(function () {
@@ -265,7 +275,17 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
                 Route::patch('scene-plan', [StoryBookController::class, 'generateScenePlan'])->name('scene-plan');
                 Route::patch('dialogue-plan', [StoryBookController::class, 'generateDialoguePlan'])->name('dialogue-plan');
                 Route::patch('page-plan', [StoryBookController::class, 'generatePagePlan'])->name('page-plan');
-                Route::patch('complete-story-book', [StoryBookController::class, 'generateCompleteStoryBook'])->name('complete-story-book');
+                Route::prefix('step14-1')->name('step14-1.')->group(function () {
+                    Route::patch('page-narration', [StoryBookController::class, 'generateStep14_1PageNarration'])->name('page-narration');
+                });
+
+                Route::prefix('step14-2')->name('step14-2.')->group(function () {
+                    Route::patch('illustration-planning', [StoryBookController::class, 'generateStep14_2IllustrationPlanning'])->name('illustration-planning');
+                });
+
+                Route::prefix('step14-3')->name('step14-3.')->group(function () {
+                    Route::patch('illustration', [StoryBookController::class, 'generateStep14_3Illustration'])->name('illustration');
+                });
             });
 
             Route::delete('delete', [StoryBookController::class, 'delete'])->name('delete');
