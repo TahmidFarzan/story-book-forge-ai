@@ -229,6 +229,16 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             {
                 \"story_book_title\": \"\",
                 \"story_book_subtitle\": \"\",
@@ -784,6 +794,16 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             {
                 \"characters\": [
                     {
@@ -1166,6 +1186,16 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             {
                 \"world_overview\": {
                     \"world_name\": \"\",
@@ -1536,6 +1566,16 @@ class AiPromptGeneratorHelper
             ==================================================
 
             Return ONLY valid JSON.
+
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
 
             {
                 \"locations\": [
@@ -1933,6 +1973,16 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             {
                 \"factions\": [
                     {
@@ -2326,6 +2376,16 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             {
                 \"creatures\": [
                     {
@@ -2715,6 +2775,16 @@ class AiPromptGeneratorHelper
             ==================================================
 
             Return ONLY valid JSON.
+
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
 
             {
                 \"systems\": [
@@ -3109,6 +3179,16 @@ class AiPromptGeneratorHelper
             ==================================================
 
             Return ONLY valid JSON.
+
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
 
             {
                 \"timeline\": [
@@ -3511,6 +3591,16 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             {
                 \"story_outline\": {
                     \"overall_overview\": \"\",
@@ -3912,6 +4002,16 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             {
                 \"twists\": [
                     {
@@ -4307,6 +4407,16 @@ class AiPromptGeneratorHelper
             ==================================================
 
             Return ONLY valid JSON.
+
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
 
             {
                 \"scene_list\": [
@@ -4707,6 +4817,16 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             {
                 \"dialogue_bank\": [
                     {
@@ -5103,6 +5223,16 @@ class AiPromptGeneratorHelper
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             {
                 \"page_layout\": [
                     {
@@ -5432,6 +5562,16 @@ public static function step14_1PageNarrationGenerator(): string
 
             Return ONLY valid JSON.
 
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
+
             The entire response must be a single JSON object with a pages array:
 
             {
@@ -5726,6 +5866,16 @@ public static function step14_1PageNarrationGenerator(): string
             ==================================================
 
             Return ONLY valid JSON.
+
+            JSON OUTPUT RULES:
+
+                - Respond with ONLY the JSON object.
+                - Do NOT use Markdown formatting.
+                - Do NOT wrap the JSON in ``` or ```json code fences.
+                - Do NOT output any text before or after the JSON.
+                - Do NOT output explanations, comments, or notes.
+                - Escape quotes, newlines, and control characters properly.
+                - The response must be valid, parseable JSON.
 
             The entire response must be a single JSON object with a pages array:
 

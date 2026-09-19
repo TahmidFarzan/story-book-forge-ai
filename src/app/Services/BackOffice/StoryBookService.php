@@ -813,38 +813,7 @@ class StoryBookService
 
     private function extractStep1FoundationFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'title' => $decoded['story_book_title'] ?? null,
@@ -1273,38 +1242,7 @@ class StoryBookService
 
     private function extractStep14_2IllustrationPlanningFromResponse($apiResponse, array $existingPages): array
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         $pages = $decoded['pages'] ?? null;
 
@@ -1517,38 +1455,7 @@ class StoryBookService
 
     private function extractStep2CharactersFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'characters' => $decoded['characters'] ?? [],
@@ -1558,38 +1465,7 @@ class StoryBookService
 
     private function extractStep3WorldVibeFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'world_overview' => $decoded['world_overview'] ?? [],
@@ -1601,38 +1477,7 @@ class StoryBookService
 
     private function extractStep4LocationsFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'locations' => $decoded['locations'] ?? [],
@@ -1644,38 +1489,7 @@ class StoryBookService
 
     private function extractStep5FactionsFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'factions' => $decoded['factions'] ?? [],
@@ -1687,38 +1501,7 @@ class StoryBookService
 
     private function extractStep6CreatureFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'creatures' => $decoded['creatures'] ?? [],
@@ -1730,38 +1513,7 @@ class StoryBookService
 
     private function extractStep7SystemFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'systems' => $decoded['systems'] ?? [],
@@ -1773,38 +1525,7 @@ class StoryBookService
 
     private function extractStep8TimelineFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'timeline' => $decoded['timeline'] ?? [],
@@ -1816,38 +1537,7 @@ class StoryBookService
 
     private function extractStep9StoryStructureFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'story_outline' => $decoded['story_outline'] ?? [],
@@ -1859,38 +1549,7 @@ class StoryBookService
 
     private function extractStep10TwistsAndForeshadowingFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'twists' => $decoded['twists'] ?? [],
@@ -1902,38 +1561,7 @@ class StoryBookService
 
     private function extractStep11ScenePlanFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'scene_list' => $decoded['scene_list'] ?? [],
@@ -1945,38 +1573,7 @@ class StoryBookService
 
     private function extractStep12DialoguePlanFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'dialogue_bank' => $decoded['dialogue_bank'] ?? [],
@@ -1988,38 +1585,7 @@ class StoryBookService
 
     private function extractStep13PagePlanFromResponse($apiResponse): object
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
-
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         return (object) [
             'page_layout' => $decoded['page_layout'] ?? [],
@@ -2031,38 +1597,8 @@ class StoryBookService
 
     private function extractStep14_1PagesFromResponse($apiResponse): array
     {
-        $content = data_get(
-            $apiResponse,
-            'choices.0.message.content'
-        );
 
-        if (! is_string($content) || trim($content) === '') {
-            throw new Exception('Invalid AI response structure.');
-        }
-
-        $content = trim($content);
-
-        $content = preg_replace(
-            '/^```(?:json)?\s*|\s*```$/i',
-            '',
-            $content
-        );
-
-        $content = trim($content);
-
-        $decoded = json_decode(
-            $content,
-            true
-        );
-
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
-            throw new Exception(
-                'AI response is not valid JSON: '.json_last_error_msg()
-            );
-        }
+        $decoded = $this->huggingFaceApiService->decodeAiResponseContent($apiResponse);
 
         $pages = $decoded['pages'] ?? [];
 

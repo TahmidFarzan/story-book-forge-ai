@@ -95,6 +95,72 @@ class HuggingFaceApiService
         return $this->extractImageResponse($response);
     }
 
+    public function decodeAiResponseContent($apiResponse): array
+    {
+        $content = data_get(
+            $apiResponse,
+            'choices.0.message.content'
+        );
+
+        if (! is_string($content) || trim($content) === '') {
+            throw new Exception('Invalid AI response structure.');
+        }
+
+        $content = $this->sanitizeAiJsonResponseContent($content);
+
+        $decoded = json_decode(
+            $content,
+            true
+        );
+
+        if (
+            json_last_error() !== JSON_ERROR_NONE ||
+            ! is_array($decoded)
+        ) {
+            throw new Exception(
+                'AI response is not valid JSON: '.json_last_error_msg()
+            );
+        }
+
+        return $decoded;
+    }
+
+    private function sanitizeAiJsonResponseContent(string $content): string
+    {
+        $content = trim($content);
+
+        if (strncmp($content, "\xEF\xBB\xBF", 3) === 0) {
+            $content = substr($content, 3);
+
+            $content = trim($content);
+        }
+
+        $content = preg_replace(
+            '/^```(?:json)?\s*/i',
+            '',
+            $content
+        );
+
+        $content = preg_replace(
+            '/\s*```$/i',
+            '',
+            $content
+        );
+
+        $content = trim($content);
+
+        $firstBrace = strpos($content, '{');
+        $lastBrace = strrpos($content, '}');
+
+        if ($firstBrace !== false && $lastBrace !== false && $lastBrace > $firstBrace) {
+            $content = substr($content, $firstBrace, $lastBrace - $firstBrace + 1);
+        }
+
+        $content = preg_replace('/[\x00-\x1F\x7F]/', '', $content);
+
+        return trim($content);
+    }
+
     private function extractImageResponse($response): array
     {
         $contentType = $response->header('Content-Type') ?? '';
