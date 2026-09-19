@@ -28,7 +28,7 @@ const isUpdate = computed(() => !!storyBook?.id);
 const foundationGeneratorForm = useForm({
     additional_information: storyBook?.additional_information ?? "",
     language_id: storyBook?.language_id ?? null,
-    genre_ids: novel?.genres?.map((genre) => genre.id) ?? [],
+    genre_ids:storyBook?.genres?.map((genre) => genre.id) ?? [],
     story_book_type_id: storyBook?.story_book_type_id ?? null,
     audience_id: storyBook?.audience_id ?? null,
     ai_brain_id:  null,
