@@ -10,7 +10,7 @@ class HuggingFaceApiService
 {
     protected int $defaultTimeout = 120;
 
-    public function sendPostRequest(string $url, string $apiKey, string $model, mixed $data = null, ?int $maxOutputTokens = null, ?int $timeout = null, string $context = ''): array
+    public function sendPostRequest(string $url, string $apiKey, string $model, mixed $data = null, ?int $maxOutputTokens = null, ?int $timeout = null, string $stepName = '', array $stepData = []): array
     {
         $requestTimeout = $timeout ?? $this->defaultTimeout;
 
@@ -31,10 +31,10 @@ class HuggingFaceApiService
             );
         }
 
-        return $this->formatAIResponse($response, $context);
+        return $this->formatAIResponse($response, $stepName, $stepData);
     }
 
-    private function formatAIResponse($response, string $context = ''): array
+    private function formatAIResponse($response, string $stepName = '', array $stepData = []): array
     {
         if (! $response->successful()) {
             return $this->formatErrorResponse(
@@ -45,7 +45,9 @@ class HuggingFaceApiService
         try {
             $apiResponse = $this->parseJsonResponse($response);
 
-            $data = $this->decodeAiResponseContent($apiResponse, $context);
+            $data = $this->decodeAiResponseContent($apiResponse, $stepName);
+
+            $data = $this->formatAIResponseByStep($stepName, $data, $stepData);
         } catch (Exception $exception) {
             return $this->formatErrorResponse(
                 $exception->getMessage()
@@ -55,7 +57,7 @@ class HuggingFaceApiService
         return $this->formatSuccessResponse($data);
     }
 
-    private function formatSuccessResponse(array $data): array
+    private function formatSuccessResponse(mixed $data): array
     {
         return [
             'success' => true,
@@ -73,51 +75,286 @@ class HuggingFaceApiService
         ];
     }
 
-    public function processAIResponse(string $promptName, array $apiResponse): object
+    private function formatAIResponseByStep(string $stepName, array $response, array $stepData = []): object
     {
-        $fields = $this->aiResponseFormats()[$promptName] ?? [];
+        switch ($stepName) {
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR:
+                return $this->formatStep1FoundationResponse($response);
 
-        if ($fields === []) {
-            return (object) $apiResponse;
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR:
+                return $this->formatStep2CharactersResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR:
+                return $this->formatStep3WorldVibeResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR:
+                return $this->formatStep4LocationsResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR:
+                return $this->formatStep5FactionsResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR:
+                return $this->formatStep6CreaturesResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR:
+                return $this->formatStep7SystemResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR:
+                return $this->formatStep8TimelineResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR:
+                return $this->formatStep9StoryStructureResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR:
+                return $this->formatStep10TwistsAndForeshadowingResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR:
+                return $this->formatStep11ScenePlanResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR:
+                return $this->formatStep12DialoguePlanResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR:
+                return $this->formatStep13PagePlanResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1_PAGE_NARRATION_GENERATOR:
+                return $this->formatStep14_1PagesResponse($response);
+
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2_ILLUSTRATION_PLANNING_GENERATOR:
+                return $this->formatStep14_2IllustrationPlanningResponse($response, $stepData);
+
+            default:
+                return (object) $response;
+        }
+    }
+
+    private function formatStep1FoundationResponse(array $response): object
+    {
+        return (object) [
+            'title' => $response['story_book_title'] ?? null,
+            'subtitle' => $response['story_book_subtitle'] ?? null,
+            'foundation' => $response['story_book_foundation'] ?? null,
+        ];
+    }
+
+    private function formatStep2CharactersResponse(array $response): object
+    {
+        return (object) [
+            'characters' => $response['characters'] ?? [],
+            'relationship_dynamics' => $response['relationship_dynamics'] ?? [],
+        ];
+    }
+
+    private function formatStep3WorldVibeResponse(array $response): object
+    {
+        return (object) [
+            'world_overview' => $response['world_overview'] ?? [],
+            'world_rules' => $response['world_rules'] ?? [],
+            'culture_and_history' => $response['culture_and_history'] ?? [],
+            'lore' => $response['lore'] ?? [],
+        ];
+    }
+
+    private function formatStep4LocationsResponse(array $response): object
+    {
+        return (object) [
+            'locations' => $response['locations'] ?? [],
+            'regions' => $response['regions'] ?? [],
+            'landmarks' => $response['landmarks'] ?? [],
+            'environment_details' => $response['environment_details'] ?? [],
+        ];
+    }
+
+    private function formatStep5FactionsResponse(array $response): object
+    {
+        return (object) [
+            'factions' => $response['factions'] ?? [],
+            'goals_and_values' => $response['goals_and_values'] ?? [],
+            'conflicts' => $response['conflicts'] ?? [],
+            'alliances' => $response['alliances'] ?? [],
+        ];
+    }
+
+    private function formatStep6CreaturesResponse(array $response): object
+    {
+        return (object) [
+            'creatures' => $response['creatures'] ?? [],
+            'abilities' => $response['abilities'] ?? [],
+            'behaviors' => $response['behaviors'] ?? [],
+            'ecosystem_role' => $response['ecosystem_role'] ?? [],
+        ];
+    }
+
+    private function formatStep7SystemResponse(array $response): object
+    {
+        return (object) [
+            'systems' => $response['systems'] ?? [],
+            'mechanics' => $response['mechanics'] ?? [],
+            'limitations' => $response['limitations'] ?? [],
+            'rules' => $response['rules'] ?? [],
+        ];
+    }
+
+    private function formatStep8TimelineResponse(array $response): object
+    {
+        return (object) [
+            'timeline' => $response['timeline'] ?? [],
+            'major_events' => $response['major_events'] ?? [],
+            'milestones' => $response['milestones'] ?? [],
+            'historical_flow' => $response['historical_flow'] ?? [],
+        ];
+    }
+
+    private function formatStep9StoryStructureResponse(array $response): object
+    {
+        return (object) [
+            'story_outline' => $response['story_outline'] ?? [],
+            'acts_and_chapters' => $response['acts_and_chapters'] ?? [],
+            'plot_progression' => $response['plot_progression'] ?? [],
+            'pacing_guide' => $response['pacing_guide'] ?? [],
+        ];
+    }
+
+    private function formatStep10TwistsAndForeshadowingResponse(array $response): object
+    {
+        return (object) [
+            'twists' => $response['twists'] ?? [],
+            'foreshadowing' => $response['foreshadowing'] ?? [],
+            'hidden_clues' => $response['hidden_clues'] ?? [],
+            'reveal_points' => $response['reveal_points'] ?? [],
+        ];
+    }
+
+    private function formatStep11ScenePlanResponse(array $response): object
+    {
+        return (object) [
+            'scene_list' => $response['scene_list'] ?? [],
+            'scene_objectives' => $response['scene_objectives'] ?? [],
+            'locations' => $response['locations'] ?? [],
+            'pov_and_tone' => $response['pov_and_tone'] ?? [],
+        ];
+    }
+
+    private function formatStep12DialoguePlanResponse(array $response): object
+    {
+        return (object) [
+            'dialogue_bank' => $response['dialogue_bank'] ?? [],
+            'character_voice' => $response['character_voice'] ?? [],
+            'conversation_flow' => $response['conversation_flow'] ?? [],
+            'key_dialogues' => $response['key_dialogues'] ?? [],
+        ];
+    }
+
+    private function formatStep13PagePlanResponse(array $response): object
+    {
+        return (object) [
+            'page_layout' => $response['page_layout'] ?? [],
+            'page_descriptions' => $response['page_descriptions'] ?? [],
+            'illustration_notes' => $response['illustration_notes'] ?? [],
+            'key_points' => $response['key_points'] ?? [],
+        ];
+    }
+
+    private function formatStep14_1PagesResponse(array $response): object
+    {
+        $pages = $response['pages'] ?? [];
+
+        if (! is_array($pages)) {
+            $pages = [];
         }
 
-        $result = [];
+        $normalizedPages = [];
 
-        foreach ($fields as $source => $definition) {
-            if (is_int($source)) {
-                $result[$definition] = $apiResponse[$definition] ?? [];
+        foreach ($pages as $index => $page) {
+            if (! is_array($page)) {
                 continue;
             }
 
-            $default = array_key_exists('default', $definition) ? $definition['default'] : [];
-
-            $result[$definition['key'] ?? $source] = $apiResponse[$source] ?? $default;
+            $normalizedPages[] = [
+                'no' => (int) ($page['no'] ?? $index + 1),
+                'narration' => $page['narration'] ?? null,
+                'illustration_type_prompt_instruction' => null,
+                'illustration_prompt' => null,
+            ];
         }
 
-        return (object) $result;
+        usort(
+            $normalizedPages,
+            fn (array $a, array $b) => $a['no'] <=> $b['no']
+        );
+
+        return (object) ['pages' => $normalizedPages];
     }
 
-    private function aiResponseFormats(): array
+    private function formatStep14_2IllustrationPlanningResponse(array $response, array $stepData = []): object
     {
-        return [
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1_FOUNDATION_GENERATOR                => [
-                'story_book_title'      => ['key' => 'title', 'default' => null],
-                'story_book_subtitle'   => ['key' => 'subtitle', 'default' => null],
-                'story_book_foundation' => ['key' => 'foundation', 'default' => null],
-            ],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2_CHARACTERS_GENERATOR                => ['characters', 'relationship_dynamics'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3_WORLD_VIBE_GENERATOR                => ['world_overview', 'world_rules', 'culture_and_history', 'lore'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4_LOCATIONS_GENERATOR                 => ['locations', 'regions', 'landmarks', 'environment_details'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5_FACTIONS_GENERATOR                  => ['factions', 'goals_and_values', 'conflicts', 'alliances'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6_CREATURE_GENERATOR                  => ['creatures', 'abilities', 'behaviors', 'ecosystem_role'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7_SYSTEM_GENERATOR                    => ['systems', 'mechanics', 'limitations', 'rules'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8_TIMELINE_GENERATOR                  => ['timeline', 'major_events', 'milestones', 'historical_flow'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9_STORY_STRUCTURE_GENERATOR           => ['story_outline', 'acts_and_chapters', 'plot_progression', 'pacing_guide'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10_TWISTS_AND_FORESHADOWING_GENERATOR => ['twists', 'foreshadowing', 'hidden_clues', 'reveal_points'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11_SCENE_PLAN_GENERATOR               => ['scene_list', 'scene_objectives', 'locations', 'pov_and_tone'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12_DIALOGUE_PLAN_GENERATOR            => ['dialogue_bank', 'character_voice', 'conversation_flow', 'key_dialogues'],
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13_PAGE_PLAN_GENERATOR                => ['page_layout', 'page_descriptions', 'illustration_notes', 'key_points'],
-        ];
+        $pages = $response['pages'] ?? null;
+
+        if (! is_array($pages)) {
+            throw new Exception('AI response does not contain a valid pages array.');
+        }
+
+        $existingByNo = [];
+
+        foreach ($stepData['existing_pages'] ?? [] as $existingPage) {
+            if (! is_array($existingPage)) {
+                continue;
+            }
+
+            $existingByNo[(int) ($existingPage['no'] ?? null)] = true;
+        }
+
+        $expectedCount = count($existingByNo);
+
+        if ($expectedCount === 0) {
+            throw new Exception('Story book has no pages to plan illustrations for.');
+        }
+
+        $result = [];
+        $seenNos = [];
+
+        foreach ($pages as $page) {
+            if (! is_array($page)) {
+                throw new Exception('AI response contains an invalid page object.');
+            }
+
+            $no = $page['no'] ?? null;
+
+            if (! is_numeric($no)) {
+                throw new Exception('AI response contains an invalid page number.');
+            }
+
+            $no = (int) $no;
+
+            if (! isset($existingByNo[$no])) {
+                throw new Exception("AI response contains a page number that does not exist: {$no}.");
+            }
+
+            if (isset($seenNos[$no])) {
+                throw new Exception("AI response contains a duplicate page number: {$no}.");
+            }
+
+            $seenNos[$no] = true;
+
+            $illustrationPrompt = $page['illustration_prompt'] ?? null;
+
+            if (! is_string($illustrationPrompt) || trim($illustrationPrompt) === '') {
+                throw new Exception("AI response contains an empty illustration prompt for page {$no}.");
+            }
+
+            $result[$no] = [
+                'no' => $no,
+                'illustration_prompt' => $illustrationPrompt,
+            ];
+        }
+
+        if (count($result) !== $expectedCount) {
+            throw new Exception('AI response does not return every expected page.');
+        }
+
+        ksort($result);
+
+        return (object) ['pages' => array_values($result)];
     }
 
     public function sendGetRequest(string $url, string $apiKey, array $params = [], ?int $timeout = null): array
