@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Services\BackOffice;
 
 use App\Models\StoryBook;
+use App\Models\StoryBookPage;
 use App\Helpers\AiPromptGeneratorHelper;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -27,21 +29,21 @@ class HuggingFaceApiService
         $this->storyBookTypeService = $storyBookTypeService;
     }
 
-    public function sendPostRequest(string $url, string $apiKey, string $model, mixed $data = null, ?int $maxOutputTokens = null, ?int $timeout = null, string $stepName = '', array $stepData = []): array
+    public function sendPostRequest(string $url, string $apiKey, string $model, string $stepName, mixed $data = null, ?int $maxOutputTokens = null, ?int $timeout = null, array $stepData = []): array
     {
         $requestTimeout = $timeout ?? $this->defaultTimeout;
 
         set_time_limit($requestTimeout);
 
-        $payload = $this->buildPayload($model,$data,$maxOutputTokens);
+        $payload = $this->buildPayload($model, $data, $maxOutputTokens);
 
         $endpoint = rtrim($url, '/');
 
         try {
             $response = Http::timeout($requestTimeout)
-            ->withToken($apiKey)
-            ->acceptJson()
-            ->post($endpoint, $payload);
+                ->withToken($apiKey)
+                ->acceptJson()
+                ->post($endpoint, $payload);
         } catch (Exception $exception) {
             return $this->formatErrorResponse(
                 'Hugging Face API request failed: ' . $exception->getMessage()
@@ -121,44 +123,7 @@ class HuggingFaceApiService
         return $this->extractImageResponse($response);
     }
 
-    public function formatRequestInputs(StoryBook $storyBook, string $stepName, array $inputs=[]): array
-    {
-        return match ($stepName) {
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1 => $this->step1FoundationRequestInputsFormatter($storyBook,$inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2 => $this->step2CharactersRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3 => $this->step3WorldVibeRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4 => $this->step4LocationsRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5 => $this->step5FactionsRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6 => $this->step6CreatureRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7 => $this->step7SystemRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8 => $this->step8TimelineRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9 => $this->step9StoryStructureRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10 => $this->step10TwistsAndForeshadowingRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11 => $this->step11ScenePlanRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12 => $this->step12DialoguePlanRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13 => $this->step13PagePlanRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14 => $this->step14PageNarrationRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15 => $this->step15IllustrationPlanningRequestInputsFormatter($storyBook, $inputs),
-
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16 => $this->step16PageIllustrationRequestInputsFormatter($storyBook, $inputs),
-        };
-    }
-
-    public function step1FoundationRequestInputsFormatter(StoryBook $storyBook, array $inputs): array
+    public function step1FoundationRequestInputsFormatter(array $inputs): array
     {
         $requestInputs = [];
 
@@ -194,7 +159,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step2CharactersRequestInputsFormatter(StoryBook $storyBook, array $inputs): array
+    public function step2CharactersRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -206,7 +171,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step3WorldVibeRequestInputsFormatter(StoryBook $storyBook,array $inputs): array
+    public function step3WorldVibeRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -221,7 +186,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step4LocationsRequestInputsFormatter(StoryBook $storyBook,array $inputs): array
+    public function step4LocationsRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -238,7 +203,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step5FactionsRequestInputsFormatter(StoryBook $storyBook, array $inputs): array
+    public function step5FactionsRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -257,7 +222,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step6CreatureRequestInputsFormatter(StoryBook $storyBook,array $inputs): array
+    public function step6CreatureRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -278,7 +243,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step7SystemRequestInputsFormatter(StoryBook $storyBook,array $inputs): array
+    public function step7SystemRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -301,7 +266,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step8TimelineRequestInputsFormatter(StoryBook $storyBook,array $inputs): array
+    public function step8TimelineRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -326,7 +291,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step9StoryStructureRequestInputsFormatter(StoryBook $storyBook, array $inputs): array
+    public function step9StoryStructureRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -353,7 +318,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step10TwistsAndForeshadowingRequestInputsFormatter(StoryBook $storyBook,array $inputs): array
+    public function step10TwistsAndForeshadowingRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -382,7 +347,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step11ScenePlanRequestInputsFormatter(StoryBook $storyBook, array $inputs): array
+    public function step11ScenePlanRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -413,7 +378,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step12DialoguePlanRequestInputsFormatter(StoryBook $storyBook,array $inputs): array
+    public function step12DialoguePlanRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -446,7 +411,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step13PagePlanRequestInputsFormatter(StoryBook $storyBook,array $inputs): array
+    public function step13PagePlanRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -481,7 +446,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step14PageNarrationRequestInputsFormatter(StoryBook $storyBook, array $inputs): array
+    public function step14PageNarrationRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -518,7 +483,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step15IllustrationPlanningRequestInputsFormatter(StoryBook $storyBook,array $inputs): array
+    public function step15IllustrationPlanningRequestInputsFormatter(StoryBook $storyBook): array
     {
         $requestInputs = [];
 
@@ -562,9 +527,8 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    public function step16PageIllustrationRequestInputsFormatter(StoryBook $storyBook, array $inputs): array
+    public function step16PageIllustrationRequestInputsFormatter(StoryBook $storyBook, StoryBookPage $storyBookPage): array
     {
-        $page = $inputs['page'];
 
         $formatedFoundation = json_encode($storyBook->foundation, JSON_PRETTY_PRINT);
         $formatedCharacters = json_encode($storyBook->characters, JSON_PRETTY_PRINT);
@@ -572,9 +536,9 @@ class HuggingFaceApiService
         $formatedLocations = json_encode($storyBook->locations, JSON_PRETTY_PRINT);
 
         $formatedPage = json_encode([
-            'no' => $page['no'] ?? null,
-            'narration' => $page['narration'] ?? null,
-            'illustration_prompt' => $page['illustration_prompt'] ?? null,
+            'no' => $storyBookPage->no ?? null,
+            'narration' => $storyBookPage->narration ?? null,
+            'illustration_prompt' => $storyBookPage->illustration_prompt ?? null,
         ], JSON_PRETTY_PRINT);
 
         return [
@@ -582,7 +546,7 @@ class HuggingFaceApiService
             'characters' => $formatedCharacters,
             'world_bible' => $formatedWorldBible,
             'locations' => $formatedLocations,
-            'illustration_type_prompt_instruction' => $page['illustration_type_prompt_instruction'] ?? 'No additional visual style instruction.',
+            "illustration_type_prompt_instruction" => $storyBookPage->illustration_type_prompt_instruction,
             'page' => $formatedPage,
         ];
     }
@@ -872,7 +836,7 @@ class HuggingFaceApiService
 
         usort(
             $normalizedPages,
-            fn (array $a, array $b) => $a['no'] <=> $b['no']
+            fn(array $a, array $b) => $a['no'] <=> $b['no']
         );
 
         return (object) ['pages' => $normalizedPages];
@@ -1254,10 +1218,10 @@ class HuggingFaceApiService
         $signature = substr($decoded, 0, 12);
 
         return str_starts_with($signature, "\x89PNG\r\n\x1a\n")
-        || str_starts_with($signature, "\xFF\xD8\xFF")
-        || str_starts_with($signature, 'GIF87a')
-        || str_starts_with($signature, 'GIF89a')
-        || str_starts_with($signature, 'RIFF');
+            || str_starts_with($signature, "\xFF\xD8\xFF")
+            || str_starts_with($signature, 'GIF87a')
+            || str_starts_with($signature, 'GIF89a')
+            || str_starts_with($signature, 'RIFF');
     }
 
     private function extensionFromMime(string $mime): string
