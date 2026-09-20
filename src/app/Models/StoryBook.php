@@ -22,9 +22,6 @@ use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 #[Table('story_books')]
 #[Fillable([
@@ -50,16 +47,13 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
     'scene_plans',
     'dialogue_plans',
     'page_plan',
-    'pages',
     'created_by_id',
 ])]
 #[UsePolicy(StoryBookPolicy::class)]
 #[ObservedBy([StoryBookObserver::class])]
-class StoryBook extends Model  implements  HasMedia
+class StoryBook extends Model
 {
-    use HasFactory, HasSlug, LogsActivity, InteractsWithMedia;
-
-    protected $appends = ['media_collection_name',];
+    use HasFactory, HasSlug, LogsActivity;
 
     protected function casts(): array
     {
@@ -79,7 +73,6 @@ class StoryBook extends Model  implements  HasMedia
             'scene_plans' => 'array',
             'dialogue_plans' => 'array',
             'page_plan' => 'array',
-            'pages' => 'array',
 
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -113,7 +106,6 @@ class StoryBook extends Model  implements  HasMedia
                 'scene_plans',
                 'dialogue_plans',
                 'page_plan',
-                'pages',
                 'chapter_plan',
             ])
             ->useLogName('StoryBook')
@@ -140,25 +132,6 @@ class StoryBook extends Model  implements  HasMedia
     public function getRouteKeyName(): string
     {
         return 'slug';
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection($this->media_collection_name);
-    }
-
-    public function registerMediaConversions($spatieMedia = null): void
-    {
-        $this->addMediaConversion(MediaHelper::DEFAULT_CONVERSION)
-            ->format(MediaHelper::DEFAULT_CONVERSION_FORMAT)
-            ->quality(100)
-            ->performOnCollections($this->media_collection_name)
-            ->queued();
-    }
-
-    public function getMediaCollectionNameAttribute(): string
-    {
-        return "Story Book";
     }
 
     public function activityLogs(): MorphMany
@@ -196,11 +169,8 @@ class StoryBook extends Model  implements  HasMedia
         return $this->belongsTo(StoryBookType::class);
     }
 
-    public function storyBookPageImages(): MorphMany
+    public function storyBookPages(): HasMany
     {
-        return $this->morphMany(Media::class, 'model')
-            ->where('collection_name', $this->media_collection_name)
-            ->whereJsonContains('custom_properties->role', MediaHelper::ROLE_STORY_BOOK_PAGE_IMAGE);
+        return $this->hasMany(StoryBookPage::class)->orderBy('no', 'asc');
     }
-
 }

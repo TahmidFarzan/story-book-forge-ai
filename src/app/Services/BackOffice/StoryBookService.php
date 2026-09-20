@@ -3,7 +3,6 @@
 namespace App\Services\BackOffice;
 
 use App\Helpers\AiPromptGeneratorHelper;
-use App\Helpers\MediaHelper;
 use App\Helpers\StoryBookHelper;
 use App\Http\Requests\StoryBookStep2CharactersRequest;
 use App\Http\Requests\StoryBookStep6CreatureRequest;
@@ -22,8 +21,8 @@ use App\Http\Requests\StoryBookStep8TimelineRequest;
 use App\Http\Requests\StoryBookStep10TwistsAndForeshadowingRequest;
 use App\Http\Requests\StoryBookStep3WorldVibeRequest;
 use App\Models\AiBrain;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Models\StoryBook;
+use App\Models\StoryBookPage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,12 +40,15 @@ class StoryBookService
 
     protected HuggingFaceApiService $huggingFaceApiService;
 
-    public function __construct(AiBrainService $aiBrainService, AiPromptService $aiPromptService, IllustrationTypeService $illustrationTypeService, HuggingFaceApiService $huggingFaceApiService)
+    protected StoryBookPageService $storyBookPageService;
+
+    public function __construct(AiBrainService $aiBrainService, AiPromptService $aiPromptService, IllustrationTypeService $illustrationTypeService, HuggingFaceApiService $huggingFaceApiService, StoryBookPageService $storyBookPageService)
     {
         $this->aiBrainService = $aiBrainService;
         $this->aiPromptService = $aiPromptService;
         $this->illustrationTypeService = $illustrationTypeService;
         $this->huggingFaceApiService = $huggingFaceApiService;
+        $this->storyBookPageService = $storyBookPageService;
     }
 
     public function new(): StoryBook
@@ -62,12 +64,13 @@ class StoryBookService
             'audience',
             'genres',
 
+            'storyBookPages' => fn($query) => $query->orderBy('no', 'asc'),
+            'storyBookPages.illustrationImage',
+
             'createdBy',
 
             'activityLogs' => fn($query) => $query->latest()->limit(10),
             'activityLogs.causer',
-
-            'storyBookPageImages' => fn($query) => $query->orderBy('order_column'),
 
             'latestActivityLog',
             'latestActivityLog.causer',
@@ -125,7 +128,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1, [
                 'language_id' => $request->input('language_id'),
                 'audience_id' => $request->input('audience_id'),
                 'story_book_type_id' => $request->input('story_book_type_id'),
@@ -197,7 +200,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -245,7 +248,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -293,7 +296,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -341,7 +344,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -389,7 +392,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -437,7 +440,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -485,7 +488,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -533,7 +536,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -581,7 +584,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -629,7 +632,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -677,7 +680,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -725,7 +728,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -773,7 +776,7 @@ class StoryBookService
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14));
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
@@ -788,7 +791,7 @@ class StoryBookService
             $apiResponse = $apiResponse['data'];
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $storyBook->pages = $apiResponse->pages;
+                $this->storyBookPageService->syncStoryBookPages($storyBook, (array) $apiResponse->pages);
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
@@ -822,13 +825,18 @@ class StoryBookService
             $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
             $illustrationType = $this->illustrationTypeService->findById($request->input('illustration_type_id'));
 
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15, [
                 'story_book' => $storyBook,
                 'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15, ['existing_pages' => (array) ($storyBook->pages ?? [])]);
+            $existingPages = $storyBook->storyBookPages->map(fn(StoryBookPage $storyBookPage) => [
+                'no' => $storyBookPage->no,
+                'narration' => $storyBookPage->narration,
+            ])->values()->all();
+
+            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15, ['existing_pages' => $existingPages]);
 
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
@@ -837,8 +845,7 @@ class StoryBookService
             $apiResponse = $apiResponse['data'];
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook, $illustrationType) {
-                $illustrationPlanning = $apiResponse->pages;
-                $storyBook->pages = $this->applyIllustrationPlanningToPages((array) ($storyBook->pages ?? []), $illustrationPlanning, $illustrationType->prompt_instruction);
+                $this->storyBookPageService->applyIllustrationPlanning($storyBook, (array) $apiResponse->pages, $illustrationType->prompt_instruction);
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
@@ -874,10 +881,10 @@ class StoryBookService
 
             $this->assertImageOutputAiBrain($aiBrain);
 
-            $page = $this->findPageByNo($storyBook, $pageNo);
+            $page = $this->storyBookPageService->findByNo($storyBook, $pageNo);
 
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16));
-            $requestInputs = $this->huggingFaceApiService->formatRequestInputs(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16, [
+            $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16, [
                 'story_book' => $storyBook,
                 'page' => $page,
             ]);
@@ -885,9 +892,8 @@ class StoryBookService
 
             $image = $this->huggingFaceApiService->sendImageRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->timeout_seconds);
 
-            DB::transaction(function () use ($storyBook, $pageNo, $page, $image) {
-                $this->deleteExistingPageImage($storyBook, $pageNo);
-                $this->storeStoryBookPageImage($storyBook, $page, $pageNo, $image);
+            DB::transaction(function () use ($page, $image) {
+                $this->storyBookPageService->replaceIllustrationImage($page, $image);
             });
 
             $storyBook = $storyBook->fresh();
@@ -941,38 +947,6 @@ class StoryBookService
         }
     }
 
-    private function applyIllustrationPlanningToPages(array $existingPages, array $illustrationPlanning, string $illustrationTypePromptInstruction): array
-    {
-        $illustrationPlanningByNo = [];
-
-        foreach ($illustrationPlanning as $plannedPage) {
-            $illustrationPlanningByNo[(int) ($plannedPage['no'] ?? null)] = $plannedPage;
-        }
-
-        $updatedPages = [];
-
-        foreach ($existingPages as $existingPage) {
-            $no = (int) ($existingPage['no'] ?? null);
-
-            $page = $existingPage;
-
-            if (isset($illustrationPlanningByNo[$no])) {
-                $page['illustration_prompt'] = $illustrationPlanningByNo[$no]['illustration_prompt'];
-            }
-
-            $page['illustration_type_prompt_instruction'] = $illustrationTypePromptInstruction;
-
-            $updatedPages[] = $page;
-        }
-
-        usort(
-            $updatedPages,
-            fn(array $a, array $b) => (int) ($a['no'] ?? 0) <=> (int) ($b['no'] ?? 0)
-        );
-
-        return $updatedPages;
-    }
-
     private function assertImageOutputAiBrain(AiBrain $aiBrain): void
     {
         $outputTypeCodes = $aiBrain->aiBrainOutputTypes->pluck('code');
@@ -980,81 +954,5 @@ class StoryBookService
         if (! $outputTypeCodes->contains('Image')) {
             throw new Exception('Selected ai brain is not an image-output ai brain.');
         }
-    }
-
-    private function findPageByNo(StoryBook $storyBook, int $pageNo): array
-    {
-        $pages = (array) ($storyBook->pages ?? []);
-
-        foreach ($pages as $page) {
-            if (is_array($page) && (int) ($page['no'] ?? null) === $pageNo) {
-                return $page;
-            }
-        }
-
-        throw new Exception("Story book page {$pageNo} not found.");
-    }
-
-    private function deleteExistingPageImage(StoryBook $storyBook, int $pageNo): void
-    {
-        $storyBook->storyBookPageImages()
-            ->get()
-            ->filter(fn(Media $media) => (int) ($media->getCustomProperty('page_no') ?? $media->order_column) === $pageNo)
-            ->each(fn(Media $media) => $media->delete());
-    }
-
-    private function storeStoryBookPageImage(StoryBook $storyBook, array $page, int $pageNo, array $image): Media
-    {
-        $mediaBaseName = "{$storyBook->title} Page {$pageNo}";
-
-        $mediaFileName = MediaHelper::generateMediaName($mediaBaseName, $image['extension'], 200);
-
-        $alt = "{$storyBook->title} Page {$pageNo}";
-
-        $narration = Str::limit((string) ($page['narration'] ?? ''), 200);
-
-        $caption = $narration !== '' ? $narration : $alt;
-
-        $customProperties = [
-            'caption' => $caption,
-            'alt' => $alt,
-            'role' => MediaHelper::ROLE_STORY_BOOK_PAGE_IMAGE,
-            'page_no' => $pageNo,
-        ];
-
-        if ($image['type'] === 'url') {
-            $media = $storyBook
-                ->addMediaFromUrl($image['url'])
-                ->usingName($mediaBaseName)
-                ->usingFileName($mediaFileName)
-                ->withCustomProperties($customProperties)
-                ->toMediaCollection($storyBook->media_collection_name);
-        } else {
-            $tempPath = tempnam(sys_get_temp_dir(), 'page_image_');
-
-            file_put_contents(
-                $tempPath,
-                (string) (base64_decode($image['encoded'], true) ?: '')
-            );
-
-            try {
-                $media = $storyBook
-                    ->addMedia($tempPath)
-                    ->usingName($mediaBaseName)
-                    ->usingFileName($mediaFileName)
-                    ->withCustomProperties($customProperties)
-                    ->toMediaCollection($storyBook->media_collection_name);
-            } finally {
-                if (file_exists($tempPath)) {
-                    unlink($tempPath);
-                }
-            }
-        }
-
-        $media->update([
-            'order_column' => $pageNo,
-        ]);
-
-        return $media;
     }
 }

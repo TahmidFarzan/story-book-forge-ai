@@ -34,7 +34,7 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const pages = computed(() => storyBook?.pages ?? []);
+const pages = computed(() => storyBook?.story_book_pages ?? []);
 
 const pageNarrationGeneratorForm = useForm({
     additional_information: null,

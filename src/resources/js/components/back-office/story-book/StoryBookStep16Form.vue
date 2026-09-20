@@ -39,25 +39,12 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const pages = computed(() => storyBook?.pages ?? []);
+const pages = computed(() => storyBook?.story_book_pages ?? []);
 
-const pageImages = computed(() => storyBook?.story_book_page_images ?? []);
+const illustrationImageUrl = (page) =>
+    page?.illustration_image?.preview_url ?? page?.illustration_image?.original_url ?? null;
 
-const pageImageByNo = computed(() => {
-    const map = new Map();
-
-    for (const media of pageImages.value) {
-        const no = Number(
-            media?.custom_properties?.page_no ?? media?.order_column,
-        );
-
-        if (Number.isInteger(no) && no > 0) {
-            map.set(no, media);
-        }
-    }
-
-    return map;
-});
+const hasIllustrationImage = (page) => !!illustrationImageUrl(page);
 
 function buildAiBrainSearchUrl() {
     return route("search.ai-brains", {
@@ -89,56 +76,45 @@ const generateEnabled = computed(
 );
 
 const generatedCount = computed(
-    () => pages.value.filter((page) => pageImageByNo.value.has(page.no))
-        .length,
+    () => pages.value.filter((page) => hasIllustrationImage(page)).length,
 );
 
 const remainingPages = computed(() =>
-    pages.value.filter(
-        (page) => !pageImageByNo.value.has(page.no),
-    ),
+    pages.value.filter((page) => !hasIllustrationImage(page)),
 );
 
 const allPagesGenerated = computed(
     () =>
         pages.value.length > 0 &&
-        pages.value.every((page) => pageImageByNo.value.has(page.no)),
+        pages.value.every((page) => hasIllustrationImage(page)),
 );
 
-const pageImageUrl = (pageNo) => {
-    const media = pageImageByNo.value.get(pageNo);
-
-    return media?.original_url ?? media?.preview_url ?? null;
-};
-
-const pageState = (pageNo) => {
-    if (generatingNo.value === pageNo) {
+const pageState = (page) => {
+    if (generatingNo.value === page.no) {
         return "generating";
     }
 
-    if (failedPageNos.has(pageNo)) {
+    if (failedPageNos.has(page.no)) {
         return "failed";
     }
 
-    if (pageImageByNo.value.has(pageNo)) {
+    if (hasIllustrationImage(page)) {
         return "generated";
     }
 
     return "waiting";
 };
 
-const isPageGenerated = (pageNo) => pageImageByNo.value.has(pageNo);
-
-const handlePageCompletion = (pageNo, onGenerated, onFailed) => {
+const handlePageCompletion = (page, onGenerated, onFailed) => {
     generatingNo.value = null;
 
     nextTick(() => {
-        if (pageImageByNo.value.has(pageNo)) {
-            failedPageNos.delete(pageNo);
+        if (hasIllustrationImage(page)) {
+            failedPageNos.delete(page.no);
 
             onGenerated?.();
         } else {
-            failedPageNos.add(pageNo);
+            failedPageNos.add(page.no);
             onFailed?.();
         }
     });
@@ -171,7 +147,7 @@ const generateSinglePage = (page, { onGenerated, onFailed } = {}) => {
             preserveState: true,
             onFinish: () => {
                 handlePageCompletion(
-                    page.no,
+                    page,
                     () => onGenerated?.(),
                     () => onFailed?.(),
                 );
@@ -356,12 +332,12 @@ watch(
                     <div class="flex flex-col gap-4 md:flex-row">
                         <div
                             v-if="
-                                pageImageUrl(page.no)
+                                illustrationImageUrl(page)
                             "
                             class="flex-shrink-0"
                         >
                             <img
-                                :src="pageImageUrl(page.no)"
+                                :src="illustrationImageUrl(page)"
                                 :alt="`Story Book Page ${page.no}`"
                                 class="h-28 w-28 rounded-lg border border-gray-200 object-cover"
                             />
@@ -381,21 +357,21 @@ watch(
                                     class="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
                                     :class="{
                                         'bg-green-100 text-green-700':
-                                            pageState(page.no) ===
+                                            pageState(page) ===
                                             'generated',
                                         'bg-amber-100 text-amber-700':
-                                            pageState(page.no) ===
+                                            pageState(page) ===
                                             'generating',
                                         'bg-red-100 text-red-700':
-                                            pageState(page.no) === 'failed',
+                                            pageState(page) === 'failed',
                                         'bg-gray-100 text-gray-600':
-                                            pageState(page.no) ===
+                                            pageState(page) ===
                                             'waiting',
                                     }"
                                 >
                                     <FontAwesomeIcon
                                         v-if="
-                                            pageState(page.no) ===
+                                            pageState(page) ===
                                             'generated'
                                         "
                                         icon="circle-check"
@@ -403,7 +379,7 @@ watch(
                                     />
                                     <FontAwesomeIcon
                                         v-else-if="
-                                            pageState(page.no) ===
+                                            pageState(page) ===
                                             'generating'
                                         "
                                         icon="spinner"
@@ -412,7 +388,7 @@ watch(
                                     />
                                     <FontAwesomeIcon
                                         v-else-if="
-                                            pageState(page.no) === 'failed'
+                                            pageState(page) === 'failed'
                                         "
                                         icon="circle-xmark"
                                         class="text-xs"
@@ -424,12 +400,12 @@ watch(
                                     />
 
                                     {{
-                                        pageState(page.no) === 'generated'
+                                        pageState(page) === 'generated'
                                             ? "Generated"
-                                            : pageState(page.no) ===
+                                            : pageState(page) ===
                                                 'generating'
                                               ? "Generating"
-                                              : pageState(page.no) ===
+                                              : pageState(page) ===
                                                   'failed'
                                                 ? "Failed"
                                                 : "Waiting"
@@ -440,7 +416,7 @@ watch(
                                     v-if="
                                         isUpdate &&
                                         !isBusy &&
-                                        pageState(page.no) === 'failed'
+                                        pageState(page) === 'failed'
                                     "
                                     type="button"
                                     @click="generateSinglePage(page)"
@@ -474,7 +450,7 @@ watch(
                                 <button
                                     v-if="
                                         isUpdate &&
-                                        pageState(page.no) !== 'generating'
+                                        pageState(page) !== 'generating'
                                     "
                                     type="button"
                                     @click="generateSinglePage(page)"
@@ -488,7 +464,7 @@ watch(
                                         class="text-xs"
                                     />
                                     {{
-                                        pageState(page.no) === 'generated'
+                                        pageState(page) === 'generated'
                                             ? "Regenerate"
                                             : "Generate"
                                     }}

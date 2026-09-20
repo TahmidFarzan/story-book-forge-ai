@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Jobs;
 
 use App\Models\StoryBook;
+use App\Models\StoryBookPage;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -43,7 +45,7 @@ class DeleteStoryBookRelationsJob implements ShouldQueue, ShouldBeUnique
     {
         $storyBook = StoryBook::find($this->storyBookId);
 
-        if ($storyBook && ( $storyBook->activityLogs()->exists() || $storyBook->genres()->exists() || $storyBook->getMedia($storyBook->media_collection_name)->exists())) {
+        if ($storyBook && ($storyBook->activityLogs()->exists() || $storyBook->genres()->exists() || $storyBook->storyBookPages()->exists())) {
 
             try {
                 DB::transaction(function () use ($storyBook) {
@@ -55,14 +57,14 @@ class DeleteStoryBookRelationsJob implements ShouldQueue, ShouldBeUnique
                         $storyBook->genres()->detach();
                     }
 
-                    if ($storyBook->getMedia($storyBook->media_collection_name)->exists()) {
-                        $storyBook->getMedia($storyBook->media_collection_name)->delete();
+                    if ($storyBook->storyBookPages()->exists()) {
+                        $storyBook->storyBookPages()->get()->each(function (StoryBookPage $page) {
+                            $page->delete();
+                        });
                     }
-
                 });
-
             } catch (Exception $ex) {
-                Log::error("Fail to delete story relations.", [
+                Log::error("Fail to delete story book relations.", [
                     'exception' => $ex,
                 ]);
 

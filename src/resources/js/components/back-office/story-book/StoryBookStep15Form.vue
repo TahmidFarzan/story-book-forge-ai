@@ -36,7 +36,7 @@ const { storyBook } = defineProps({
 
 const isUpdate = computed(() => !!storyBook?.id);
 
-const pages = computed(() => storyBook?.pages ?? []);
+const pages = computed(() => storyBook?.story_book_pages ?? []);
 
 function buildAiBrainSearchUrl() {
     return route("search.ai-brains", {

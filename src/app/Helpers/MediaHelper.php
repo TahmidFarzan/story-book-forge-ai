@@ -15,7 +15,7 @@ class MediaHelper
     public const ROLE_APP_LOGO_IMAGE    = 'App Logo Image';
     public const ROLE_APP_FAVICON_IMAGE = 'App Favicon Image';
 
-    public const ROLE_STORY_BOOK_PAGE_IMAGE = 'Story Book Page Image';
+    public const ROLE_STORY_BOOK_PAGE_ILLUSTRATION = 'Story Book Page Illustration';
 
     public static function mediaRoles(): Collection
     {
@@ -26,7 +26,7 @@ class MediaHelper
 
             self::ROLE_APP_LOGO_IMAGE,
             self::ROLE_APP_FAVICON_IMAGE,
-            self::ROLE_STORY_BOOK_PAGE_IMAGE
+            self::ROLE_STORY_BOOK_PAGE_ILLUSTRATION
         ]);
     }
 
