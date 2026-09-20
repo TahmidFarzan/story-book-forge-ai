@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoryBookStep10TwistsAndForeshadowingRequest extends FormRequest
+class StoryBookStep5 extends FormRequest
 {
     public function authorize(): bool
     {
@@ -24,8 +24,8 @@ class StoryBookStep10TwistsAndForeshadowingRequest extends FormRequest
     public function messages()
     {
         return [
-            'ai_brain_id.required' => 'Please select an ai brain.',
-            'ai_brain_id.exists' => 'Selected ai brain does not exist.',
+            'ai_brain_id.required'          => 'Please select an ai brain.',
+            'ai_brain_id.exists'            => 'Selected ai brain does not exist.',
         ];
     }
 }

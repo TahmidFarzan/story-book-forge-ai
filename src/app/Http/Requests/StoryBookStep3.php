@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoryBookStep3WorldVibeRequest extends FormRequest
+class StoryBookStep3 extends FormRequest
 {
     public function authorize(): bool
     {
