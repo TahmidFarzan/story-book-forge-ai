@@ -1,20 +1,20 @@
 <script setup>
 import Layout from "@/pages/layouts/AuthLayout.vue";
 
-import StoryBookStep2CharactersForm from "@/components/back-office/story-book/StoryBookStep2CharactersForm.vue";
-import StoryBookStep6CreatureForm from "@/components/back-office/story-book/StoryBookStep6CreatureForm.vue";
-import StoryBookStep12DialoguePlanForm from "@/components/back-office/story-book/StoryBookStep12DialoguePlanForm.vue";
-import StoryBookStep5FactionsForm from "@/components/back-office/story-book/StoryBookStep5FactionsForm.vue";
-import StoryBookStep1FoundationForm from "@/components/back-office/story-book/StoryBookStep1FoundationForm.vue";
-import StoryBookStep4LocationsForm from "@/components/back-office/story-book/StoryBookStep4LocationsForm.vue";
-import StoryBookStep13PagePlanForm from "@/components/back-office/story-book/StoryBookStep13PagePlanForm.vue";
+import StoryBookStep2Form from "@/components/back-office/story-book/StoryBookStep2Form.vue";
+import StoryBookStep6Form from "@/components/back-office/story-book/StoryBookStep6Form.vue";
+import StoryBookStep12Form from "@/components/back-office/story-book/StoryBookStep12Form.vue";
+import StoryBookStep5Form from "@/components/back-office/story-book/StoryBookStep5Form.vue";
+import StoryBookStep1Form from "@/components/back-office/story-book/StoryBookStep1Form.vue";
+import StoryBookStep4Form from "@/components/back-office/story-book/StoryBookStep4Form.vue";
+import StoryBookStep13Form from "@/components/back-office/story-book/StoryBookStep13Form.vue";
 import StoryBookStep14IllustratedStoryBookForm from "@/components/back-office/story-book/StoryBookStep14IllustratedStoryBookForm.vue";
-import StoryBookStep11ScenePlanForm from "@/components/back-office/story-book/StoryBookStep11ScenePlanForm.vue";
-import StoryBookStep9StoryStructureForm from "@/components/back-office/story-book/StoryBookStep9StoryStructureForm.vue";
-import StoryBookStep7SystemForm from "@/components/back-office/story-book/StoryBookStep7SystemForm.vue";
-import StoryBookStep8TimelineForm from "@/components/back-office/story-book/StoryBookStep8TimelineForm.vue";
-import StoryBookStep10TwistsAndForeshadowingForm from "@/components/back-office/story-book/StoryBookStep10TwistsAndForeshadowingForm.vue";
-import StoryBookStep3WorldVibeForm from "@/components/back-office/story-book/StoryBookStep3WorldVibeForm.vue";
+import StoryBookStep11Form from "@/components/back-office/story-book/StoryBookStep11Form.vue";
+import StoryBookStep9Form from "@/components/back-office/story-book/StoryBookStep9Form.vue";
+import StoryBookStep7Form from "@/components/back-office/story-book/StoryBookStep7Form.vue";
+import StoryBookStep8Form from "@/components/back-office/story-book/StoryBookStep8Form.vue";
+import StoryBookStep10Form from "@/components/back-office/story-book/StoryBookStep10Form.vue";
+import StoryBookStep3Form from "@/components/back-office/story-book/StoryBookStep3Form.vue";
 
 import { computed, nextTick, onMounted, ref } from "vue";
 import { Head } from "@inertiajs/vue3";
@@ -404,79 +404,79 @@ const goPrev = () => {
                             </div>
                         </div>
 
-                        <StoryBookStep1FoundationForm
+                        <StoryBookStep1Form
                             v-if="activeStep === 1"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep2CharactersForm
+                        <StoryBookStep2Form
                             v-else-if="activeStep === 2"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep3WorldVibeForm
+                        <StoryBookStep3Form
                             v-else-if="activeStep === 3"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep4LocationsForm
+                        <StoryBookStep4Form
                             v-else-if="activeStep === 4"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep5FactionsForm
+                        <StoryBookStep5Form
                             v-else-if="activeStep === 5"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep6CreatureForm
+                        <StoryBookStep6Form
                             v-else-if="activeStep === 6"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep7SystemForm
+                        <StoryBookStep7Form
                             v-else-if="activeStep === 7"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep8TimelineForm
+                        <StoryBookStep8Form
                             v-else-if="activeStep === 8"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep9StoryStructureForm
+                        <StoryBookStep9Form
                             v-else-if="activeStep === 9"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep10TwistsAndForeshadowingForm
+                        <StoryBookStep10Form
                             v-else-if="activeStep === 10"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep11ScenePlanForm
+                        <StoryBookStep11Form
                             v-else-if="activeStep === 11"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep12DialoguePlanForm
+                        <StoryBookStep12Form
                             v-else-if="activeStep === 12"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep13PagePlanForm
+                        <StoryBookStep13Form
                             v-else-if="activeStep === 13"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"

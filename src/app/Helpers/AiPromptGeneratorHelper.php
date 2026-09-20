@@ -30,11 +30,11 @@ class AiPromptGeneratorHelper
 
     public const AI_PROMPT_NAME_STEP13 = 'Page Plan Generator';
 
-    public const AI_PROMPT_NAME_STEP_14 = 'Step 14 Page Narration Generator';
+    public const AI_PROMPT_NAME_STEP_14 = 'Page Narration Generator';
 
-    public const AI_PROMPT_NAME_STEP_15 = 'Step 15 Page Illustration Planning Generator';
+    public const AI_PROMPT_NAME_STEP_15 = 'Page Illustration Planning Generator';
 
-    public const AI_PROMPT_NAME_STEP_16 = 'Step 16 Page Illustration Generator';
+    public const AI_PROMPT_NAME_STEP_16 = 'Page Illustration Generator';
 
     public static function step1Prompt(): string
     {

@@ -116,7 +116,7 @@ class StoryBookService
             ->appends($request->all());
     }
 
-    public function generateStep1Foundation(StoryBookStep1FoundationRequest $request, StoryBook $storyBook): array
+    public function generateStep1(StoryBookStep1FoundationRequest $request, StoryBook $storyBook): array
     {
         $isNew = empty($storyBook->id);
         $statusEvent = $isNew ? 'save' : 'update';
@@ -191,7 +191,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep2Characters(StoryBookStep2CharactersRequest $request, StoryBook $storyBook): array
+    public function generateStep2(StoryBookStep2CharactersRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2));
@@ -239,7 +239,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep3WorldVibe(StoryBookStep3WorldVibeRequest $request, StoryBook $storyBook): array
+    public function generateStep3(StoryBookStep3WorldVibeRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3));
@@ -287,7 +287,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep4Locations(StoryBookStep4LocationsRequest $request, StoryBook $storyBook): array
+    public function generateStep4(StoryBookStep4LocationsRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4));
@@ -335,7 +335,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep5Factions(StoryBookStep5FactionsRequest $request, StoryBook $storyBook): array
+    public function generateStep5(StoryBookStep5FactionsRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5));
@@ -383,7 +383,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep6Creature(StoryBookStep6CreatureRequest $request, StoryBook $storyBook): array
+    public function generateStep6(StoryBookStep6CreatureRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6));
@@ -431,7 +431,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep7System(StoryBookStep7SystemRequest $request, StoryBook $storyBook): array
+    public function generateStep7(StoryBookStep7SystemRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7));
@@ -479,7 +479,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep8Timeline(StoryBookStep8TimelineRequest $request, StoryBook $storyBook): array
+    public function generateStep8(StoryBookStep8TimelineRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8));
@@ -527,7 +527,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep9StoryStructure(StoryBookStep9StoryStructureRequest $request, StoryBook $storyBook): array
+    public function generateStep9(StoryBookStep9StoryStructureRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9));
@@ -575,7 +575,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep10TwistsAndForeshadowing(StoryBookStep10TwistsAndForeshadowingRequest $request, StoryBook $storyBook): array
+    public function generateStep10(StoryBookStep10TwistsAndForeshadowingRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10));
@@ -623,7 +623,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep11ScenePlan(StoryBookStep11ScenePlanRequest $request, StoryBook $storyBook): array
+    public function generateStep11(StoryBookStep11ScenePlanRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11));
@@ -671,7 +671,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep12DialoguePlan(StoryBookStep12DialoguePlanRequest $request, StoryBook $storyBook): array
+    public function generateStep12(StoryBookStep12DialoguePlanRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12));
@@ -719,7 +719,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep13PagePlan(StoryBookStep13PagePlanRequest $request, StoryBook $storyBook): array
+    public function generateStep13(StoryBookStep13PagePlanRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13));
@@ -767,7 +767,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep14PageNarration(StoryBookStep14PageNarrationRequest $request, StoryBook $storyBook): array
+    public function generateStep14(StoryBookStep14PageNarrationRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14));
@@ -815,7 +815,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep15IllustrationPlanning(StoryBookStep15IllustrationPlanningRequest $request, StoryBook $storyBook): array
+    public function generateStep15(StoryBookStep15IllustrationPlanningRequest $request, StoryBook $storyBook): array
     {
         try {
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15));
@@ -865,7 +865,7 @@ class StoryBookService
         }
     }
 
-    public function generateStep16Illustration(StoryBookStep16IllustrationGenerationRequest $request, StoryBook $storyBook): array
+    public function generateStep16(StoryBookStep16IllustrationGenerationRequest $request, StoryBook $storyBook): array
     {
         try {
             $pageNo = (int) $request->input('page_no');

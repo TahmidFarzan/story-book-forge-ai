@@ -25,9 +25,9 @@ FontAwesomeLibrary.add(
     faWandMagicSparkles,
 );
 
-import StoryBookStep14PageNarrationForm from "@/components/back-office/story-book/StoryBookStep14PageNarrationForm.vue";
-import StoryBookStep15IllustrationPlanningForm from "@/components/back-office/story-book/StoryBookStep15IllustrationPlanningForm.vue";
-import StoryBookStep16IllustrationGenerationForm from "@/components/back-office/story-book/StoryBookStep16IllustrationGenerationForm.vue";
+import StoryBookStep14Form from "@/components/back-office/story-book/StoryBookStep14Form.vue";
+import StoryBookStep15Form from "@/components/back-office/story-book/StoryBookStep15Form.vue";
+import StoryBookStep16Form from "@/components/back-office/story-book/StoryBookStep16Form.vue";
 
 const emit = defineEmits(["completed"]);
 
@@ -181,19 +181,19 @@ const goToSubStep = (subStepId) => {
             </nav>
         </div>
 
-        <StoryBookStep14PageNarrationForm
+        <StoryBookStep14Form
             v-if="activeSubStep === 1"
             :story-book="storyBook"
             @completed="handleSubStepCompleted"
         />
 
-        <StoryBookStep15IllustrationPlanningForm
+        <StoryBookStep15Form
             v-else-if="activeSubStep === 2"
             :story-book="storyBook"
             @completed="handleSubStepCompleted"
         />
 
-        <StoryBookStep16IllustrationGenerationForm
+        <StoryBookStep16Form
             v-else-if="activeSubStep === 3"
             :story-book="storyBook"
             @completed="handleSubStepCompleted"
