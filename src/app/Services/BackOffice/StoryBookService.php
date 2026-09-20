@@ -202,7 +202,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -250,7 +249,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -298,7 +296,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -346,7 +343,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -394,7 +390,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -442,7 +437,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -490,7 +484,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -538,7 +531,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -586,7 +578,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -634,7 +625,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -682,7 +672,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -730,7 +719,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -778,7 +766,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
@@ -827,7 +814,6 @@ class StoryBookService
 
             $requestInputs = $this->huggingFaceApiService->formatRequestInputs($storyBook,AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15, [
                 'story_book' => $storyBook,
-                'additional_information' => $request->input('additional_information', 'Auto'),
             ]);
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 

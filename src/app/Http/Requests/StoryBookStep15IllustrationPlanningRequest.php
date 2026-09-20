@@ -14,11 +14,6 @@ class StoryBookStep15IllustrationPlanningRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'additional_information' => [
-                'nullable',
-                'string',
-            ],
-
             'illustration_type_id' => [
                 'required',
                 'exists:illustration_types,id',
@@ -34,7 +29,6 @@ class StoryBookStep15IllustrationPlanningRequest extends FormRequest
     public function messages()
     {
         return [
-            'additional_information.string' => 'Additional information must be a string.',
             'illustration_type_id.required' => 'Please select an illustration type.',
             'illustration_type_id.exists' => 'Selected illustration type does not exist.',
             'ai_brain_id.required' => 'Please select an ai brain.',

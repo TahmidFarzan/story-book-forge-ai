@@ -14,11 +14,6 @@ class StoryBookStep10TwistsAndForeshadowingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'additional_information' => [
-                'nullable',
-                'string',
-            ],
-
             'ai_brain_id' => [
                 'required',
                 'exists:ai_brains,id',
@@ -29,7 +24,6 @@ class StoryBookStep10TwistsAndForeshadowingRequest extends FormRequest
     public function messages()
     {
         return [
-            'additional_information.string' => 'Additional information must be a string.',
             'ai_brain_id.required' => 'Please select an ai brain.',
             'ai_brain_id.exists' => 'Selected ai brain does not exist.',
         ];

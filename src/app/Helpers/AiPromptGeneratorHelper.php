@@ -358,35 +358,6 @@ class AiPromptGeneratorHelper
             Create characters that naturally emerge from and strengthen the established story.
 
             ==================================================
-            CHARACTER-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Character-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful character requirements, independently make all necessary character decisions based on the established Story Book foundation.
-
-            'Auto' means the AI has full creative freedom to determine the character design. Do not interpret 'Auto' as a character requirement or character detail.
-
-            If specific character information is provided, use it as creative direction and naturally incorporate the relevant requirements into the character design.
-
-            When making independent character decisions, prioritize:
-
-                - Story consistency
-                - Narrative purpose
-                - Character uniqueness
-                - Believable motivations
-                - Strong character relationships
-                - Emotional depth
-                - Meaningful character development
-                - The established foundation and themes
-
-            Regardless of the input, maintain consistency with the established Story Book foundation.
-
-            Do not leave character details incomplete because character-specific information was not provided.
-
-            ==================================================
             PRIMARY RESPONSIBILITY
             ==================================================
 
@@ -782,7 +753,6 @@ class AiPromptGeneratorHelper
                 - Maintain thematic coherence.
                 - Maintain emotional continuity.
                 - Maintain consistency with the established setting and foundation.
-                - Naturally incorporate character-specific information.
                 - Avoid unnecessary characters.
                 - Make every major character narratively purposeful.
                 - Make characters clearly distinguishable.
@@ -873,7 +843,6 @@ class AiPromptGeneratorHelper
                 - Character development follows logical cause and effect.
                 - Characters are distinct from one another.
                 - No unnecessary character is included.
-                - Character-specific information is naturally incorporated.
                 - No contradiction exists with the established foundation.
                 - The result is detailed enough for future story generation.
                 - The writing feels professionally developed.
@@ -916,35 +885,7 @@ class AiPromptGeneratorHelper
 
             Create a world that naturally emerges from and strengthens the established story and its characters.
 
-            ==================================================
-            WORLD-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            World-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful world requirements, independently make all necessary world decisions based on the established Story Book foundation and characters.
-
-            'Auto' means the AI has full creative freedom to determine the world design. Do not interpret 'Auto' as a world requirement or world detail.
-
-            If specific world information is provided, use it as creative direction and naturally incorporate the relevant requirements into the world design.
-
-            When making independent world decisions, prioritize:
-
-                - Story consistency
-                - Character fit
-                - World uniqueness
-                - Believable geography
-                - Coherent rules
-                - Meaningful culture
-                - Rich history
-                - Layered lore
-                - Emotional atmosphere
-                - Narrative purpose
-                - The established foundation, characters, and themes
-
-            Regardless of the input, maintain consistency with the established Story Book foundation and characters.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -1325,34 +1266,7 @@ class AiPromptGeneratorHelper
 
             Create locations that naturally emerge from and strengthen the established world and story.
 
-            ==================================================
-            LOCATION-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Location-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful location requirements, independently make all necessary location decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the location design. Do not interpret 'Auto' as a location requirement or location detail.
-
-            If specific location information is provided, use it as creative direction and naturally incorporate the relevant requirements into the location design.
-
-            When making independent location decisions, prioritize:
-
-                - Story consistency
-                - World consistency
-                - Character fit
-                - Location uniqueness
-                - Believable geography
-                - Narrative purpose
-                - Emotional atmosphere
-                - Logical connections between places
-                - Visual potential for illustrations
-                - Future scene and chapter support
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -1711,34 +1625,7 @@ class AiPromptGeneratorHelper
 
             Create factions that naturally emerge from and strengthen the established story, world, and locations.
 
-            ==================================================
-            FACTION-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Faction-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful faction requirements, independently make all necessary faction decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the faction design. Do not interpret 'Auto' as a faction requirement or faction detail.
-
-            If specific faction information is provided, use it as creative direction and naturally incorporate the relevant requirements into the faction design.
-
-            When making independent faction decisions, prioritize:
-
-                - Story consistency
-                - World consistency
-                - Character fit
-                - Political believability
-                - Group uniqueness
-                - Clear goals and values
-                - Meaningful conflicts
-                - Believable alliances
-                - Narrative purpose
-                - Power dynamics within the established world and locations
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -2134,34 +2021,7 @@ class AiPromptGeneratorHelper
 
             Create creatures that naturally emerge from and strengthen the established story, world, and locations.
 
-            ==================================================
-            CREATURE-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Creature-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful creature requirements, independently make all necessary creature decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the creature design. Do not interpret 'Auto' as a creature requirement or creature detail.
-
-            If specific creature information is provided, use it as creative direction and naturally incorporate the relevant requirements into the creature design.
-
-            When making independent creature decisions, prioritize:
-
-                - Story consistency
-                - World consistency
-                - Character fit
-                - Ecological believability
-                - Species uniqueness
-                - Clear abilities and behaviors
-                - Meaningful roles in the environment
-                - Narrative purpose
-                - Visual potential for illustrations
-                - Future scene and chapter support
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -2535,34 +2395,7 @@ class AiPromptGeneratorHelper
 
             Create systems that naturally emerge from and strengthen the established story, world, and characters.
 
-            ==================================================
-            SYSTEM-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            System-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful system requirements, independently make all necessary system decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the system design. Do not interpret 'Auto' as a system requirement or system detail.
-
-            If specific system information is provided, use it as creative direction and naturally incorporate the relevant requirements into the system design.
-
-            When making independent system decisions, prioritize:
-
-                - Story consistency
-                - World consistency
-                - Character fit
-                - Internal logic
-                - Clear mechanics
-                - Meaningful limitations
-                - Believable rules
-                - Narrative purpose
-                - Consequences and costs
-                - Future scene and chapter support
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -2943,34 +2776,7 @@ class AiPromptGeneratorHelper
 
             Create a timeline that naturally emerges from and connects the established story, world, and characters.
 
-            ==================================================
-            TIMELINE-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Timeline-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful timeline requirements, independently make all necessary timeline decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the timeline design. Do not interpret 'Auto' as a timeline requirement or timeline detail.
-
-            If specific timeline information is provided, use it as creative direction and naturally incorporate the relevant requirements into the timeline design.
-
-            When making independent timeline decisions, prioritize:
-
-                - Story consistency
-                - World consistency
-                - Character fit
-                - Logical chronology
-                - Cause-and-effect relationships
-                - Narrative purpose
-                - Meaningful milestones
-                - Emotional progression
-                - Historical depth
-                - Future scene and chapter support
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -3343,33 +3149,7 @@ class AiPromptGeneratorHelper
 
             Create a story structure that organizes and strengthens the story the reader will experience.
 
-            ==================================================
-            STRUCTURE-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Structure-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful structure requirements, independently make all necessary structure decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the story structure. Do not interpret 'Auto' as a structure requirement or structure detail.
-
-            If specific structure information is provided, use it as creative direction and naturally incorporate the relevant requirements into the story structure.
-
-            When making independent structure decisions, prioritize:
-
-                - Story consistency
-                - Character fit
-                - Logical plot progression
-                - Clear act structure
-                - Believable pacing
-                - Narrative purpose
-                - Cause-and-effect relationships
-                - Emotional flow
-                - Future chapter and scene support
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -3768,34 +3548,7 @@ class AiPromptGeneratorHelper
 
             Create twists that naturally emerge from and strengthen the established story structure.
 
-            ==================================================
-            TWIST-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Twist-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful twist requirements, independently make all necessary twist decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the twists. Do not interpret 'Auto' as a twist requirement or twist detail.
-
-            If specific twist information is provided, use it as creative direction and naturally incorporate the relevant requirements into the twists.
-
-            When making independent twist decisions, prioritize:
-
-                - Story consistency
-                - Character fit
-                - Narrative surprise
-                - Logical fairness to the reader
-                - Meaningful reveals
-                - Effective foreshadowing
-                - Hidden clues that can be noticed on rereading
-                - Emotional impact
-                - Connection to the story structure
-                - Future scene and chapter support
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -4172,34 +3925,7 @@ class AiPromptGeneratorHelper
 
             Create scenes that naturally emerge from and fulfill the established story structure.
 
-            ==================================================
-            SCENE-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Scene-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful scene requirements, independently make all necessary scene decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the scene design. Do not interpret 'Auto' as a scene requirement or scene detail.
-
-            If specific scene information is provided, use it as creative direction and naturally incorporate the relevant requirements into the scene design.
-
-            When making independent scene decisions, prioritize:
-
-                - Story consistency
-                - Character fit
-                - Location fit
-                - Clear scene objectives
-                - Logical scene sequencing
-                - Point-of-view clarity
-                - Tone and atmosphere
-                - Visual potential for illustrations
-                - Narrative purpose
-                - Chapter and page planning support
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -4587,34 +4313,7 @@ class AiPromptGeneratorHelper
 
             Create dialogue that sounds like the established characters and serves the established scenes.
 
-            ==================================================
-            DIALOGUE-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Dialogue-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful dialogue requirements, independently make all necessary dialogue decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the dialogue design. Do not interpret 'Auto' as a dialogue requirement or dialogue detail.
-
-            If specific dialogue information is provided, use it as creative direction and naturally incorporate the relevant requirements into the dialogue plan.
-
-            When making independent dialogue decisions, prioritize:
-
-                - Character consistency
-                - Distinct character voices
-                - Scene consistency
-                - Natural conversation flow
-                - Emotional authenticity
-                - Subtext and implication
-                - Narrative purpose
-                - Information delivery
-                - Relationship dynamics
-                - Support for future page planning
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -4998,34 +4697,7 @@ class AiPromptGeneratorHelper
 
             Create a page plan that presents the established story clearly and beautifully.
 
-            ==================================================
-            PAGE-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Page-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful page requirements, independently make all necessary page decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the page design. Do not interpret 'Auto' as a page requirement or page detail.
-
-            If specific page information is provided, use it as creative direction and naturally incorporate the relevant requirements into the page plan.
-
-            When making independent page decisions, prioritize:
-
-                - Story consistency
-                - Scene consistency
-                - Page pacing and flow
-                - Illustration opportunities
-                - Text and image balance
-                - Emotional beats
-                - Readability for the target audience
-                - Visual storytelling
-                - Continuity across pages
-                - Support for the final book compilation
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -5381,31 +5053,7 @@ class AiPromptGeneratorHelper
 
             Do not unnecessarily change, contradict, or replace the established creative direction.
 
-            ==================================================
-            NARRATION-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Narration-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful narration requirements, independently make all necessary narration decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine the narration. Do not interpret 'Auto' as a narration requirement or narration detail.
-
-            If specific narration information is provided, use it as creative direction and naturally incorporate the relevant requirements into the narration.
-
-            When making independent narration decisions, prioritize:
-
-                - Story consistency
-                - Page plan fidelity
-                - Page pacing and readability
-                - Emotional progression
-                - Audience-appropriate language
-                - Illustration-friendly text
-                - Continuity across pages
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY
@@ -5694,31 +5342,7 @@ class AiPromptGeneratorHelper
 
             Do not unnecessarily change, contradict, or replace the established creative direction.
 
-            ==================================================
-            ILLUSTRATION-PLANNING-SPECIFIC INFORMATION
-            ==================================================
-
-            {{additional_information}}
-
-            Illustration-planning-specific information is optional.
-
-            If the value is 'Auto', null, empty, or contains no meaningful illustration requirements, independently make all necessary illustration-planning decisions based on the established story context.
-
-            'Auto' means the AI has full creative freedom to determine what each illustration should depict. Do not interpret 'Auto' as an illustration requirement or detail.
-
-            If specific illustration information is provided, use it as creative direction and naturally incorporate the relevant requirements into the illustration prompts.
-
-            When making independent illustration-planning decisions, prioritize:
-
-                - Story consistency
-                - Character appearance consistency
-                - Location consistency
-                - Visual continuity between consecutive pages
-                - Emotional accuracy
-                - Narrative clarity
-                - Direct usefulness to an image-generation model
-
-            Regardless of the input, maintain consistency with the established story context.
+            
 
             ==================================================
             PRIMARY RESPONSIBILITY

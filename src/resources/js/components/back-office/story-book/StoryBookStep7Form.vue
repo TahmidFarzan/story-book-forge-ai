@@ -27,7 +27,6 @@ const { storyBook } = defineProps({
 const isUpdate = computed(() => !!storyBook?.id);
 
 const systemsGeneratorForm = useForm({
-    additional_information: null,
     ai_brain_id: null,
 });
 
@@ -84,35 +83,6 @@ const submit = () => {
 
 <template>
     <div class="space-y-6">
-        <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
-            <div>
-                <p v-if="systemsGeneratorForm.errors.additional_information">
-                    {{ systemsGeneratorForm.errors.additional_information }}
-                </p>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-1">
-                    Systems Additional Information
-                </label>
-
-                <textarea
-                    v-model="systemsGeneratorForm.additional_information"
-                    rows="3"
-                    placeholder="Any additional context or instructions for the AI..."
-                    class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300"
-                ></textarea>
-
-                <p
-                    v-if="systemsGeneratorForm.errors.additional_information"
-                >
-                    {{
-                        systemsGeneratorForm.errors.additional_information
-                    }}
-                </p>
-            </div>
-        </div>
-
         <div class="bg-white border rounded-xl p-5 shadow-sm space-y-4">
             <div class="flex items-center gap-2">
                 <FontAwesomeIcon icon="brain" class="text-purple-600" />
