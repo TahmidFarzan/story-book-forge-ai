@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Jobs;
 
 use App\Models\StoryBookType;
@@ -43,7 +44,7 @@ class DeleteStoryBookTypeRelationsJob implements ShouldQueue, ShouldBeUnique
     {
         $storyBookType = StoryBookType::find($this->storyBookTypeId);
 
-        if ($storyBookType && ($storyBookType->activityLogs()->exists())) {
+        if ($storyBookType && ($storyBookType->activityLogs()->exists() || $storyBookType->storyBooks()->exists())) {
 
             try {
 
@@ -51,8 +52,11 @@ class DeleteStoryBookTypeRelationsJob implements ShouldQueue, ShouldBeUnique
                     if ($storyBookType->activityLogs()->exists()) {
                         $storyBookType->activityLogs()->delete();
                     }
-                });
 
+                    if ($storyBookType->storyBooks()->exists()) {
+                        $storyBookType->storyBooks()->delete();
+                    }
+                });
             } catch (Exception $ex) {
                 Log::error("Fail to delete story book type relations.", [
                     'exception' => $ex,

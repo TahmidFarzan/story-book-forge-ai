@@ -133,11 +133,11 @@ class HuggingFaceApiService
             case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13:
                 return $this->formatStep13PagePlanResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1:
-                return $this->formatStep14_1PagesResponse($response);
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14:
+                return $this->formatStep14PagesResponse($response);
 
-            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2:
-                return $this->formatStep14_2IllustrationPlanningResponse($response, $stepData);
+            case AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15:
+                return $this->formatStep15IllustrationPlanningResponse($response, $stepData);
 
             default:
                 return (object) $response;
@@ -271,7 +271,7 @@ class HuggingFaceApiService
         ];
     }
 
-    private function formatStep14_1PagesResponse(array $response): object
+    private function formatStep14PagesResponse(array $response): object
     {
         $pages = $response['pages'] ?? [];
 
@@ -302,7 +302,7 @@ class HuggingFaceApiService
         return (object) ['pages' => $normalizedPages];
     }
 
-    private function formatStep14_2IllustrationPlanningResponse(array $response, array $stepData = []): object
+    private function formatStep15IllustrationPlanningResponse(array $response, array $stepData = []): object
     {
         $pages = $response['pages'] ?? null;
 
@@ -402,11 +402,11 @@ class HuggingFaceApiService
 
             AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13 => $this->step13PagePlanRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1 => $this->step14_1PageNarrationRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14 => $this->step14PageNarrationRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2 => $this->step14_2IllustrationPlanningRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15 => $this->step15IllustrationPlanningRequestInputsFormatter($inputs),
 
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3 => $this->step14_3PageIllustrationRequestInputsFormatter($inputs),
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16 => $this->step16PageIllustrationRequestInputsFormatter($inputs),
         };
     }
 
@@ -781,7 +781,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    private function step14_1PageNarrationRequestInputsFormatter(array $inputs): array
+    private function step14PageNarrationRequestInputsFormatter(array $inputs): array
     {
         $requestInputs = [];
 
@@ -822,7 +822,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    private function step14_2IllustrationPlanningRequestInputsFormatter(array $inputs): array
+    private function step15IllustrationPlanningRequestInputsFormatter(array $inputs): array
     {
         $requestInputs = [];
 
@@ -870,7 +870,7 @@ class HuggingFaceApiService
         return $requestInputs;
     }
 
-    private function step14_3PageIllustrationRequestInputsFormatter(array $inputs): array
+    private function step16PageIllustrationRequestInputsFormatter(array $inputs): array
     {
         $storyBook = $inputs['story_book'];
         $page = $inputs['page'];

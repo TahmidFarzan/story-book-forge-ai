@@ -25,9 +25,9 @@ FontAwesomeLibrary.add(
     faWandMagicSparkles,
 );
 
-import StoryBookStep14_1PageNarrationForm from "@/components/back-office/story-book/StoryBookStep14-1PageNarrationForm.vue";
-import StoryBookStep14_2IllustrationPlanningForm from "@/components/back-office/story-book/StoryBookStep14-2IllustrationPlanningForm.vue";
-import StoryBookStep14_3IllustrationGenerationForm from "@/components/back-office/story-book/StoryBookStep14-3IllustrationGenerationForm.vue";
+import StoryBookStep14PageNarrationForm from "@/components/back-office/story-book/StoryBookStep14PageNarrationForm.vue";
+import StoryBookStep15IllustrationPlanningForm from "@/components/back-office/story-book/StoryBookStep15IllustrationPlanningForm.vue";
+import StoryBookStep16IllustrationGenerationForm from "@/components/back-office/story-book/StoryBookStep16IllustrationGenerationForm.vue";
 
 const emit = defineEmits(["completed"]);
 
@@ -40,19 +40,19 @@ const { storyBook } = defineProps({
 
 const SUB_STEP_DEFINITIONS = [
     {
-        number: "14.1",
+        number: "14",
         title: "Page Narration",
         text: "Generate the narration text for every page of the illustrated story book.",
         icon: "file-lines",
     },
     {
-        number: "14.2",
+        number: "15",
         title: "Illustration Planning",
         text: "Select the illustration type applied to every page of the illustrated story book.",
         icon: "image",
     },
     {
-        number: "14.3",
+        number: "16",
         title: "Illustration Generation",
         text: "Generate one illustration per page using an image-output AI Brain.",
         icon: "wand-magic-sparkles",
@@ -181,19 +181,19 @@ const goToSubStep = (subStepId) => {
             </nav>
         </div>
 
-        <StoryBookStep14_1PageNarrationForm
+        <StoryBookStep14PageNarrationForm
             v-if="activeSubStep === 1"
             :story-book="storyBook"
             @completed="handleSubStepCompleted"
         />
 
-        <StoryBookStep14_2IllustrationPlanningForm
+        <StoryBookStep15IllustrationPlanningForm
             v-else-if="activeSubStep === 2"
             :story-book="storyBook"
             @completed="handleSubStepCompleted"
         />
 
-        <StoryBookStep14_3IllustrationGenerationForm
+        <StoryBookStep16IllustrationGenerationForm
             v-else-if="activeSubStep === 3"
             :story-book="storyBook"
             @completed="handleSubStepCompleted"

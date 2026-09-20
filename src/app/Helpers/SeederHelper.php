@@ -571,27 +571,27 @@ class SeederHelper
             ],
 
             (object) [
-                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_1,
-                'code' => 'Step14.1PageNarrationGenerator',
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14,
+                'code' => 'Step14PageNarrationGenerator',
                 'step_number' => 14,
                 'depend_on_prompt_ids' => null,
-                'prompt' => AiPromptGeneratorHelper::step14_1Prompt(),
+                'prompt' => AiPromptGeneratorHelper::step14Prompt(),
             ],
 
             (object) [
-                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_2,
-                'code' => 'Step14.2IllustrationPlanningGenerator',
-                'step_number' => 14,
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15,
+                'code' => 'Step15IllustrationPlanningGenerator',
+                'step_number' => 15,
                 'depend_on_prompt_ids' => null,
-                'prompt' => AiPromptGeneratorHelper::step14_2Prompt(),
+                'prompt' => AiPromptGeneratorHelper::step15Prompt(),
             ],
 
             (object) [
-                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14_3,
-                'code' => 'Step14.3IllustrationGenerator',
-                'step_number' => 14,
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16,
+                'code' => 'Step16IllustrationGenerator',
+                'step_number' => 16,
                 'depend_on_prompt_ids' => null,
-                'prompt' => AiPromptGeneratorHelper::step14_3Prompt(),
+                'prompt' => AiPromptGeneratorHelper::step16Prompt(),
             ],
 
         ]);

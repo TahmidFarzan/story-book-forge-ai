@@ -30,11 +30,11 @@ class AiPromptGeneratorHelper
 
     public const AI_PROMPT_NAME_STEP13 = 'Page Plan Generator';
 
-    public const AI_PROMPT_NAME_STEP_14_1 = 'Step 14.1 Page Narration Generator';
+    public const AI_PROMPT_NAME_STEP_14 = 'Step 14 Page Narration Generator';
 
-    public const AI_PROMPT_NAME_STEP_14_2 = 'Step 14.2 Illustration Planning Generator';
+    public const AI_PROMPT_NAME_STEP_15 = 'Step 15 Page Illustration Planning Generator';
 
-    public const AI_PROMPT_NAME_STEP_14_3 = 'Step 14.3 Illustration Generator';
+    public const AI_PROMPT_NAME_STEP_16 = 'Step 16 Page Illustration Generator';
 
     public static function step1Prompt(): string
     {
@@ -5328,7 +5328,7 @@ class AiPromptGeneratorHelper
         ";
 
         return $prompt;
-    }    public static function step14_1Prompt(): string
+    }    public static function step14Prompt(): string
     {
         $prompt = "
             You are a professional story narration AI, illustrated book narrator, page writing specialist, and story development expert.
@@ -5617,7 +5617,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step14_2Prompt(): string
+    public static function step15Prompt(): string
     {
         $prompt = "
             You are a professional illustration planning AI, visual storytelling specialist, and story development expert.
@@ -5922,7 +5922,7 @@ class AiPromptGeneratorHelper
         return $prompt;
     }
 
-    public static function step14_3Prompt(): string
+    public static function step16Prompt(): string
     {
         $prompt = "
             You are a professional story book illustration image generator and visual storytelling specialist.

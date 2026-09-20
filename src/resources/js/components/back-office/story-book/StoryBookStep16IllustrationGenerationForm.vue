@@ -158,7 +158,7 @@ const generateSinglePage = (page, { onGenerated, onFailed } = {}) => {
     illustrationGenerationForm.clearErrors();
 
     inertiaRoute.patch(
-        route("back-office.story-books.regenerate.step14-3.illustration", {
+        route("back-office.story-books.regenerate.step16.illustration", {
             slug: storyBook?.slug,
         }),
         {
