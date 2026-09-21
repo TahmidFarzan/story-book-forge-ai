@@ -8,7 +8,9 @@ import StoryBookStep5Form from "@/components/back-office/story-book/StoryBookSte
 import StoryBookStep1Form from "@/components/back-office/story-book/StoryBookStep1Form.vue";
 import StoryBookStep4Form from "@/components/back-office/story-book/StoryBookStep4Form.vue";
 import StoryBookStep13Form from "@/components/back-office/story-book/StoryBookStep13Form.vue";
-import StoryBookStep14IllustratedStoryBookForm from "@/components/back-office/story-book/StoryBookStep14IllustratedStoryBookForm.vue";
+import StoryBookStep14Form from "@/components/back-office/story-book/StoryBookStep14Form.vue";
+import StoryBookStep15Form from "@/components/back-office/story-book/StoryBookStep15Form.vue";
+import StoryBookStep16Form from "@/components/back-office/story-book/StoryBookStep16Form.vue";
 import StoryBookStep11Form from "@/components/back-office/story-book/StoryBookStep11Form.vue";
 import StoryBookStep9Form from "@/components/back-office/story-book/StoryBookStep9Form.vue";
 import StoryBookStep7Form from "@/components/back-office/story-book/StoryBookStep7Form.vue";
@@ -32,6 +34,7 @@ import {
     faFlag,
     faGear,
     faGlobe,
+    faImage,
     faLightbulb,
     faList,
     faLocationDot,
@@ -53,6 +56,7 @@ FontAwesomeLibrary.add(
     faFlag,
     faGear,
     faGlobe,
+    faImage,
     faLightbulb,
     faList,
     faLocationDot,
@@ -176,9 +180,21 @@ const STEP_DEFINITIONS = [
     },
     {
         number: "14",
-        title: "Illustrated Story Book",
-        text: "Build the illustrated story book pages with narration, illustration planning, and one illustration per page.",
-        icon: ["fas", "book-open"],
+        title: "Page Narration",
+        text: "Generate the narration text for every page of the illustrated story book.",
+        icon: ["fas", "file-lines"],
+    },
+    {
+        number: "15",
+        title: "Illustration Planning",
+        text: "Select the illustration type applied to every page of the illustrated story book.",
+        icon: ["fas", "image"],
+    },
+    {
+        number: "16",
+        title: "Illustration Generation",
+        text: "Generate one illustration per page using an image-output AI Brain.",
+        icon: ["fas", "wand-magic-sparkles"],
     },
 ];
 
@@ -482,8 +498,20 @@ const goPrev = () => {
                             @completed="handleStepCompleted"
                         />
 
-                        <StoryBookStep14IllustratedStoryBookForm
+                        <StoryBookStep14Form
                             v-else-if="activeStep === 14"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep15Form
+                            v-else-if="activeStep === 15"
+                            :story-book="storyBook"
+                            @completed="handleStepCompleted"
+                        />
+
+                        <StoryBookStep16Form
+                            v-else-if="activeStep === 16"
                             :story-book="storyBook"
                             @completed="handleStepCompleted"
                         />
