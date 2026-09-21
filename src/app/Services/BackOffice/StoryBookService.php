@@ -871,17 +871,17 @@ class StoryBookService
 
             $this->assertImageOutputAiBrain($aiBrain);
 
-            $page = $this->storyBookPageService->findByNo($storyBook, $pageNo);
+            $storyBookPage = $this->storyBookPageService->findByNo($storyBook, $pageNo);
             $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
 
-            $requestInputs = $this->huggingFaceApiService->step16InputsFormatter($storyBook, $page);
+            $requestInputs = $this->huggingFaceApiService->step16InputsFormatter($storyBook, $storyBookPage);
 
             $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
 
             $image = $this->huggingFaceApiService->sendImageRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->timeout_seconds);
 
-            DB::transaction(function () use ($page, $image) {
-                $this->storyBookPageService->replaceIllustrationImage($page, $image);
+            DB::transaction(function () use ($storyBookPage, $image) {
+                $this->storyBookPageService->replaceIllustrationImage($storyBookPage, $image);
             });
 
             $storyBook = $storyBook->fresh();
