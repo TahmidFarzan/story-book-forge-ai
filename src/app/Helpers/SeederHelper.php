@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Str;
+
 class SeederHelper
 {
     public static function genres()
@@ -462,6 +464,230 @@ class SeederHelper
         ]);
     }
 
+    public static function storyBookGeneratorSteps()
+    {
+        return collect([
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                'depends_on' => [],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14),
+                ],
+            ],
+
+            (object) [
+                'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16,
+                'ai_prompt_code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16),
+                'depends_on' => [
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14),
+                    Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15),
+                ],
+            ],
+
+        ]);
+    }
+
     public static function aiPrompts()
     {
         return collect([
@@ -572,7 +798,7 @@ class SeederHelper
 
             (object) [
                 'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14,
-                'code' => 'Step14PageNarrationGenerator',
+                'code' => 'PageNarrationGenerator',
                 'step_number' => 14,
                 'depend_on_prompt_ids' => null,
                 'prompt' => AiPromptGeneratorHelper::step14Prompt(),
@@ -580,7 +806,7 @@ class SeederHelper
 
             (object) [
                 'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15,
-                'code' => 'Step15IllustrationPlanningGenerator',
+                'code' => 'PageIllustrationPlanningGenerator',
                 'step_number' => 15,
                 'depend_on_prompt_ids' => null,
                 'prompt' => AiPromptGeneratorHelper::step15Prompt(),
@@ -588,7 +814,7 @@ class SeederHelper
 
             (object) [
                 'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16,
-                'code' => 'Step16IllustrationGenerator',
+                'code' => 'PageIllustrationGenerator',
                 'step_number' => 16,
                 'depend_on_prompt_ids' => null,
                 'prompt' => AiPromptGeneratorHelper::step16Prompt(),

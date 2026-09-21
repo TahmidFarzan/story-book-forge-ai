@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Helpers;
 
 use Illuminate\Support\Collection;
@@ -7,23 +8,40 @@ class UserPermissionHelper
 {
     private const SEPARATOR = ': ';
 
-    public const ACCESS_VIEW_ANY     = 'View any';
-    public const ACCESS_VIEW         = 'View';
-    public const ACCESS_CREATE       = 'Create';
-    public const ACCESS_UPDATE       = 'Update';
-    public const ACCESS_DELETE       = 'Delete';
-    public const ACCESS_RESTORE      = 'Restore';
+    public const ACCESS_VIEW_ANY = 'View any';
+
+    public const ACCESS_VIEW = 'View';
+
+    public const ACCESS_CREATE = 'Create';
+
+    public const ACCESS_UPDATE = 'Update';
+
+    public const ACCESS_DELETE = 'Delete';
+
+    public const ACCESS_RESTORE = 'Restore';
+
     public const ACCESS_FORCE_DELETE = 'Force delete';
 
-    public const MODULE_USER  = 'User';
-    public const MODULE_GENRE  = 'Genre';
+    public const MODULE_USER = 'User';
+
+    public const MODULE_GENRE = 'Genre';
+
     public const MODULE_AUDIENCE = 'Audience';
+
     public const MODULE_LANGUAGE = 'Language';
+
     public const MODULE_STORY_BOOK_TYPE = 'Story Type';
+
     public const MODULE_ILLUSTRATION_TYPE = 'Illustration Type';
+
     public const MODULE_AI_BRAIN = 'Ai Brain';
+
     public const MODULE_AI_PROMPT = 'Ai Prompt';
+
     public const MODULE_AI_BRAIN_OUTPUT_TYPE = 'Ai Brain Output Type';
+
+    public const MODULE_STORY_BOOK_GENERATOR_STEP = 'Story Book Generator Step';
+
     public const MODULE_STORY_BOOK = 'Story';
 
     public static function modules(): Collection
@@ -38,6 +56,7 @@ class UserPermissionHelper
             self::MODULE_AI_BRAIN,
             self::MODULE_AI_PROMPT,
             self::MODULE_AI_BRAIN_OUTPUT_TYPE,
+            self::MODULE_STORY_BOOK_GENERATOR_STEP,
             self::MODULE_STORY_BOOK,
 
         ]);
@@ -51,6 +70,7 @@ class UserPermissionHelper
 
         $readOnlyPermissionModules = [
             self::MODULE_AI_BRAIN_OUTPUT_TYPE,
+            self::MODULE_STORY_BOOK_GENERATOR_STEP,
         ];
 
         if (in_array($moduleName, $fullPermissionModules, true)) {
@@ -83,7 +103,6 @@ class UserPermissionHelper
 
     public static function modulePermissingNameGenerates(string $moduleName, string $accessName): string
     {
-        return $moduleName . self::SEPARATOR . $accessName;
+        return $moduleName.self::SEPARATOR.$accessName;
     }
-
 }

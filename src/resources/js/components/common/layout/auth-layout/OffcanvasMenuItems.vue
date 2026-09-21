@@ -20,6 +20,7 @@ import {
     faPalette,
     faClipboardList,
     faBook,
+    faCubesStacked,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -37,6 +38,7 @@ library.add(
     faPalette,
     faClipboardList,
     faBook,
+    faCubesStacked,
 );
 
 import {
@@ -49,6 +51,7 @@ import {
     canAccessAiBrain,
     canAccessAiPrompt,
     canAccessAiBrainOutputType,
+    canAccessStoryBookGeneratorStep,
 } from "@/composables/useUserPermissions";
 
 const { authUser } = defineProps({
@@ -70,7 +73,12 @@ const subMenus = ref({
 
 const routeMap = {
     UserManagement: ["/back-office/users/*"],
-    AiAttributes: ["/back-office/ai-brains/*", "/back-office/ai-prompts/*", "/back-office/ai-brain-output-types/*"],
+    AiAttributes: [
+        "/back-office/ai-brains/*",
+        "/back-office/ai-prompts/*",
+        "/back-office/ai-brain-output-types/*",
+        "/back-office/story-book-generator-steps/*",
+    ],
     StoryBookAttribute: [
         "/back-office/genres/*",
         "/back-office/audiences/*",
@@ -114,6 +122,10 @@ const canAccessAiPromptComputed = computed(() => {
 
 const canAccessAiBrainOutputTypeComputed = computed(() => {
     return canAccessAiBrainOutputType(authUser);
+});
+
+const canAccessStoryBookGeneratorStepComputed = computed(() => {
+    return canAccessStoryBookGeneratorStep(authUser);
 });
 
 const toggleShowSubMenu = (key) => {
@@ -369,6 +381,21 @@ const isSubMenuVisible = (key) => {
                 >
                     <FontAwesomeIcon icon="brain" class="w-4" />
                     Ai Brain Output Types
+                </Link>
+
+                <Link
+                    v-if="canAccessStoryBookGeneratorStepComputed"
+                    :href="route('back-office.story-book-generator-steps.index')"
+                    class="sbfa-nav-item"
+                    :class="
+                        isCurrentPage('/back-office/story-book-generator-steps/*')
+                            ? 'is-active'
+                            : ''
+                    "
+                    @start="handleNavigate"
+                >
+                    <FontAwesomeIcon icon="cubes-stacked" class="w-4" />
+                    Story Book Generator Steps
                 </Link>
             </div>
         </Transition>

@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\AiPrompt;
-use App\Models\Genre;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -31,6 +29,8 @@ class DatabaseSeeder extends Seeder
         $this->call(AiBrainSeeder::class);
 
         $this->call(AiPromptSeeder::class);
+
+        $this->call(StoryBookGeneratorStepSeeder::class);
 
         $this->call(AiBrainOutputTypeSeeder::class);
 

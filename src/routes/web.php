@@ -13,6 +13,7 @@ use App\Http\Controllers\BackOffice\LanguageController;
 use App\Http\Controllers\BackOffice\MediaController;
 use App\Http\Controllers\BackOffice\SettingController;
 use App\Http\Controllers\BackOffice\StoryBookController;
+use App\Http\Controllers\BackOffice\StoryBookGeneratorStepController;
 use App\Http\Controllers\BackOffice\StoryBookTypeController;
 use App\Http\Controllers\BackOffice\UserController;
 //
@@ -221,6 +222,14 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
 
         Route::prefix('{slug}')->group(function () {
             Route::get('details', [AiBrainOutputTypeController::class, 'details'])->name('details');
+        });
+    });
+
+    Route::prefix('story-book-generator-steps')->name('story-book-generator-steps.')->group(function () {
+        Route::get('/', [StoryBookGeneratorStepController::class, 'index'])->name('index');
+
+        Route::prefix('{slug}')->group(function () {
+            Route::get('details', [StoryBookGeneratorStepController::class, 'details'])->name('details');
         });
     });
 
