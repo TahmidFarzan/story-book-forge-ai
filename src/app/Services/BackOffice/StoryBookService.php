@@ -1,25 +1,24 @@
 <?php
-
 namespace App\Services\BackOffice;
 
 use App\Helpers\AiPromptGeneratorHelper;
 use App\Helpers\StoryBookHelper;
-use App\Http\Requests\StoryBookStep2;
-use App\Http\Requests\StoryBookStep6;
-use App\Http\Requests\StoryBookStep12;
-use App\Http\Requests\StoryBookStep5;
 use App\Http\Requests\StoryBookStep1;
+use App\Http\Requests\StoryBookStep2;
+use App\Http\Requests\StoryBookStep3;
 use App\Http\Requests\StoryBookStep4;
-use App\Http\Requests\StoryBookStep13;
+use App\Http\Requests\StoryBookStep5;
+use App\Http\Requests\StoryBookStep6;
+use App\Http\Requests\StoryBookStep7;
+use App\Http\Requests\StoryBookStep8;
+use App\Http\Requests\StoryBookStep9;
+use App\Http\Requests\StoryBookStep10;
 use App\Http\Requests\StoryBookStep11;
+use App\Http\Requests\StoryBookStep12;
+use App\Http\Requests\StoryBookStep13;
 use App\Http\Requests\StoryBookStep14;
 use App\Http\Requests\StoryBookStep15;
 use App\Http\Requests\StoryBookStep16;
-use App\Http\Requests\StoryBookStep9;
-use App\Http\Requests\StoryBookStep7;
-use App\Http\Requests\StoryBookStep8;
-use App\Http\Requests\StoryBookStep10;
-use App\Http\Requests\StoryBookStep3;
 use App\Models\AiBrain;
 use App\Models\StoryBook;
 use App\Models\StoryBookPage;
@@ -32,26 +31,14 @@ use Illuminate\Support\Str;
 
 class StoryBookService
 {
-    protected AiBrainService $aiBrainService;
+    protected StoryBookGeneratorService $storyBookGeneratorService;
 
-    protected AiPromptService $aiPromptService;
-
-    protected IllustrationTypeService $illustrationTypeService;
-
-    protected HuggingFaceApiService $huggingFaceApiService;
-
-    protected StoryBookPageService $storyBookPageService;
-
-    public function __construct(AiBrainService $aiBrainService, AiPromptService $aiPromptService, IllustrationTypeService $illustrationTypeService, HuggingFaceApiService $huggingFaceApiService, StoryBookPageService $storyBookPageService)
+    public function __construct(StoryBookGeneratorService $storyBookGeneratorService)
     {
-        $this->aiBrainService = $aiBrainService;
-        $this->aiPromptService = $aiPromptService;
-        $this->illustrationTypeService = $illustrationTypeService;
-        $this->huggingFaceApiService = $huggingFaceApiService;
-        $this->storyBookPageService = $storyBookPageService;
+        $this->storyBookGeneratorService = $storyBookGeneratorService;
     }
 
-    public function new(): StoryBook
+    public function new (): StoryBook
     {
         return new StoryBook;
     }
@@ -69,7 +56,7 @@ class StoryBookService
 
             'createdBy',
 
-            'activityLogs' => fn($query) => $query->latest()->limit(10),
+            'activityLogs'   => fn($query)   => $query->latest()->limit(10),
             'activityLogs.causer',
 
             'latestActivityLog',
@@ -94,7 +81,7 @@ class StoryBookService
         }
 
         if ($request->filled('search')) {
-            $search = $request->input('search');
+            $search     = $request->input('search');
             $likeSearch = "%{$search}%";
 
             $query->whereAny([
@@ -121,25 +108,12 @@ class StoryBookService
 
     public function step1Prompt(StoryBookStep1 $request, StoryBook $storyBook): array
     {
-        $isNew = empty($storyBook->id);
+        $isNew       = empty($storyBook->id);
         $statusEvent = $isNew ? 'save' : 'update';
 
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1;
 
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step1InputsFormatter([
-                'language_id' => $request->input('language_id'),
-                'audience_id' => $request->input('audience_id'),
-                'story_book_type_id' => $request->input('story_book_type_id'),
-                'genre_ids' => $request->input('genre_ids'),
-                'additional_information' => $request->input('additional_information', 'Auto'),
-            ]);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt,  $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+            $apiResponse = $this->storyBookGeneratorService->step1Prompt($request, $storyBook);
 
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
@@ -148,20 +122,20 @@ class StoryBookService
             $apiResponse = $apiResponse['data'];
 
             $storyBook = DB::transaction(function () use ($request, $apiResponse, $storyBook, $isNew) {
-                $storyBook->title = $apiResponse->title;
-                $storyBook->sub_title = $apiResponse->subtitle;
+                $storyBook->title      = $apiResponse->title;
+                $storyBook->sub_title  = $apiResponse->subtitle;
                 $storyBook->foundation = $apiResponse->foundation;
 
-                $storyBook->audience_id = $request->input('audience_id');
+                $storyBook->audience_id        = $request->input('audience_id');
                 $storyBook->story_book_type_id = $request->input('story_book_type_id');
-                $storyBook->language_id = $request->input('language_id');
+                $storyBook->language_id        = $request->input('language_id');
 
                 $storyBook->additional_information = $request->input('additional_information');
 
                 $storyBook->status = StoryBookHelper::STATUS_ONGOING;
 
                 if ($isNew) {
-                    $storyBook->datetime = now();
+                    $storyBook->datetime      = now();
                     $storyBook->created_by_id = Auth::id();
                 }
 
@@ -176,8 +150,8 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => $isNew
+                'status'     => 'success',
+                'message'    => $isNew
                     ? 'Story created successfully.'
                     : 'Story updated successfully.',
             ];
@@ -185,13 +159,13 @@ class StoryBookService
 
             Log::error("Failed to {$statusEvent} story.", [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -199,15 +173,7 @@ class StoryBookService
     public function step2Prompt(StoryBookStep2 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP2));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step2InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+            $apiResponse = $this->storyBookGeneratorService->step2Prompt($request, $storyBook);
 
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
@@ -217,7 +183,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->characters = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status     = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -225,20 +191,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story characters generate successfully.',
+                'status'     => 'success',
+                'message'    => 'Story characters generate successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story characters', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -246,16 +212,7 @@ class StoryBookService
     public function step3Prompt(StoryBookStep3 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP3;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step3InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model,  $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
-
+            $apiResponse = $this->storyBookGeneratorService->step3Prompt($request, $storyBook);
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
             }
@@ -264,7 +221,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->world_bible = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status      = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -272,20 +229,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story world bible generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story world bible generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story world bible', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -293,16 +250,7 @@ class StoryBookService
     public function step4Prompt(StoryBookStep4 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP4;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step4InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
-
+            $apiResponse = $this->storyBookGeneratorService->step4Prompt($request, $storyBook);
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
             }
@@ -311,7 +259,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->locations = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status    = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -319,20 +267,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story locations generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story locations generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story locations', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -340,16 +288,7 @@ class StoryBookService
     public function step5Prompt(StoryBookStep5 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP5;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step5InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
-
+            $apiResponse = $this->storyBookGeneratorService->step5Prompt($request, $storyBook);
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
             }
@@ -358,7 +297,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->factions = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status   = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -366,20 +305,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story factions generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story factions generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story factions', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -387,15 +326,7 @@ class StoryBookService
     public function step6Prompt(StoryBookStep6 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP6;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step6InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model,  $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+            $apiResponse = $this->storyBookGeneratorService->step6Prompt($request, $storyBook);
 
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
@@ -405,7 +336,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->creatures = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status    = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -413,20 +344,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story creatures generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story creatures generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story creatures', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -434,15 +365,7 @@ class StoryBookService
     public function step7Prompt(StoryBookStep7 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP7;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step7InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step,$prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+            $apiResponse = $this->storyBookGeneratorService->step7Prompt($request, $storyBook);
 
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
@@ -452,7 +375,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->systems = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status  = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -460,20 +383,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story systems generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story systems generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story systems', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -481,16 +404,7 @@ class StoryBookService
     public function step8Prompt(StoryBookStep8 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP8;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step8InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step,$prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
-
+            $apiResponse = $this->storyBookGeneratorService->step8Prompt($request, $storyBook);
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
             }
@@ -499,7 +413,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->timeline = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status   = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -507,20 +421,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story timeline generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story timeline generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story timeline', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -528,16 +442,7 @@ class StoryBookService
     public function step9Prompt(StoryBookStep9 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP9;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step9InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
-
+            $apiResponse = $this->storyBookGeneratorService->step9Prompt($request, $storyBook);
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
             }
@@ -546,7 +451,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->story_structure = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status          = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -554,20 +459,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story structure generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story structure generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story structure', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -575,16 +480,7 @@ class StoryBookService
     public function step10Prompt(StoryBookStep10 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP10;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step10InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
-
+            $apiResponse = $this->storyBookGeneratorService->step10Prompt($request, $storyBook);
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
             }
@@ -593,7 +489,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->twists_and_foreshadowing = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status                   = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -601,20 +497,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story twists and foreshadowing generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story twists and foreshadowing generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story twists and foreshadowing', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -622,16 +518,7 @@ class StoryBookService
     public function step11Prompt(StoryBookStep11 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP11;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step11InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
-
+            $apiResponse = $this->storyBookGeneratorService->step11Prompt($request, $storyBook);
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
             }
@@ -640,7 +527,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->scene_plans = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status      = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -648,20 +535,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story scene plan generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story scene plan generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story scene plan', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -669,16 +556,7 @@ class StoryBookService
     public function step12Prompt(StoryBookStep12 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP12;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step12InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
-
+            $apiResponse = $this->storyBookGeneratorService->step12Prompt($request, $storyBook);
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
             }
@@ -687,7 +565,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->dialogue_plans = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status         = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -695,20 +573,20 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story dialogue plan generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story dialogue plan generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story dialogue plan', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
@@ -716,15 +594,7 @@ class StoryBookService
     public function step13Prompt(StoryBookStep13 $request, StoryBook $storyBook): array
     {
         try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP13;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step13InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step,$prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
+            $apiResponse = $this->storyBookGeneratorService->step13Prompt($request, $storyBook);
 
             if (! $apiResponse['success']) {
                 throw new Exception($apiResponse['message']);
@@ -734,7 +604,7 @@ class StoryBookService
 
             $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
                 $storyBook->page_plan = $apiResponse;
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
+                $storyBook->status    = StoryBookHelper::STATUS_ONGOING;
                 $storyBook->save();
 
                 return $storyBook;
@@ -742,171 +612,37 @@ class StoryBookService
 
             return [
                 'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story page plan generated successfully.',
+                'status'     => 'success',
+                'message'    => 'Story page plan generated successfully.',
             ];
         } catch (Exception $exception) {
 
             Log::error('Failed to generate Story page plan', [
                 'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
+                'trace'     => $exception->getTraceAsString(),
             ]);
 
             return [
                 'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
+                'status'     => 'error',
+                'message'    => $exception->getMessage(),
             ];
         }
     }
 
     public function step14Prompt(StoryBookStep14 $request, StoryBook $storyBook): array
     {
-        try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_14;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step14InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds);
-
-            if (! $apiResponse['success']) {
-                throw new Exception($apiResponse['message']);
-            }
-
-            $apiResponse = $apiResponse['data'];
-
-            $storyBook = DB::transaction(function () use ($apiResponse, $storyBook) {
-                $this->storyBookPageService->syncStoryBookPages($storyBook, (array) $apiResponse->pages);
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
-                $storyBook->save();
-
-                return $storyBook;
-            });
-
-            return [
-                'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story page narration generated successfully.',
-            ];
-        } catch (Exception $exception) {
-
-            Log::error('Failed to generate Story page narration', [
-                'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
-            ]);
-
-            return [
-                'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
-            ];
-        }
+        return $this->storyBookGeneratorService->step14Prompt($request, $storyBook);
     }
 
     public function step15Prompt(StoryBookStep15 $request, StoryBook $storyBook): array
     {
-        try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_15;
-
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-            $illustrationType = $this->illustrationTypeService->findById($request->input('illustration_type_id'));
-
-            $requestInputs = $this->huggingFaceApiService->step15InputsFormatter($storyBook);
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $existingPages = $storyBook->storyBookPages->map(fn(StoryBookPage $storyBookPage) => [
-                'no' => $storyBookPage->no,
-                'narration' => $storyBookPage->narration,
-            ])->values()->all();
-
-            $apiResponse = $this->huggingFaceApiService->sendPostRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $step, $prompt, $aiBrain->max_output_tokens, $aiBrain->timeout_seconds, ['existing_pages' => $existingPages]);
-
-            if (! $apiResponse['success']) {
-                throw new Exception($apiResponse['message']);
-            }
-
-            $apiResponse = $apiResponse['data'];
-
-            $storyBook = DB::transaction(function () use ($apiResponse, $storyBook, $illustrationType) {
-                $this->storyBookPageService->applyIllustrationPlanning($storyBook, (array) $apiResponse->pages, $illustrationType->prompt_instruction);
-                $storyBook->status = StoryBookHelper::STATUS_ONGOING;
-                $storyBook->save();
-
-                return $storyBook;
-            });
-
-            return [
-                'story_book' => $storyBook,
-                'status' => 'success',
-                'message' => 'Story illustration planning generated successfully.',
-            ];
-        } catch (Exception $exception) {
-
-            Log::error('Failed to generate Story illustration planning', [
-                'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
-            ]);
-
-            return [
-                'story_book' => null,
-                'status' => 'error',
-                'message' => $exception->getMessage(),
-            ];
-        }
+        return $this->storyBookGeneratorService->step15Prompt($request, $storyBook);
     }
 
     public function step16Prompt(StoryBookStep16 $request, StoryBook $storyBook): array
     {
-        try {
-            $step = AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16;
-
-            $pageNo = (int) $request->input('page_no');
-
-            $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_id'));
-
-            $this->assertImageOutputAiBrain($aiBrain);
-
-            $storyBookPage = $this->storyBookPageService->findByNo($storyBook, $pageNo);
-            $aiPrompt = $this->aiPromptService->findByCode(Str::studly($step));
-
-            $requestInputs = $this->huggingFaceApiService->step16InputsFormatter($storyBook, $storyBookPage);
-
-            $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $requestInputs);
-
-            $image = $this->huggingFaceApiService->sendImageRequest($aiBrain->api_url, $aiBrain->api_key, $aiBrain->model, $prompt, $aiBrain->timeout_seconds);
-
-            DB::transaction(function () use ($storyBookPage, $image) {
-                $this->storyBookPageService->replaceIllustrationImage($storyBookPage, $image);
-            });
-
-            $storyBook = $storyBook->fresh();
-
-            return [
-                'story_book' => $storyBook,
-                'page_no' => $pageNo,
-                'status' => 'success',
-                'message' => "Story book page {$pageNo} illustration generated successfully.",
-            ];
-        } catch (Exception $exception) {
-
-            Log::error('Failed to generate Story book page illustration', [
-                'page_no' => $request->input('page_no'),
-                'exception' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString(),
-            ]);
-
-            return [
-                'story_book' => null,
-                'page_no' => $request->input('page_no'),
-                'status' => 'error',
-                'message' => $exception->getMessage(),
-            ];
-        }
+        return $this->storyBookGeneratorService->step16Prompt($request, $storyBook);
     }
 
     public function delete(StoryBook $storyBook): array
@@ -919,7 +655,7 @@ class StoryBookService
             });
 
             return [
-                'status' => 'success',
+                'status'  => 'success',
                 'message' => 'Story deleted successfully.',
             ];
         } catch (Exception $exception) {
@@ -929,18 +665,9 @@ class StoryBookService
             ]);
 
             return [
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Failed to delete story. Please try again.',
             ];
-        }
-    }
-
-    private function assertImageOutputAiBrain(AiBrain $aiBrain): void
-    {
-        $outputTypeCodes = $aiBrain->aiBrainOutputTypes->pluck('code');
-
-        if (! $outputTypeCodes->contains('Image')) {
-            throw new Exception('Selected ai brain is not an image-output ai brain.');
         }
     }
 }

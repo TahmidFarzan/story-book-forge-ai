@@ -14,7 +14,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class StoryBookPageService
 {
-    public function new(): StoryBookPage
+    public function new (): StoryBookPage
     {
         return new StoryBookPage();
     }
@@ -36,7 +36,7 @@ class StoryBookPageService
         ])->where('story_book_id', $storyBook->id)->where('slug', $slug)->firstOrFail();
     }
 
-    public function findByNo(StoryBook $storyBook, string|int $no): StoryBookPage
+    public function findByNo(StoryBook $storyBook, string | int $no): StoryBookPage
     {
         return StoryBookPage::with([
             'createdBy',
@@ -61,26 +61,26 @@ class StoryBookPageService
             $no = (int) ($perRecordInResponce['no'] ?? null);
 
             $incomingPages[$no] = [
-                'no' => $no,
+                'no'        => $no,
                 'narration' => $perRecordInResponce['narration'] ?? null,
             ];
         }
 
         $existingPages = $storyBook->storyBookPages()->get()->keyBy('no');
 
-        foreach($incomingPages as $no => $incomingPage){
+        foreach ($incomingPages as $no => $incomingPage) {
 
             $storyBookPage = $storyBook->storyBookPages()->where('no', $no)->first();
 
-            if(!$storyBookPage){
-                $storyBookPage = $this->new();
-                $storyBookPage->story_book_id =  $storyBook->id;
-                $storyBookPage->created_by_id =  Auth::id();
+            if (! $storyBookPage) {
+                $storyBookPage                = $this->new();
+                $storyBookPage->story_book_id = $storyBook->id;
+                $storyBookPage->created_by_id = Auth::id();
             }
 
-            $storyBookPage->no = $no;
-            $storyBookPage->narration = $incomingPage['narration'];
-            $storyBookPage->illustration_prompt = null;
+            $storyBookPage->no                                   = $no;
+            $storyBookPage->narration                            = $incomingPage['narration'];
+            $storyBookPage->illustration_prompt                  = null;
             $storyBookPage->illustration_type_prompt_instruction = null;
             $storyBookPage->save();
 
@@ -104,12 +104,14 @@ class StoryBookPageService
             $illustrationPrompts[$no] = $plannedPage['illustration_prompt'] ?? null;
         }
 
-        $storyBook->storyBookPages()->whereIn('no', array_keys($illustrationPrompts))->get()
-            ->each(function (StoryBookPage $storyBookPage) use ($illustrationPrompts, $illustrationTypePromptInstruction) {
-                $storyBookPage->illustration_prompt = $illustrationPrompts[$storyBookPage->no] ?? null;
-                $storyBookPage->illustration_type_prompt_instruction = $illustrationTypePromptInstruction;
-                $storyBookPage->save();
-            });
+        DB::transaction(function () use ($storyBook, $illustrationPrompts, $illustrationTypePromptInstruction) {
+            $storyBook->storyBookPages()->whereIn('no', array_keys($illustrationPrompts))->get()
+                ->each(function (StoryBookPage $storyBookPage) use ($illustrationPrompts, $illustrationTypePromptInstruction) {
+                    $storyBookPage->illustration_prompt                  = $illustrationPrompts[$storyBookPage->no] ?? null;
+                    $storyBookPage->illustration_type_prompt_instruction = $illustrationTypePromptInstruction;
+                    $storyBookPage->save();
+                });
+        });
     }
 
     public function replaceIllustrationImage(StoryBookPage $storyBookPage, array $image): Media
@@ -138,7 +140,7 @@ class StoryBookPageService
         }
 
         if ($request->filled('search')) {
-            $search = $request->input('search');
+            $search     = $request->input('search');
             $likeSearch = "%{$search}%";
 
             $query->whereAny([
@@ -161,7 +163,7 @@ class StoryBookPageService
             });
 
             return [
-                'status' => 'success',
+                'status'  => 'success',
                 'message' => 'Story book page deleted successfully.',
             ];
         } catch (Exception $exception) {
@@ -171,7 +173,7 @@ class StoryBookPageService
             ]);
 
             return [
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Failed to delete story book page. Please try again.',
             ];
         }
@@ -196,8 +198,8 @@ class StoryBookPageService
 
         $customProperties = [
             'caption' => $caption,
-            'alt' => $alt,
-            'role' => MediaHelper::ROLE_STORY_BOOK_PAGE_ILLUSTRATION,
+            'alt'     => $alt,
+            'role'    => MediaHelper::ROLE_STORY_BOOK_PAGE_ILLUSTRATION,
             'page_no' => $storyBookPage->no,
         ];
 
