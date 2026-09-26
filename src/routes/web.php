@@ -238,64 +238,25 @@ Route::prefix('back-office')->name('back-office.')->middleware(['auth', 'verifie
         Route::get('create', [StoryBookController::class, 'create'])->name('create');
 
         Route::prefix('create')->name('create.')->group(function () {
-            Route::post('step1-foundation', [StoryBookController::class, 'createStep1Foundation'])->name('step1-foundation');
+            Route::post('text-generation', [StoryBookController::class, 'startTextGeneration'])->name('text-generation');
         });
 
         Route::prefix('{slug}')->group(function () {
             Route::get('edit', [StoryBookController::class, 'edit'])->name('edit');
 
-            Route::prefix('generate')->name('generate.')->group(function () {
-                Route::patch('step1-foundation', [StoryBookController::class, 'generateStep1'])->name('step1-foundation');
-                Route::patch('step2-characters', [StoryBookController::class, 'generateStep2'])->name('step2-characters');
-                Route::patch('step3-world-vibe', [StoryBookController::class, 'generateStep3'])->name('step3-world-vibe');
-                Route::patch('step4-locations', [StoryBookController::class, 'generateStep4'])->name('step4-locations');
-                Route::patch('step5-factions', [StoryBookController::class, 'generateStep5'])->name('step5-factions');
-                Route::patch('step6-creature', [StoryBookController::class, 'generateStep6'])->name('step6-creature');
-                Route::patch('step7-system', [StoryBookController::class, 'generateStep7'])->name('step7-system');
-                Route::patch('step8-timeline', [StoryBookController::class, 'generateStep8'])->name('step8-timeline');
-                Route::patch('step9-story-structure', [StoryBookController::class, 'generateStep9'])->name('step9-story-structure');
-                Route::patch('step10-twists-and-foreshadowing', [StoryBookController::class, 'generateStep10'])->name('step10-twists-and-foreshadowing');
-                Route::patch('step11-scene-plan', [StoryBookController::class, 'generateStep11'])->name('step11-scene-plan');
-                Route::patch('step12-dialogue-plan', [StoryBookController::class, 'generateStep12'])->name('step12-dialogue-plan');
-                Route::patch('step13-page-plan', [StoryBookController::class, 'generateStep13'])->name('step13-page-plan');
-                Route::prefix('step14')->name('step14.')->group(function () {
-                    Route::patch('page-narration', [StoryBookController::class, 'generateStep14'])->name('page-narration');
-                });
+            Route::patch('save', [StoryBookController::class, 'save'])->name('save');
 
-                Route::prefix('step15')->name('step15.')->group(function () {
-                    Route::patch('illustration-planning', [StoryBookController::class, 'generateStep15'])->name('illustration-planning');
-                });
-
-                Route::prefix('step16')->name('step16.')->group(function () {
-                    Route::patch('illustration', [StoryBookController::class, 'generateStep16'])->name('illustration');
-                });
+            Route::prefix('text-generation')->name('text-generation.')->group(function () {
+                Route::patch('resume', [StoryBookController::class, 'resumeTextGeneration'])->name('resume');
+                Route::patch('stop', [StoryBookController::class, 'stopTextGeneration'])->name('stop');
             });
 
-            Route::prefix('regenerate')->name('regenerate.')->group(function () {
-                Route::patch('step2-characters', [StoryBookController::class, 'generateStep2'])->name('step2-characters');
-                Route::patch('step3-world-vibe', [StoryBookController::class, 'generateStep3'])->name('step3-world-vibe');
-                Route::patch('step4-locations', [StoryBookController::class, 'generateStep4'])->name('step4-locations');
-                Route::patch('step5-factions', [StoryBookController::class, 'generateStep5'])->name('step5-factions');
-                Route::patch('step6-creature', [StoryBookController::class, 'generateStep6'])->name('step6-creature');
-                Route::patch('step7-system', [StoryBookController::class, 'generateStep7'])->name('step7-system');
-                Route::patch('step8-timeline', [StoryBookController::class, 'generateStep8'])->name('step8-timeline');
-                Route::patch('step9-story-structure', [StoryBookController::class, 'generateStep9'])->name('step9-story-structure');
-                Route::patch('step10-twists-and-foreshadowing', [StoryBookController::class, 'generateStep10'])->name('step10-twists-and-foreshadowing');
-                Route::patch('step11-scene-plan', [StoryBookController::class, 'generateStep11'])->name('step11-scene-plan');
-                Route::patch('step12-dialogue-plan', [StoryBookController::class, 'generateStep12'])->name('step12-dialogue-plan');
-                Route::patch('step13-page-plan', [StoryBookController::class, 'generateStep13'])->name('step13-page-plan');
-                Route::prefix('step14')->name('step14.')->group(function () {
-                    Route::patch('page-narration', [StoryBookController::class, 'generateStep14'])->name('page-narration');
-                });
-
-                Route::prefix('step15')->name('step15.')->group(function () {
-                    Route::patch('illustration-planning', [StoryBookController::class, 'generateStep15'])->name('illustration-planning');
-                });
-
-                Route::prefix('step16')->name('step16.')->group(function () {
-                    Route::patch('illustration', [StoryBookController::class, 'generateStep16'])->name('illustration');
-                });
+            Route::prefix('illustration-generation')->name('illustration-generation.')->group(function () {
+                Route::patch('start', [StoryBookController::class, 'startIllustrationGeneration'])->name('start');
+                Route::patch('stop', [StoryBookController::class, 'stopIllustrationGeneration'])->name('stop');
             });
+
+            Route::get('generation-status', [StoryBookController::class, 'generationStatus'])->name('generation-status');
 
             Route::delete('delete', [StoryBookController::class, 'delete'])->name('delete');
         });

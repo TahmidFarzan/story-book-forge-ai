@@ -371,7 +371,7 @@ class SeederHelper
                 'average_latency' => 0.90,
                 'minimum_wait_time' => 2,
                 'timeout_seconds' => 60,
-                'max_output_tokens' => 5000,
+                'max_output_tokens' => 20000,
             ],
 
             (object) [
@@ -385,7 +385,7 @@ class SeederHelper
                 'average_latency' => 1.50,
                 'minimum_wait_time' => 2,
                 'timeout_seconds' => 60,
-                'max_output_tokens' => 5000,
+                'max_output_tokens' => 20000,
             ],
 
             (object) [
@@ -399,7 +399,7 @@ class SeederHelper
                 'average_latency' => 2.00,
                 'minimum_wait_time' => 2,
                 'timeout_seconds' => 90,
-                'max_output_tokens' => 5000,
+                'max_output_tokens' => 20000,
             ],
 
             (object) [

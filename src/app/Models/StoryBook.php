@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\MediaHelper;
+use App\Helpers\StoryBookHelper;
 use App\Observers\StoryBookObserver;
 use App\Policies\StoryBookPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -33,6 +34,10 @@ use Spatie\Sluggable\SlugOptions;
     'audience_id',
     'story_book_type_id',
     'language_id',
+    'illustration_type_id',
+    'ai_brain_text_id',
+    'ai_brain_illustration_id',
+    'additional_information',
     'ai_prompt',
     'foundation',
     'characters',
@@ -47,6 +52,16 @@ use Spatie\Sluggable\SlugOptions;
     'scene_plans',
     'dialogue_plans',
     'page_plan',
+    'current_step',
+    'completed_steps_count',
+    'current_illustration_page',
+    'completed_illustration_pages',
+    'error_message',
+    'stopped_at',
+    'text_generation_started_at',
+    'text_generation_completed_at',
+    'illustration_generation_started_at',
+    'illustration_generation_completed_at',
     'created_by_id',
 ])]
 #[UsePolicy(StoryBookPolicy::class)]
@@ -74,9 +89,34 @@ class StoryBook extends Model
             'dialogue_plans' => 'array',
             'page_plan' => 'array',
 
+            'current_step' => 'integer',
+            'completed_steps_count' => 'integer',
+            'current_illustration_page' => 'integer',
+            'completed_illustration_pages' => 'integer',
+
+            'stopped_at' => 'datetime',
+            'text_generation_started_at' => 'datetime',
+            'text_generation_completed_at' => 'datetime',
+            'illustration_generation_started_at' => 'datetime',
+            'illustration_generation_completed_at' => 'datetime',
+
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    public function isLocked(): bool
+    {
+        return StoryBookHelper::isLocked($this->status);
+    }
+
+    public function textGenerationProgressPercentage(): int
+    {
+        return (int) round(
+            min($this->completed_steps_count, StoryBookHelper::TEXT_GENERATION_STEP_COUNT)
+            / StoryBookHelper::TEXT_GENERATION_STEP_COUNT
+            * 100
+        );
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -91,6 +131,10 @@ class StoryBook extends Model
                 'audience_id',
                 'story_book_type_id',
                 'language_id',
+                'illustration_type_id',
+                'ai_brain_text_id',
+                'ai_brain_illustration_id',
+                'additional_information',
                 'ai_prompt',
 
                 'foundation',
@@ -107,6 +151,17 @@ class StoryBook extends Model
                 'dialogue_plans',
                 'page_plan',
                 'chapter_plan',
+
+                'current_step',
+                'completed_steps_count',
+                'current_illustration_page',
+                'completed_illustration_pages',
+                'error_message',
+                'stopped_at',
+                'text_generation_started_at',
+                'text_generation_completed_at',
+                'illustration_generation_started_at',
+                'illustration_generation_completed_at',
             ])
             ->useLogName('StoryBook')
             ->setDescriptionForEvent(fn (string $eventName) => "The record has been {$eventName}.")
@@ -142,6 +197,21 @@ class StoryBook extends Model
     public function audience(): BelongsTo
     {
         return $this->belongsTo(Audience::class);
+    }
+
+    public function aiBrainText(): BelongsTo
+    {
+        return $this->belongsTo(AiBrain::class, 'ai_brain_text_id');
+    }
+
+    public function aiBrainIllustration(): BelongsTo
+    {
+        return $this->belongsTo(AiBrain::class, 'ai_brain_illustration_id');
+    }
+
+    public function illustrationType(): BelongsTo
+    {
+        return $this->belongsTo(IllustrationType::class);
     }
 
     public function createdBy(): BelongsTo

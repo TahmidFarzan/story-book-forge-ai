@@ -1,24 +1,20 @@
 <script setup>
+import StoryBookContentReview from "@/components/back-office/story-book/StoryBookContentReview.vue";
+import StoryBookGenerationProgress from "@/components/back-office/story-book/StoryBookGenerationProgress.vue";
+import StoryBookIllustrationForm from "@/components/back-office/story-book/StoryBookIllustrationForm.vue";
+import StoryBookSetupForm from "@/components/back-office/story-book/StoryBookSetupForm.vue";
+import {
+    canStartIllustrationGeneration,
+    isGenerationRunning,
+    isStoryBookComplete,
+    isTextGenerationComplete,
+    statusClasses,
+    statusLabels,
+} from "@/composables/useStoryBook";
+
 import Layout from "@/pages/layouts/AuthLayout.vue";
 
-import StoryBookStep2Form from "@/components/back-office/story-book/StoryBookStep2Form.vue";
-import StoryBookStep6Form from "@/components/back-office/story-book/StoryBookStep6Form.vue";
-import StoryBookStep12Form from "@/components/back-office/story-book/StoryBookStep12Form.vue";
-import StoryBookStep5Form from "@/components/back-office/story-book/StoryBookStep5Form.vue";
-import StoryBookStep1Form from "@/components/back-office/story-book/StoryBookStep1Form.vue";
-import StoryBookStep4Form from "@/components/back-office/story-book/StoryBookStep4Form.vue";
-import StoryBookStep13Form from "@/components/back-office/story-book/StoryBookStep13Form.vue";
-import StoryBookStep14Form from "@/components/back-office/story-book/StoryBookStep14Form.vue";
-import StoryBookStep15Form from "@/components/back-office/story-book/StoryBookStep15Form.vue";
-import StoryBookStep16Form from "@/components/back-office/story-book/StoryBookStep16Form.vue";
-import StoryBookStep11Form from "@/components/back-office/story-book/StoryBookStep11Form.vue";
-import StoryBookStep9Form from "@/components/back-office/story-book/StoryBookStep9Form.vue";
-import StoryBookStep7Form from "@/components/back-office/story-book/StoryBookStep7Form.vue";
-import StoryBookStep8Form from "@/components/back-office/story-book/StoryBookStep8Form.vue";
-import StoryBookStep10Form from "@/components/back-office/story-book/StoryBookStep10Form.vue";
-import StoryBookStep3Form from "@/components/back-office/story-book/StoryBookStep3Form.vue";
-
-import { computed, nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { Head } from "@inertiajs/vue3";
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -26,44 +22,16 @@ import { library as FontAwesomeLibrary } from "@fortawesome/fontawesome-svg-core
 import {
     faArrowLeft,
     faBookOpen,
-    faCheck,
-    faClock,
-    faComments,
-    faFileLines,
-    faFilm,
-    faFlag,
-    faGear,
-    faGlobe,
     faImage,
-    faLightbulb,
-    faList,
-    faLocationDot,
     faLock,
-    faShuffle,
-    faSitemap,
-    faUser,
     faWandMagicSparkles,
 } from "@fortawesome/free-solid-svg-icons";
 
 FontAwesomeLibrary.add(
     faArrowLeft,
     faBookOpen,
-    faCheck,
-    faClock,
-    faComments,
-    faFileLines,
-    faFilm,
-    faFlag,
-    faGear,
-    faGlobe,
     faImage,
-    faLightbulb,
-    faList,
-    faLocationDot,
     faLock,
-    faShuffle,
-    faSitemap,
-    faUser,
     faWandMagicSparkles,
 );
 
@@ -71,17 +39,55 @@ defineOptions({ layout: Layout });
 
 const createPageTitle = "Create Story Book";
 
-const { storyBook } = defineProps({
+const { storyBook, progress } = defineProps({
     storyBook: {
         type: Object,
         default: null,
     },
+    progress: {
+        type: Object,
+        default: null,
+    },
 });
+
 const isUpdate = computed(() => !!storyBook?.id);
+
+const liveProgress = ref(null);
+
+const currentProgress = computed(() => liveProgress.value ?? progress);
+
+const status = computed(
+    () => currentProgress.value?.status ?? storyBook?.status,
+);
 
 const pageTitle = computed(() => {
     return isUpdate.value ? `Edit ${storyBook?.title}` : "New Story Book";
 });
+
+const isRunning = computed(() => isGenerationRunning(status.value));
+
+const isTextComplete = computed(() =>
+    isTextGenerationComplete(status.value),
+);
+
+const isComplete = computed(() => isStoryBookComplete(status.value));
+
+const canStartIllustration = computed(() =>
+    canStartIllustrationGeneration(status.value),
+);
+
+const showSetup = computed(
+    () => !isUpdate.value || (!isTextComplete.value && !isComplete.value),
+);
+
+const TABS = [
+    { key: "setup", label: "Setup", icon: "wand-magic-sparkles" },
+    { key: "progress", label: "Progress", icon: "book-open" },
+    { key: "review", label: "Review", icon: "book-open" },
+    { key: "illustration", label: "Illustration", icon: "image" },
+];
+
+const activeTab = ref(isUpdate.value ? "progress" : "setup");
 
 onMounted(async () => {
     await nextTick();
@@ -99,166 +105,47 @@ onMounted(async () => {
     );
 });
 
-const STEP_DEFINITIONS = [
-    {
-        number: "01",
-        title: "Foundation",
-        text: "Create the core story foundation with its title, subtitle, foundation, theme, genre, and tone.",
-        icon: ["fas", "lightbulb"],
-    },
-    {
-        number: "02",
-        title: "Character",
-        text: "Create protagonists, supporting characters, antagonists, relationships, and character arcs.",
-        icon: ["fas", "user"],
-    },
-    {
-        number: "03",
-        title: "World Vibe",
-        text: "Create the story world through its overview, culture, history, environment, rules, and lore.",
-        icon: ["fas", "globe"],
-    },
-    {
-        number: "04",
-        title: "Location",
-        text: "Create important places, regions, cities, and special story locations.",
-        icon: ["fas", "location-dot"],
-    },
-    {
-        number: "05",
-        title: "Faction",
-        text: "Create organizations, kingdoms, rival groups, goals, and conflicts.",
-        icon: ["fas", "flag"],
-    },
-    {
-        number: "06",
-        title: "Creature",
-        text: "Create short cinematic story moments, special entities, and important scenes.",
-        icon: ["fas", "film"],
-    },
-    {
-        number: "07",
-        title: "System",
-        text: "Create magic, technology, world mechanics, and the limitations that shape the story.",
-        icon: ["fas", "gear"],
-    },
-    {
-        number: "08",
-        title: "Timeline",
-        text: "Create chronological story history with past events, present events, future events, and milestones.",
-        icon: ["fas", "clock"],
-    },
-    {
-        number: "09",
-        title: "Story Structure",
-        text: "Create the story outline, acts, chapters, plot progression, and pacing guide.",
-        icon: ["fas", "sitemap"],
-    },
-    {
-        number: "10",
-        title: "Twists & Foreshadowing",
-        text: "Create hidden narrative elements with twists, clues, reveals, and future connections.",
-        icon: ["fas", "shuffle"],
-    },
-    {
-        number: "11",
-        title: "Scene Plan",
-        text: "Create scene progression with objectives, events, locations, and purpose.",
-        icon: ["fas", "list"],
-    },
-    {
-        number: "12",
-        title: "Dialogue Plan",
-        text: "Create dialogue planning with dialogue points, emotional beats, and conversation flow.",
-        icon: ["fas", "comments"],
-    },
-    {
-        number: "13",
-        title: "Page Plan",
-        text: "Create page-by-page story planning with page sequence, descriptions, and illustration notes.",
-        icon: ["fas", "file-lines"],
-    },
-    {
-        number: "14",
-        title: "Page Narration",
-        text: "Generate the narration text for every page of the illustrated story book.",
-        icon: ["fas", "file-lines"],
-    },
-    {
-        number: "15",
-        title: "Illustration Planning",
-        text: "Select the illustration type applied to every page of the illustrated story book.",
-        icon: ["fas", "image"],
-    },
-    {
-        number: "16",
-        title: "Illustration Generation",
-        text: "Generate one illustration per page using an image-output AI Brain.",
-        icon: ["fas", "wand-magic-sparkles"],
-    },
-];
+const isTabVisible = (tab) => {
+    if (!isUpdate.value) {
+        return tab === "setup";
+    }
 
-const activeStep = ref(1);
-const completedSteps = ref(new Set());
-const isStoryBookComplete = ref(false);
+    if (tab === "setup") {
+        return showSetup.value;
+    }
 
-const activeStepDefinition = computed(
-    () => STEP_DEFINITIONS[activeStep.value - 1],
+    if (tab === "review") {
+        return isTextComplete.value || isComplete.value;
+    }
+
+    if (tab === "illustration") {
+        return isTextComplete.value || isRunning.value || isComplete.value;
+    }
+
+    return true;
+};
+
+const visibleTabs = computed(() => TABS.filter((tab) => isTabVisible(tab)));
+
+const handleProgressUpdated = (payload) => {
+    liveProgress.value = payload?.progress ?? null;
+};
+
+watch(
+    () => progress,
+    (newProgress) => {
+        liveProgress.value = newProgress ?? null;
+    },
 );
 
-const isStepAccessible = (stepId) => {
-    if (stepId === 1) {
-        return true;
-    }
-
-    return completedSteps.value.has(stepId - 1);
-};
-
-const isStepCompleted = (stepId) => completedSteps.value.has(stepId);
-
-const getStepState = (stepId) => {
-    if (isStepCompleted(stepId)) {
-        return "completed";
-    }
-
-    if (stepId === activeStep.value) {
-        return "active";
-    }
-
-    if (isStepAccessible(stepId)) {
-        return "accessible";
-    }
-
-    return "locked";
-};
-
-const handleStepCompleted = () => {
-    const stepId = activeStep.value;
-
-    completedSteps.value = new Set([...completedSteps.value, stepId]);
-
-    if (stepId < STEP_DEFINITIONS.length) {
-        activeStep.value = stepId + 1;
-    }
-};
-
-const completeStoryBook = () => {
-    if (isStepCompleted(STEP_DEFINITIONS.length)) {
-        isStoryBookComplete.value = true;
-    }
-};
-
-const goToStep = (stepId) => {
-    if (isStepAccessible(stepId) || isStepCompleted(stepId)) {
-        activeStep.value = stepId;
-    }
-};
-
-const goPrev = () => {
-    if (activeStep.value > 1) {
-        activeStep.value--;
-    }
-};
+watch(
+    () => storyBook?.status,
+    (newStatus) => {
+        if (!isGenerationRunning(newStatus)) {
+            liveProgress.value = progress ?? null;
+        }
+    },
+);
 </script>
 
 <template>
@@ -270,7 +157,7 @@ const goPrev = () => {
         >
             <div class="flex flex-col">
                 <div
-                    class="flex items-center px-0 py-4 border-b border-gray-200"
+                    class="flex flex-wrap items-center justify-between gap-3 px-0 py-4 border-b border-gray-200"
                 >
                     <h2 class="text-lg font-semibold flex items-center gap-2">
                         <FontAwesomeIcon
@@ -279,298 +166,121 @@ const goPrev = () => {
                         />
                         {{ pageTitle }}
                     </h2>
-                </div>
 
-                <div class="px-0 pt-4 border-b border-gray-200">
-                    <nav class="hidden md:grid md:grid-cols-4 gap-2 pb-4">
-                        <button
-                            v-for="(step, index) in STEP_DEFINITIONS"
-                            :key="step.number"
-                            type="button"
-                            @click="goToStep(index + 1)"
-                            :disabled="
-                                !isStepAccessible(index + 1) &&
-                                !isStepCompleted(index + 1)
-                            "
-                            class="flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
-                            :class="{
-                                'border-blue-200 bg-blue-50 text-blue-700':
-                                    getStepState(index + 1) === 'active',
-                                'border-green-200 bg-green-50 text-green-700':
-                                    getStepState(index + 1) === 'completed',
-                                'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50':
-                                    getStepState(index + 1) === 'accessible',
-                                'border-gray-100 text-gray-300':
-                                    getStepState(index + 1) === 'locked',
-                            }"
+                    <div class="flex items-center gap-2">
+                        <span
+                            v-if="isUpdate"
+                            class="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
+                            :class="statusClasses[status] ?? 'bg-gray-100 text-gray-700'"
                         >
-                            <span
-                                class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold"
-                                :class="{
-                                    'bg-blue-600 text-white':
-                                        getStepState(index + 1) === 'active',
-                                    'bg-green-500 text-white':
-                                        getStepState(index + 1) === 'completed',
-                                    'bg-gray-200 text-gray-600':
-                                        getStepState(index + 1) ===
-                                        'accessible',
-                                    'bg-gray-100 text-gray-400':
-                                        getStepState(index + 1) === 'locked',
-                                }"
-                            >
-                                <FontAwesomeIcon
-                                    v-if="isStepCompleted(index + 1)"
-                                    icon="check"
-                                    class="text-xs"
-                                />
-                                <span v-else>{{ step.number }}</span>
-                            </span>
                             <FontAwesomeIcon
-                                :icon="step.icon"
-                                class="flex-shrink-0 text-xs"
-                            />
-                            <span class="min-w-0 flex-1 break-words">{{
-                                step.title
-                            }}</span>
-                            <FontAwesomeIcon
-                                v-if="getStepState(index + 1) === 'locked'"
+                                v-if="isComplete"
                                 icon="lock"
-                                class="flex-shrink-0 text-xs"
+                                class="text-xs"
                             />
-                        </button>
-                    </nav>
+                            {{ statusLabels[status] ?? status }}
+                        </span>
 
-                    <nav class="md:hidden -mx-2 px-2 pb-3">
-                        <button
-                            v-for="(step, index) in STEP_DEFINITIONS"
-                            :key="step.number"
-                            type="button"
-                            @click="goToStep(index + 1)"
-                            :disabled="
-                                !isStepAccessible(index + 1) &&
-                                !isStepCompleted(index + 1)
-                            "
-                            class="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition disabled:opacity-40 disabled:cursor-not-allowed"
-                            :class="{
-                                'bg-blue-50 text-blue-700':
-                                    getStepState(index + 1) === 'active' ||
-                                    getStepState(index + 1) === 'completed',
-                                'text-gray-600 hover:bg-gray-50':
-                                    getStepState(index + 1) === 'accessible',
-                                'text-gray-300':
-                                    getStepState(index + 1) === 'locked',
-                            }"
+                        <a
+                            :href="route('back-office.story-books.index')"
+                            class="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition flex items-center gap-2"
                         >
-                            <span
-                                class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold"
-                                :class="{
-                                    'bg-blue-600 text-white':
-                                        getStepState(index + 1) === 'active',
-                                    'bg-green-500 text-white':
-                                        getStepState(index + 1) === 'completed',
-                                    'bg-gray-200 text-gray-600':
-                                        getStepState(index + 1) ===
-                                        'accessible',
-                                    'bg-gray-100 text-gray-400':
-                                        getStepState(index + 1) === 'locked',
-                                }"
-                            >
-                                <FontAwesomeIcon
-                                    v-if="isStepCompleted(index + 1)"
-                                    icon="check"
-                                    class="text-xs"
-                                />
-                                <span v-else>{{ step.number }}</span>
-                            </span>
-                            <FontAwesomeIcon
-                                :icon="step.icon"
-                                class="flex-shrink-0 text-xs"
-                            />
-                            <span class="flex-1 break-words">{{
-                                step.title
-                            }}</span>
-                            <FontAwesomeIcon
-                                v-if="getStepState(index + 1) === 'locked'"
-                                icon="lock"
-                                class="flex-shrink-0 text-xs"
-                            />
-                        </button>
-                    </nav>
-                </div>
-
-                <div class="px-0 py-6">
-                    <section class="space-y-6">
-                        <div class="bg-white border rounded-xl p-5 shadow-sm">
-                            <div class="flex items-start gap-3">
-                                <span
-                                    class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600"
-                                >
-                                    <FontAwesomeIcon
-                                        :icon="activeStepDefinition.icon"
-                                    />
-                                </span>
-                                <div>
-                                    <h3 class="text-base font-semibold">
-                                        {{ activeStepDefinition.title }}
-                                    </h3>
-                                    <p class="mt-1 text-sm text-gray-500">
-                                        {{ activeStepDefinition.text }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <StoryBookStep1Form
-                            v-if="activeStep === 1"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep2Form
-                            v-else-if="activeStep === 2"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep3Form
-                            v-else-if="activeStep === 3"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep4Form
-                            v-else-if="activeStep === 4"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep5Form
-                            v-else-if="activeStep === 5"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep6Form
-                            v-else-if="activeStep === 6"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep7Form
-                            v-else-if="activeStep === 7"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep8Form
-                            v-else-if="activeStep === 8"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep9Form
-                            v-else-if="activeStep === 9"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep10Form
-                            v-else-if="activeStep === 10"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep11Form
-                            v-else-if="activeStep === 11"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep12Form
-                            v-else-if="activeStep === 12"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep13Form
-                            v-else-if="activeStep === 13"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep14Form
-                            v-else-if="activeStep === 14"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep15Form
-                            v-else-if="activeStep === 15"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-
-                        <StoryBookStep16Form
-                            v-else-if="activeStep === 16"
-                            :story-book="storyBook"
-                            @completed="handleStepCompleted"
-                        />
-                    </section>
-
-                    <div
-                        v-if="isStoryBookComplete"
-                        class="mt-6 rounded-xl border border-green-200 bg-green-50 p-5 text-center"
-                    >
-                        <FontAwesomeIcon
-                            icon="check"
-                            class="text-2xl text-green-600"
-                        />
-                        <h3 class="mt-2 text-lg font-semibold text-green-800">
-                            Story Book Complete
-                        </h3>
-                        <p class="mt-1 text-sm text-green-700">
-                            All story modules are ready for the final story
-                            book.
-                        </p>
+                            <FontAwesomeIcon icon="arrow-left" />
+                            Back to List
+                        </a>
                     </div>
                 </div>
 
                 <div
-                    class="px-0 py-4 border-t border-gray-200 flex justify-between items-center gap-3"
+                    v-if="isUpdate"
+                    class="px-0 pt-4 border-b border-gray-200"
                 >
-                    <button
-                        type="button"
-                        @click="goPrev"
-                        :disabled="activeStep === 1"
-                        class="px-4 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-50 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                        <FontAwesomeIcon icon="arrow-left" />
-                        Previous
-                    </button>
-
-                    <span class="hidden sm:inline text-xs text-gray-400"
-                        >Step {{ activeStep }} of
-                        {{ STEP_DEFINITIONS.length }}</span
-                    >
-
-                    <div class="flex items-center gap-2">
+                    <nav class="flex flex-wrap gap-2 pb-4">
                         <button
-                            v-if="
-                                activeStep === STEP_DEFINITIONS.length &&
-                                isStepCompleted(activeStep)
-                            "
+                            v-for="tab in visibleTabs"
+                            :key="tab.key"
                             type="button"
-                            @click="completeStoryBook"
-                            :disabled="isStoryBookComplete"
-                            class="px-5 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                            @click="activeTab = tab.key"
+                            class="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition"
+                            :class="
+                                activeTab === tab.key
+                                    ? 'border-blue-200 bg-blue-50 text-blue-700'
+                                    : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                            "
                         >
-                            <FontAwesomeIcon icon="book-open" />
-                            {{
-                                isStoryBookComplete
-                                    ? "Completed"
-                                    : "Complete Story Book"
-                            }}
+                            <FontAwesomeIcon :icon="tab.icon" class="text-xs" />
+                            {{ tab.label }}
                         </button>
+                    </nav>
+                </div>
+
+                <div class="px-0 py-6 space-y-6">
+                    <StoryBookSetupForm
+                        v-if="activeTab === 'setup' && showSetup"
+                        :story-book="storyBook"
+                        :is-update="isUpdate"
+                        :disabled="isRunning"
+                    />
+
+                    <StoryBookGenerationProgress
+                        v-if="activeTab === 'progress' && isUpdate"
+                        :story-book="storyBook"
+                        :progress="currentProgress"
+                        @updated="handleProgressUpdated"
+                    />
+
+                    <div
+                        v-if="
+                            activeTab === 'progress' &&
+                            isUpdate &&
+                            canStartIllustration
+                        "
+                        class="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700 flex flex-wrap items-center justify-between gap-3"
+                    >
+                        <span class="flex items-center gap-2">
+                            <FontAwesomeIcon icon="book-open" />
+                            Story Book is created successfully, You can review
+                            first then start Illustration page.
+                        </span>
+
+                        <button
+                            type="button"
+                            @click="activeTab = 'illustration'"
+                            class="flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
+                        >
+                            <FontAwesomeIcon icon="image" />
+                            Go to Illustration
+                        </button>
+                    </div>
+
+                    <StoryBookContentReview
+                        v-if="activeTab === 'review' && isUpdate"
+                        :story-book="storyBook"
+                    />
+
+                    <StoryBookIllustrationForm
+                        v-if="activeTab === 'illustration' && isUpdate"
+                        :story-book="storyBook"
+                        :progress="currentProgress"
+                        @updated="handleProgressUpdated"
+                    />
+
+                    <div
+                        v-if="!isUpdate"
+                        class="rounded-xl border border-blue-200 bg-blue-50 p-5 text-center"
+                    >
+                        <FontAwesomeIcon
+                            icon="wand-magic-sparkles"
+                            class="text-2xl text-blue-600"
+                        />
+                        <h3 class="mt-2 text-lg font-semibold text-blue-800">
+                            One click generates steps 1 to 15
+                        </h3>
+                        <p class="mt-1 text-sm text-blue-700">
+                            The story book is saved only after the foundation
+                            call succeeds, then every remaining text step runs
+                            automatically. You can stop and resume at any time.
+                        </p>
                     </div>
                 </div>
             </div>

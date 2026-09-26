@@ -35,7 +35,7 @@ class HuggingFaceApiService
 
         set_time_limit($requestTimeout);
 
-        $payload = $this->buildPayload($model, $data, $maxOutputTokens);
+        $payload = $this->buildPayload($model, $data, $maxOutputTokens, true);
 
         $endpoint = rtrim($url, '/');
 
@@ -44,13 +44,36 @@ class HuggingFaceApiService
                 ->withToken($apiKey)
                 ->acceptJson()
                 ->post($endpoint, $payload);
+
+            if ($this->rejectsJsonMode($response)) {
+                unset($payload['response_format']);
+
+                $response = Http::timeout($requestTimeout)
+                    ->withToken($apiKey)
+                    ->acceptJson()
+                    ->post($endpoint, $payload);
+            }
         } catch (Exception $exception) {
             return $this->formatErrorResponse(
                 'Hugging Face API request failed: ' . $exception->getMessage()
             );
         }
 
-        return $this->formatAIResponse($response, $stepName, $stepData);
+        return $this->formatAIResponse($response, $stepName, $stepData, $model, $maxOutputTokens);
+    }
+
+    private function rejectsJsonMode($response): bool
+    {
+        if ($response->successful()) {
+            return false;
+        }
+
+        $body = Str::lower($response->body());
+
+        return str_contains($body, 'response_format')
+            || str_contains($body, 'json_object')
+            || str_contains($body, 'not supported')
+            || str_contains($body, 'unsupported');
     }
 
     public function sendGetRequest(string $url, string $apiKey, array $params = [], ?int $timeout = null): array
@@ -551,7 +574,7 @@ class HuggingFaceApiService
         ];
     }
 
-    private function formatAIResponse($response, string $stepName = '', array $stepData = []): array
+    private function formatAIResponse($response, string $stepName = '', array $stepData = [], string $model = '', ?int $maxOutputTokens = null): array
     {
         if (! $response->successful()) {
             return $this->formatErrorResponse(
@@ -559,10 +582,16 @@ class HuggingFaceApiService
             );
         }
 
+        $meta = [
+            'http_status'      => $response->status(),
+            'model'            => $model,
+            'max_output_tokens' => $maxOutputTokens,
+        ];
+
         try {
             $apiResponse = $this->parseJsonResponse($response);
 
-            $data = $this->decodeAiResponseContent($apiResponse, $stepName);
+            $data = $this->decodeAiResponseContent($apiResponse, $stepName, $meta);
 
             $data = $this->dispatchStepResponseFormat($stepName, $data, $stepData);
         } catch (Exception $exception) {
@@ -574,8 +603,10 @@ class HuggingFaceApiService
         return $this->formatSuccessResponse($data);
     }
 
-    private function decodeAiResponseContent($apiResponse, string $context = ''): array
+    private function decodeAiResponseContent($apiResponse, string $context = '', array $meta = []): array
     {
+        $finishReason = (string) (data_get($apiResponse, 'choices.0.finish_reason') ?? '');
+
         $content = data_get(
             $apiResponse,
             'choices.0.message.content'
@@ -585,7 +616,9 @@ class HuggingFaceApiService
             throw new Exception(
                 $this->buildDecodeErrorMessage(
                     $context,
-                    'AI response is empty or invalid structure.'
+                    'AI response is empty or invalid structure.',
+                    $finishReason,
+                    $meta
                 )
             );
         }
@@ -597,20 +630,36 @@ class HuggingFaceApiService
             true
         );
 
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            ! is_array($decoded)
-        ) {
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+
+        if ($finishReason === 'length') {
             throw new Exception(
-                $this->buildDecodeErrorMessage(
-                    $context,
-                    json_last_error_msg(),
-                    $content
-                )
+                $this->buildTruncationErrorMessage($context, $meta, $content)
             );
         }
 
-        return $decoded;
+        $repaired = $this->normalizeAiJsonStructure($content);
+
+        $decoded = json_decode(
+            $repaired,
+            true
+        );
+
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+
+        throw new Exception(
+            $this->buildDecodeErrorMessage(
+                $context,
+                json_last_error_msg(),
+                $finishReason,
+                $meta,
+                $content
+            )
+        );
     }
 
     private function formatSuccessResponse(mixed $data): array
@@ -944,9 +993,110 @@ class HuggingFaceApiService
             $content = substr($content, $firstBrace, $lastBrace - $firstBrace + 1);
         }
 
-        $content = preg_replace('/[\x00-\x1F\x7F]/', '', $content);
-
         return trim($content);
+    }
+
+    private function normalizeAiJsonStructure(string $content): string
+    {
+        $result = '';
+
+        $length = strlen($content);
+
+        $inString = false;
+
+        $isEscaped = false;
+
+        $pendingComma = false;
+
+        for ($index = 0; $index < $length; $index++) {
+            $character = $content[$index];
+
+            $ordinal = ord($character);
+
+            if ($inString) {
+                if ($isEscaped) {
+                    $result .= $character;
+                    $isEscaped = false;
+
+                    continue;
+                }
+
+                if ($character === '\\') {
+                    $result .= $character;
+                    $isEscaped = true;
+
+                    continue;
+                }
+
+                if ($character === '"') {
+                    $result .= $character;
+                    $inString = false;
+
+                    continue;
+                }
+
+                if ($ordinal < 0x20) {
+                    $result .= $this->escapeControlCharacter($ordinal);
+
+                    continue;
+                }
+
+                $result .= $character;
+
+                continue;
+            }
+
+            if ($character === '"') {
+                if ($pendingComma) {
+                    $pendingComma = false;
+                }
+
+                $result .= $character;
+                $inString = true;
+
+                continue;
+            }
+
+            if ($character === ',') {
+                $pendingComma = true;
+
+                continue;
+            }
+
+            if ($ordinal <= 0x20 || $character === "\t") {
+                if ($pendingComma) {
+                    $pendingComma = false;
+                }
+
+                $result .= ($character === "\t") ? ' ' : $character;
+
+                continue;
+            }
+
+            if ($pendingComma) {
+                $pendingComma = false;
+
+                $result .= $character;
+
+                continue;
+            }
+
+            $result .= $character;
+        }
+
+        return $result;
+    }
+
+    private function escapeControlCharacter(int $ordinal): string
+    {
+        return match ($ordinal) {
+            0x08 => '\\b',
+            0x09 => '\\t',
+            0x0A => '\\n',
+            0x0C => '\\f',
+            0x0D => '\\r',
+            default => ' ',
+        };
     }
 
     private function parseJsonResponse($response): array
@@ -1012,17 +1162,61 @@ class HuggingFaceApiService
         return $message;
     }
 
-    private function buildDecodeErrorMessage(string $context, string $jsonError, string $content = ''): string
+    private function buildDecodeErrorMessage(string $context, string $jsonError, string $finishReason = '', array $meta = [], string $content = ''): string
     {
         $stepLabel = $context !== '' ? $context : 'AI generation';
 
         $message = $stepLabel . " generation failed.\n\nJSON Error:\n" . $jsonError;
+
+        $message .= $this->buildResponseMetaSection($finishReason, $meta);
 
         if ($content !== '') {
             $message .= "\n\nAPI Response:\n" . Str::limit($content, 600);
         }
 
         return $message;
+    }
+
+    private function buildTruncationErrorMessage(string $context, array $meta, string $content): string
+    {
+        $stepLabel = $context !== '' ? $context : 'AI generation';
+
+        $maxOutputTokens = $meta['max_output_tokens'] ?? null;
+
+        $message = $stepLabel . " generation failed.\n\nJSON Error:\nResponse was truncated by the model before the JSON could be completed.";
+
+        $message .= "\n\nFinish Reason:\nlength";
+
+        $message .= "\n\nMax Output Tokens:\n" . ($maxOutputTokens ?? 'not set');
+
+        if (! empty($meta['model'])) {
+            $message .= "\n\nModel:\n" . $meta['model'];
+        }
+
+        $message .= "\n\nAPI Response:\n" . Str::limit($content, 600);
+
+        $message .= "\n\nThe AI ran out of output tokens mid-JSON. Raise max output tokens for this AI brain, or reduce the amount of content requested by this step.";
+
+        return $message;
+    }
+
+    private function buildResponseMetaSection(string $finishReason, array $meta): string
+    {
+        $lines = [];
+
+        if ($finishReason !== '') {
+            $lines[] = "Finish Reason:\n" . $finishReason;
+        }
+
+        if (! empty($meta['model'])) {
+            $lines[] = "Model:\n" . $meta['model'];
+        }
+
+        if (! empty($meta['http_status'])) {
+            $lines[] = "HTTP Status:\n" . $meta['http_status'];
+        }
+
+        return $lines === [] ? '' : "\n\n" . implode("\n\n", $lines);
     }
 
     private function extractImageResponse($response): array
@@ -1256,7 +1450,7 @@ class HuggingFaceApiService
             : 'png';
     }
 
-    private function buildPayload(string $model, mixed $data = null, ?int $maxOutputTokens = null): array
+    private function buildPayload(string $model, mixed $data = null, ?int $maxOutputTokens = null, bool $jsonMode = false): array
     {
         $content = $this->buildContent($data);
 
@@ -1269,6 +1463,12 @@ class HuggingFaceApiService
                 ],
             ],
         ];
+
+        if ($jsonMode) {
+            $payload['response_format'] = [
+                'type' => 'json_object',
+            ];
+        }
 
         if ($maxOutputTokens !== null && $maxOutputTokens > 0) {
             $payload['max_tokens'] = $maxOutputTokens;
