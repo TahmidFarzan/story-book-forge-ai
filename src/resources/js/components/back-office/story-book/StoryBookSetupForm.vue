@@ -158,9 +158,9 @@ const submit = () => {
             </div>
 
             <p class="text-sm text-gray-500">
-                These details drive every text generation step. The AI
+                These details drive every text generation stage. The AI
                 foundation is generated first, and the story book is only saved
-                once that call succeeds.
+                once that stage succeeds.
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

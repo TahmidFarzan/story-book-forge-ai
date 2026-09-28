@@ -274,11 +274,11 @@ watch(
                             class="text-2xl text-blue-600"
                         />
                         <h3 class="mt-2 text-lg font-semibold text-blue-800">
-                            One click generates steps 1 to 15
+                            One click generates all 2 text stages
                         </h3>
                         <p class="mt-1 text-sm text-blue-700">
                             The story book is saved only after the foundation
-                            call succeeds, then every remaining text step runs
+                            stage succeeds, then the detail stage runs
                             automatically. You can stop and resume at any time.
                         </p>
                     </div>

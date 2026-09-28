@@ -8,9 +8,11 @@ export const statuses = {
     Complete: "Complete",
 }
 
-export const textGenerationStepCount = 15;
+export const totalGenerationStages = 3;
 
-export const illustrationGenerationStep = 16;
+export const textGenerationStages = 2;
+
+export const finalGenerationStage = 3;
 
 export const statusLabels = {
     [statuses.Draft]: "Draft",

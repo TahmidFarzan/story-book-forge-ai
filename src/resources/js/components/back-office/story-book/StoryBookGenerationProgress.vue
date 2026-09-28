@@ -53,7 +53,7 @@ const currentProgress = computed(() => liveProgress.value ?? props.progress);
 
 const status = computed(() => currentProgress.value?.status ?? props.storyBook?.status);
 
-const steps = computed(() => currentProgress.value?.steps ?? []);
+const stages = computed(() => currentProgress.value?.stages ?? []);
 
 const isRunning = computed(() => status.value === statuses.ProcessingText);
 
@@ -68,45 +68,45 @@ const canResume = computed(() => isStopped.value);
 const percentage = computed(() => currentProgress.value?.percentage ?? 0);
 
 const completedCount = computed(
-    () => currentProgress.value?.completed_steps_count ?? 0,
+    () => currentProgress.value?.completed_stages_count ?? 0,
 );
 
-const totalCount = computed(() => currentProgress.value?.total_steps ?? 0);
+const totalCount = computed(() => currentProgress.value?.total_stages ?? 0);
 
-const stepClasses = (step) => {
-    if (step.state === "completed") {
+const stageClasses = (stage) => {
+    if (stage.state === "completed") {
         return "border-green-200 bg-green-50 text-green-700";
     }
 
-    if (step.state === "processing") {
+    if (stage.state === "processing") {
         return "border-blue-200 bg-blue-50 text-blue-700";
     }
 
-    if (step.state === "failed") {
+    if (stage.state === "failed") {
         return "border-red-200 bg-red-50 text-red-700";
     }
 
-    if (step.state === "stopped") {
+    if (stage.state === "stopped") {
         return "border-amber-200 bg-amber-50 text-amber-700";
     }
 
     return "border-gray-200 text-gray-500";
 };
 
-const stepIconClasses = (step) => {
-    if (step.state === "completed") {
+const stageIconClasses = (stage) => {
+    if (stage.state === "completed") {
         return "bg-green-500 text-white";
     }
 
-    if (step.state === "processing") {
+    if (stage.state === "processing") {
         return "bg-blue-600 text-white";
     }
 
-    if (step.state === "failed") {
+    if (stage.state === "failed") {
         return "bg-red-500 text-white";
     }
 
-    if (step.state === "stopped") {
+    if (stage.state === "stopped") {
         return "bg-amber-500 text-white";
     }
 
@@ -311,7 +311,7 @@ const resumeGeneration = () => {
                 <span
                     class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700"
                 >
-                    {{ completedCount }} / {{ totalCount }} steps
+                    {{ completedCount }} / {{ totalCount }} stages
                 </span>
             </div>
 
@@ -379,12 +379,12 @@ const resumeGeneration = () => {
         </div>
 
         <p
-            v-if="isRunning && currentProgress?.current_step_name"
+            v-if="isRunning && currentProgress?.current_stage_name"
             class="flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800"
         >
             <FontAwesomeIcon icon="spinner" spin />
-            Running step {{ currentProgress?.current_step }} of
-            {{ totalCount }} &mdash; {{ currentProgress?.current_step_name }}
+            Running stage {{ currentProgress?.current_stage }} of
+            {{ totalCount }} &mdash; {{ currentProgress?.current_stage_name }}
         </p>
 
         <p
@@ -397,7 +397,7 @@ const resumeGeneration = () => {
             />
             <span>
                 <span class="font-medium">
-                    Step {{ currentProgress?.current_step }} failed:
+                    Stage {{ currentProgress?.current_stage }} failed:
                 </span>
                 {{ currentProgress?.error_message }}
             </span>
@@ -408,8 +408,8 @@ const resumeGeneration = () => {
             class="flex items-center gap-2 rounded-lg border border-amber-100 bg-amber-50 p-3 text-sm text-amber-700"
         >
             <FontAwesomeIcon icon="circle-pause" />
-            Generation stopped at step
-            {{ currentProgress?.current_step }}. Resume to continue.
+            Generation stopped at stage
+            {{ currentProgress?.current_stage }}. Resume to continue.
         </p>
 
         <p
@@ -417,39 +417,39 @@ const resumeGeneration = () => {
             class="flex items-center gap-2 rounded-lg border border-green-100 bg-green-50 p-3 text-sm text-green-700"
         >
             <FontAwesomeIcon icon="circle-check" />
-            All {{ totalCount }} text generation steps are complete. Review the
+            All {{ totalCount }} generation stages are complete. Review the
             content, then start illustration generation.
         </p>
 
         <ol class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             <li
-                v-for="step in steps"
-                :key="step.number"
+                v-for="stage in stages"
+                :key="stage.number"
                 class="flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium"
-                :class="stepClasses(step)"
+                :class="stageClasses(stage)"
             >
                 <span
                     class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold"
-                    :class="stepIconClasses(step)"
+                    :class="stageIconClasses(stage)"
                 >
                     <FontAwesomeIcon
-                        v-if="step.state === 'completed'"
+                        v-if="stage.state === 'completed'"
                         icon="circle-check"
                         class="text-xs"
                     />
                     <FontAwesomeIcon
-                        v-else-if="step.state === 'processing'"
+                        v-else-if="stage.state === 'processing'"
                         icon="spinner"
                         spin
                         class="text-xs"
                     />
                     <FontAwesomeIcon
-                        v-else-if="step.state === 'failed'"
+                        v-else-if="stage.state === 'failed'"
                         icon="circle-exclamation"
                         class="text-xs"
                     />
                     <FontAwesomeIcon
-                        v-else-if="step.state === 'stopped'"
+                        v-else-if="stage.state === 'stopped'"
                         icon="circle-pause"
                         class="text-xs"
                     />
@@ -461,7 +461,7 @@ const resumeGeneration = () => {
                 </span>
 
                 <span class="min-w-0 flex-1 break-words">
-                    {{ step.number }}. {{ step.name }}
+                    Stage {{ stage.number }}: {{ stage.name }}
                 </span>
             </li>
         </ol>

@@ -14,9 +14,15 @@ class StoryBookHelper
     public const STATUS_STOP_ILLUSTRATION        = 'Stop Illustration';
     public const STATUS_COMPLETE                 = 'Complete';
 
-    public const TEXT_GENERATION_STEP_COUNT = 15;
+    public const FIRST_GENERATION_STAGE = 1;
 
-    public const ILLUSTRATION_GENERATION_STEP = 16;
+    public const SECOND_GENERATION_STAGE = 2;
+
+    public const FINAL_GENERATION_STAGE = 3;
+
+    public const TEXT_GENERATION_STAGE_COUNT = 2;
+
+    public const TOTAL_GENERATION_STAGE_COUNT = 3;
 
     public static function statuses(): Collection
     {

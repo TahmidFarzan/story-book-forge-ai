@@ -143,35 +143,41 @@ class StoryBookGeneratorStepTest extends TestCase
         $this->assertTrue(Gate::allows('viewAny', StoryBookGeneratorStep::class));
     }
 
-    public function test_seeder_creates_sixteen_linked_steps(): void
+    public function test_seeder_creates_three_linked_stages(): void
     {
         $this->seed([
             AiPromptSeeder::class,
             StoryBookGeneratorStepSeeder::class,
         ]);
 
-        $this->assertDatabaseCount('story_book_generator_steps', 16);
+        $this->assertDatabaseCount('story_book_generator_steps', 3);
 
-        $steps = StoryBookGeneratorStep::orderByDesc('id')->get()->reverse()->values();
+        $stages = StoryBookGeneratorStep::orderBy('id')->get()->values();
 
-        $this->assertNull($steps->first()->previousStep);
-        $this->assertNull($steps->last()->nextStep);
+        $this->assertSame([
+            'Story Foundation Generator',
+            'Story Detail Generator',
+            'Page Illustration Generator',
+        ], $stages->pluck('name')->all());
 
-        foreach ($steps as $index => $step) {
+        $this->assertNull($stages->first()->previousStep);
+        $this->assertNull($stages->last()->nextStep);
+
+        foreach ($stages as $index => $stage) {
             if ($index > 0) {
-                $this->assertSame($steps[$index - 1]->id, $step->previousStep->id);
+                $this->assertSame($stages[$index - 1]->id, $stage->previousStep->id);
             }
 
-            if ($index < $steps->count() - 1) {
-                $this->assertSame($steps[$index + 1]->id, $step->nextStep->id);
+            if ($index < $stages->count() - 1) {
+                $this->assertSame($stages[$index + 1]->id, $stage->nextStep->id);
             }
 
-            $this->assertNotNull($step->aiPrompt);
-            $this->assertNotNull($step->dependOnSteps());
+            $this->assertNotNull($stage->aiPrompt);
+            $this->assertNotNull($stage->dependOnSteps());
 
-            foreach ($step->depend_on_step_ids ?? [] as $dependencyId) {
-                $this->assertNotSame($step->id, $dependencyId);
-                $this->assertLessThan($step->id, $dependencyId);
+            foreach ($stage->depend_on_step_ids ?? [] as $dependencyId) {
+                $this->assertNotSame($stage->id, $dependencyId);
+                $this->assertLessThan($stage->id, $dependencyId);
             }
         }
     }
@@ -183,42 +189,16 @@ class StoryBookGeneratorStepTest extends TestCase
             StoryBookGeneratorStepSeeder::class,
         ]);
 
-        $steps = StoryBookGeneratorStep::orderByDesc('id')->get()->reverse()->values();
+        $stages = StoryBookGeneratorStep::orderBy('id')->get()->values();
 
-        $this->assertNull($steps[0]->depend_on_step_ids);
+        $this->assertNull($stages[0]->depend_on_step_ids);
 
-        $this->assertSame([$steps[0]->id], $steps[1]->depend_on_step_ids);
-
-        $this->assertSame([
-            $steps[0]->id,
-            $steps[1]->id,
-            $steps[2]->id,
-        ], $steps[3]->depend_on_step_ids);
+        $this->assertSame([$stages[0]->id], $stages[1]->depend_on_step_ids);
 
         $this->assertSame([
-            $steps[0]->id,
-            $steps[1]->id,
-            $steps[2]->id,
-            $steps[8]->id,
-            $steps[9]->id,
-            $steps[10]->id,
-            $steps[11]->id,
-            $steps[12]->id,
-        ], $steps[13]->depend_on_step_ids);
-
-        $this->assertSame(
-            collect($steps)->take(14)->pluck('id')->values()->all(),
-            $steps[14]->depend_on_step_ids
-        );
-
-        $this->assertSame([
-            $steps[0]->id,
-            $steps[1]->id,
-            $steps[2]->id,
-            $steps[3]->id,
-            $steps[13]->id,
-            $steps[14]->id,
-        ], $steps[15]->depend_on_step_ids);
+            $stages[0]->id,
+            $stages[1]->id,
+        ], $stages[2]->depend_on_step_ids);
     }
 
     public function test_seeder_dependency_codes_all_resolve(): void
@@ -228,19 +208,19 @@ class StoryBookGeneratorStepTest extends TestCase
             StoryBookGeneratorStepSeeder::class,
         ]);
 
-        $steps = StoryBookGeneratorStep::orderByDesc('id')->get()->reverse()->values();
+        $stages = StoryBookGeneratorStep::orderBy('id')->get()->values();
 
-        $stepCodes = collect($steps)
-            ->keyBy(fn (StoryBookGeneratorStep $step) => Str::studly($step->name));
+        $stageCodes = collect($stages)
+            ->keyBy(fn (StoryBookGeneratorStep $stage) => Str::studly($stage->name));
 
-        foreach ($steps as $step) {
-            foreach ($step->depend_on_step_ids ?? [] as $dependencyId) {
+        foreach ($stages as $stage) {
+            foreach ($stage->depend_on_step_ids ?? [] as $dependencyId) {
                 $this->assertTrue(
-                    $steps->contains(fn (StoryBookGeneratorStep $candidate) => $candidate->id === $dependencyId)
+                    $stages->contains(fn (StoryBookGeneratorStep $candidate) => $candidate->id === $dependencyId)
                 );
             }
 
-            $this->assertTrue($stepCodes->has(Str::studly($step->name)));
+            $this->assertTrue($stageCodes->has(Str::studly($stage->name)));
         }
     }
 
@@ -260,6 +240,81 @@ class StoryBookGeneratorStepTest extends TestCase
         $secondIds = StoryBookGeneratorStep::orderBy('id')->pluck('id')->all();
 
         $this->assertSame($firstIds, $secondIds);
-        $this->assertDatabaseCount('story_book_generator_steps', 16);
+        $this->assertDatabaseCount('story_book_generator_steps', 3);
+    }
+
+    public function test_seeder_creates_three_prompts_with_matching_codes(): void
+    {
+        $this->seed([
+            AiPromptSeeder::class,
+            StoryBookGeneratorStepSeeder::class,
+        ]);
+
+        $this->assertDatabaseCount('ai_prompts', 3);
+
+        $prompts = AiPrompt::orderBy('id')->get()->values();
+
+        $this->assertSame([
+            'StoryFoundationGenerator',
+            'StoryDetailGenerator',
+            'PageIllustrationGenerator',
+        ], $prompts->pluck('code')->all());
+
+        $this->assertSame([1, 2, 3], $prompts->pluck('step_number')->all());
+
+        $stages = StoryBookGeneratorStep::orderBy('id')->get()->values();
+
+        foreach ($stages as $index => $stage) {
+            $this->assertSame($prompts[$index]->id, $stage->aiPrompt->id);
+        }
+    }
+
+    public function test_seeded_prompt_placeholders_match_generation_stages(): void
+    {
+        $this->seed([
+            AiPromptSeeder::class,
+        ]);
+
+        $placeholders = static function (string $prompt): array {
+            preg_match_all('/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/', $prompt, $matches);
+
+            return array_values(array_unique($matches[1]));
+        };
+
+        $first = $placeholders(AiPrompt::where('code', 'StoryFoundationGenerator')->value('prompt'));
+        $second = $placeholders(AiPrompt::where('code', 'StoryDetailGenerator')->value('prompt'));
+        $final = $placeholders(AiPrompt::where('code', 'PageIllustrationGenerator')->value('prompt'));
+
+        $this->assertEqualsCanonicalizing([
+            'language',
+            'genre_instructions',
+            'audience_instruction',
+            'story_book_type_instruction',
+            'additional_information',
+        ], $first);
+
+        $this->assertEqualsCanonicalizing([
+            'language',
+            'genre_instructions',
+            'audience_instruction',
+            'story_book_type_instruction',
+            'foundation',
+            'characters',
+            'world_bible',
+            'locations',
+            'factions',
+            'creatures',
+            'systems',
+            'timeline',
+        ], $second);
+
+        $this->assertEqualsCanonicalizing([
+            'illustration_type_prompt_instruction',
+            'page',
+            'foundation',
+            'characters',
+            'world_bible',
+            'locations',
+        ], $final);
     }
 }

@@ -53,17 +53,26 @@ class StoryBookPageService
         ])->where('story_book_id', $storyBook->id)->where('no', $no)->firstOrFail();
     }
 
-    public function syncStoryBookPages(StoryBook $storyBook, array $apiResponce): void
+    public function syncGeneratedPages(StoryBook $storyBook, array $generatedPages, string $illustrationTypePromptInstruction): void
     {
         $incomingPages = [];
 
-        foreach ($apiResponce as $perRecordInResponce) {
-            $no = (int) ($perRecordInResponce['no'] ?? null);
+        foreach ($generatedPages as $generatedPage) {
+            $no = (int) ($generatedPage['no'] ?? null);
+
+            if ($no <= 0) {
+                continue;
+            }
 
             $incomingPages[$no] = [
-                'no'        => $no,
-                'narration' => $perRecordInResponce['narration'] ?? null,
+                'no'                  => $no,
+                'narration'           => $generatedPage['narration'] ?? null,
+                'illustration_prompt' => $generatedPage['illustration_prompt'] ?? null,
             ];
+        }
+
+        if ($incomingPages === []) {
+            throw new Exception('Story book generation did not return any page.');
         }
 
         $existingPages = $storyBook->storyBookPages()->get()->keyBy('no');
@@ -75,13 +84,14 @@ class StoryBookPageService
             if (! $storyBookPage) {
                 $storyBookPage                = $this->new();
                 $storyBookPage->story_book_id = $storyBook->id;
-                $storyBookPage->created_by_id = Auth::id();
+                $storyBookPage->created_by_id = Auth::id() ?? $storyBook->created_by_id;
             }
 
             $storyBookPage->no                                   = $no;
             $storyBookPage->narration                            = $incomingPage['narration'];
-            $storyBookPage->illustration_prompt                  = null;
-            $storyBookPage->illustration_type_prompt_instruction = null;
+            $storyBookPage->illustration_prompt                  = $incomingPage['illustration_prompt'];
+            $storyBookPage->illustration_type_prompt_instruction = $illustrationTypePromptInstruction;
+
             $storyBookPage->save();
 
         }
@@ -92,26 +102,6 @@ class StoryBookPageService
             $storyBook->storyBookPages()->whereIn('no', $missingPageNos)->get()
                 ->each(fn(StoryBookPage $storyBookPage) => $storyBookPage->delete());
         }
-    }
-
-    public function applyIllustrationPlanning(StoryBook $storyBook, array $plannedPages, string $illustrationTypePromptInstruction): void
-    {
-        $illustrationPrompts = [];
-
-        foreach ($plannedPages as $plannedPage) {
-            $no = (int) ($plannedPage['no'] ?? null);
-
-            $illustrationPrompts[$no] = $plannedPage['illustration_prompt'] ?? null;
-        }
-
-        DB::transaction(function () use ($storyBook, $illustrationPrompts, $illustrationTypePromptInstruction) {
-            $storyBook->storyBookPages()->whereIn('no', array_keys($illustrationPrompts))->get()
-                ->each(function (StoryBookPage $storyBookPage) use ($illustrationPrompts, $illustrationTypePromptInstruction) {
-                    $storyBookPage->illustration_prompt                  = $illustrationPrompts[$storyBookPage->no] ?? null;
-                    $storyBookPage->illustration_type_prompt_instruction = $illustrationTypePromptInstruction;
-                    $storyBookPage->save();
-                });
-        });
     }
 
     public function replaceIllustrationImage(StoryBookPage $storyBookPage, array $image): Media

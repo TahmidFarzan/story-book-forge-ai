@@ -112,9 +112,11 @@ class StoryBook extends Model
 
     public function textGenerationProgressPercentage(): int
     {
+        $totalStages = StoryBookHelper::TOTAL_GENERATION_STAGE_COUNT;
+
         return (int) round(
-            min($this->completed_steps_count, StoryBookHelper::TEXT_GENERATION_STEP_COUNT)
-            / StoryBookHelper::TEXT_GENERATION_STEP_COUNT
+            min($this->completed_steps_count, $totalStages)
+            / $totalStages
             * 100
         );
     }

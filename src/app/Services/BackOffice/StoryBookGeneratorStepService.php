@@ -73,48 +73,55 @@ class StoryBookGeneratorStepService
             ->appends($request->all());
     }
 
-    public function textSteps(): Collection
+    public function stages(): Collection
     {
-        return $this->orderedSteps()
-            ->take(StoryBookHelper::TEXT_GENERATION_STEP_COUNT)
+        return $this->orderedStages()
+            ->take(StoryBookHelper::TOTAL_GENERATION_STAGE_COUNT)
             ->values();
     }
 
-    public function illustrationStep(): ?StoryBookGeneratorStep
+    public function textStages(): Collection
     {
-        return $this->orderedSteps()->get(StoryBookHelper::TEXT_GENERATION_STEP_COUNT);
+        return $this->stages()
+            ->take(StoryBookHelper::TEXT_GENERATION_STAGE_COUNT)
+            ->values();
     }
 
-    public function totalTextSteps(): int
+    public function totalStages(): int
     {
-        return $this->textSteps()->count();
+        return max($this->stages()->count(), StoryBookHelper::TOTAL_GENERATION_STAGE_COUNT);
     }
 
-    public function stepByNumber(int $number): ?StoryBookGeneratorStep
+    public function totalTextStages(): int
     {
-        return $this->textSteps()->get($number - 1);
+        return max($this->textStages()->count(), StoryBookHelper::TEXT_GENERATION_STAGE_COUNT);
+    }
+
+    public function stageByNumber(int $number): ?StoryBookGeneratorStep
+    {
+        return $this->textStages()->get($number - 1);
     }
 
     public function startTextGeneration(StoryBook $storyBook): void
     {
-        $storyBook->status                        = StoryBookHelper::STATUS_PROCESSING_TEXT;
-        $storyBook->current_step                  = $storyBook->completed_steps_count + 1;
-        $storyBook->error_message                 = null;
-        $storyBook->stopped_at                    = null;
-        $storyBook->text_generation_started_at    = $storyBook->text_generation_started_at ?? now();
-        $storyBook->text_generation_completed_at  = null;
+        $storyBook->status                       = StoryBookHelper::STATUS_PROCESSING_TEXT;
+        $storyBook->current_step                 = $storyBook->completed_steps_count + 1;
+        $storyBook->error_message                = null;
+        $storyBook->stopped_at                   = null;
+        $storyBook->text_generation_started_at   = $storyBook->text_generation_started_at ?? now();
+        $storyBook->text_generation_completed_at = null;
 
         $storyBook->save();
     }
 
-    public function startStep(StoryBook $storyBook, int $number): void
+    public function startStage(StoryBook $storyBook, int $number): void
     {
         $storyBook->current_step = $number;
 
         $storyBook->save();
     }
 
-    public function completeStep(StoryBook $storyBook, int $number): void
+    public function completeStage(StoryBook $storyBook, int $number): void
     {
         $storyBook->current_step           = $number;
         $storyBook->completed_steps_count = max($storyBook->completed_steps_count, $number);
@@ -123,7 +130,7 @@ class StoryBookGeneratorStepService
         $storyBook->save();
     }
 
-    public function failStep(StoryBook $storyBook, int $number, string $message): void
+    public function failStage(StoryBook $storyBook, int $number, string $message): void
     {
         $storyBook->current_step  = $number;
         $storyBook->error_message = $message;
@@ -134,8 +141,8 @@ class StoryBookGeneratorStepService
     public function completeTextGeneration(StoryBook $storyBook): void
     {
         $storyBook->status                       = StoryBookHelper::STATUS_COMPLETE_TEXT;
-        $storyBook->current_step                 = StoryBookHelper::TEXT_GENERATION_STEP_COUNT;
-        $storyBook->completed_steps_count        = StoryBookHelper::TEXT_GENERATION_STEP_COUNT;
+        $storyBook->current_step                 = $this->totalTextStages();
+        $storyBook->completed_steps_count        = $this->totalTextStages();
         $storyBook->error_message                = null;
         $storyBook->stopped_at                   = null;
         $storyBook->text_generation_completed_at = now();
@@ -158,44 +165,84 @@ class StoryBookGeneratorStepService
             || $storyBook->status === StoryBookHelper::STATUS_STOP_TEXT;
     }
 
-    public function resumeStep(StoryBook $storyBook): ?StoryBookGeneratorStep
-    {
-        $number = $storyBook->current_step ?: 1;
-
-        return $this->stepByNumber(min($number, $this->totalTextSteps()));
-    }
-
     public function isTextGenerationComplete(StoryBook $storyBook): bool
     {
-        return $storyBook->completed_steps_count >= $this->totalTextSteps();
+        return $storyBook->completed_steps_count >= $this->totalTextStages();
+    }
+
+    public function startFinalGeneration(StoryBook $storyBook): void
+    {
+        $storyBook->current_step                            = StoryBookHelper::FINAL_GENERATION_STAGE;
+        $storyBook->completed_steps_count                   = max(
+            $storyBook->completed_steps_count,
+            $this->totalTextStages()
+        );
+        $storyBook->error_message                           = null;
+        $storyBook->stopped_at                              = null;
+        $storyBook->illustration_generation_started_at      = now();
+        $storyBook->illustration_generation_completed_at    = null;
+
+        $storyBook->save();
+    }
+
+    public function completeFinalGeneration(StoryBook $storyBook): void
+    {
+        $storyBook->status                               = StoryBookHelper::STATUS_COMPLETE;
+        $storyBook->current_step                         = StoryBookHelper::FINAL_GENERATION_STAGE;
+        $storyBook->completed_steps_count                = $this->totalStages();
+        $storyBook->current_illustration_page             = null;
+        $storyBook->error_message                        = null;
+        $storyBook->stopped_at                           = null;
+        $storyBook->illustration_generation_completed_at = now();
+
+        $storyBook->save();
+    }
+
+    public function failFinalGeneration(StoryBook $storyBook, string $message): void
+    {
+        $storyBook->status        = StoryBookHelper::STATUS_STOP_ILLUSTRATION;
+        $storyBook->error_message = $message;
+
+        $storyBook->save();
+    }
+
+    public function stopFinalGeneration(StoryBook $storyBook): void
+    {
+        $storyBook->status        = StoryBookHelper::STATUS_STOP_ILLUSTRATION;
+        $storyBook->stopped_at    = now();
+        $storyBook->error_message = null;
+
+        $storyBook->save();
     }
 
     public function progress(StoryBook $storyBook): array
     {
-        $totalSteps = $this->totalTextSteps();
+        $totalStages = $this->totalStages();
 
-        $completedSteps = min($storyBook->completed_steps_count, $totalSteps);
+        $completedStages = min($storyBook->completed_steps_count, $totalStages);
+
+        $currentStage = $storyBook->current_step ?: StoryBookHelper::FIRST_GENERATION_STAGE;
 
         return [
-            'status'                => $storyBook->status,
-            'current_step'          => $storyBook->current_step,
-            'current_step_name'     => $this->stepByNumber($storyBook->current_step ?: 1)?->name,
-            'completed_steps_count' => $completedSteps,
-            'total_steps'           => $totalSteps,
-            'percentage'            => (int) round($completedSteps / max($totalSteps, 1) * 100),
-            'error_message'         => $storyBook->error_message,
-            'stopped_at'            => $storyBook->stopped_at?->toDateTimeString(),
+            'status'                  => $storyBook->status,
+            'current_stage'           => $currentStage,
+            'current_stage_name'      => $this->stages()->get($currentStage - 1)?->name,
+            'completed_stages_count'  => $completedStages,
+            'total_stages'            => $totalStages,
+            'percentage'              => (int) round($completedStages / max($totalStages, 1) * 100),
+            'error_message'           => $storyBook->error_message,
+            'stopped_at'              => $storyBook->stopped_at?->toDateTimeString(),
             'text_generation_completed' => $this->isTextGenerationComplete($storyBook),
-            'steps'                 => $this->textSteps()->map(fn(StoryBookGeneratorStep $step, int $index) => [
+            'stages'                  => $this->stages()->map(fn(StoryBookGeneratorStep $stage, int $index) => [
                 'number' => $index + 1,
-                'name'   => $step->name,
-                'state'  => $this->stepState($storyBook, $index + 1),
+                'name'   => $stage->name,
+                'state'  => $this->stageState($storyBook, $index + 1),
             ])->values()->all(),
-            'illustration'          => $this->illustrationProgress($storyBook),
+            'illustration'            => $this->illustrationProgress($storyBook),
         ];
     }
 
-    private function orderedSteps(): Collection
+    private function orderedStages(): Collection
     {
         return StoryBookGeneratorStep::query()
             ->with('aiPrompt')
@@ -203,7 +250,7 @@ class StoryBookGeneratorStepService
             ->get();
     }
 
-    private function stepState(StoryBook $storyBook, int $number): string
+    private function stageState(StoryBook $storyBook, int $number): string
     {
         if ($number <= $storyBook->completed_steps_count) {
             return 'completed';
@@ -217,7 +264,10 @@ class StoryBookGeneratorStepService
             return 'failed';
         }
 
-        if ($storyBook->status === StoryBookHelper::STATUS_PROCESSING_TEXT) {
+        if (in_array($storyBook->status, [
+            StoryBookHelper::STATUS_PROCESSING_TEXT,
+            StoryBookHelper::STATUS_PROCESSING_ILLUSTRATION,
+        ], true)) {
             return 'processing';
         }
 

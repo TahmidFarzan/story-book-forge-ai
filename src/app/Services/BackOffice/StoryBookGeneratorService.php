@@ -21,21 +21,6 @@ use Illuminate\Support\Str;
 
 class StoryBookGeneratorService
 {
-    protected const TEXT_STEP_COLUMNS = [
-        2  => 'characters',
-        3  => 'world_bible',
-        4  => 'locations',
-        5  => 'factions',
-        6  => 'creatures',
-        7  => 'systems',
-        8  => 'timeline',
-        9  => 'story_structure',
-        10 => 'twists_and_foreshadowing',
-        11 => 'scene_plans',
-        12 => 'dialogue_plans',
-        13 => 'page_plan',
-    ];
-
     protected const AI_BRAIN_OUTPUT_TYPE_TEXT  = 'Text';
 
     protected const AI_BRAIN_OUTPUT_TYPE_IMAGE = 'Image';
@@ -72,13 +57,20 @@ class StoryBookGeneratorService
     {
         try {
 
-            $foundation = $this->generateFoundation($request);
+            $firstGeneration = $this->generateFirstGeneration($request);
 
-            $storyBook = DB::transaction(function () use ($request, $foundation) {
+            $storyBook = DB::transaction(function () use ($request, $firstGeneration) {
                 $storyBook                    = new StoryBook;
-                $storyBook->title             = $foundation->title;
-                $storyBook->sub_title         = $foundation->subtitle;
-                $storyBook->foundation        = $foundation->foundation;
+                $storyBook->title             = $firstGeneration->title;
+                $storyBook->sub_title         = $firstGeneration->subtitle;
+                $storyBook->foundation        = $firstGeneration->foundation;
+                $storyBook->characters        = $firstGeneration->characters;
+                $storyBook->world_bible       = $firstGeneration->world_bible;
+                $storyBook->locations         = $firstGeneration->locations;
+                $storyBook->factions          = $firstGeneration->factions;
+                $storyBook->creatures         = $firstGeneration->creatures;
+                $storyBook->systems           = $firstGeneration->systems;
+                $storyBook->timeline          = $firstGeneration->timeline;
                 $storyBook->audience_id       = $request->input('audience_id');
                 $storyBook->language_id       = $request->input('language_id');
                 $storyBook->story_book_type_id = $request->input('story_book_type_id');
@@ -86,8 +78,8 @@ class StoryBookGeneratorService
                 $storyBook->ai_brain_text_id  = $request->input('ai_brain_text_id');
                 $storyBook->additional_information = $request->input('additional_information');
                 $storyBook->status            = StoryBookHelper::STATUS_PROCESSING_TEXT;
-                $storyBook->current_step      = 1;
-                $storyBook->completed_steps_count = 1;
+                $storyBook->current_step      = StoryBookHelper::FIRST_GENERATION_STAGE;
+                $storyBook->completed_steps_count = StoryBookHelper::FIRST_GENERATION_STAGE;
                 $storyBook->text_generation_started_at = now();
                 $storyBook->text_generation_completed_at = null;
                 $storyBook->datetime          = now();
@@ -162,7 +154,9 @@ class StoryBookGeneratorService
             return $this->lockedResult();
         }
 
-        $this->storyBookGeneratorStepService->stopTextGeneration($storyBook);
+        if (! $this->storyBookGeneratorStepService->isTextGenerationComplete($storyBook)) {
+            $this->storyBookGeneratorStepService->stopTextGeneration($storyBook);
+        }
 
         return $this->textGenerationResult($storyBook);
     }
@@ -190,12 +184,10 @@ class StoryBookGeneratorService
             DB::transaction(function () use ($aiBrain, $storyBook) {
                 $storyBook->ai_brain_illustration_id = $aiBrain->id;
                 $storyBook->status = StoryBookHelper::STATUS_PROCESSING_ILLUSTRATION;
-                $storyBook->error_message = null;
-                $storyBook->stopped_at = null;
-                $storyBook->illustration_generation_started_at = now();
-                $storyBook->illustration_generation_completed_at = null;
 
                 $storyBook->save();
+
+                $this->storyBookGeneratorStepService->startFinalGeneration($storyBook);
             });
 
             GenerateStoryBookIllustrationJob::dispatchSync($storyBook->slug, $aiBrain->id);
@@ -222,11 +214,15 @@ class StoryBookGeneratorService
             return $this->lockedResult();
         }
 
-        $storyBook->status        = StoryBookHelper::STATUS_STOP_ILLUSTRATION;
-        $storyBook->stopped_at    = now();
-        $storyBook->error_message = null;
+        if (! $this->storyBookGeneratorStepService->isTextGenerationComplete($storyBook)) {
+            return [
+                'story_book' => $storyBook,
+                'status'     => 'error',
+                'message'    => 'Illustration generation can only be stopped after text generation is complete.',
+            ];
+        }
 
-        $storyBook->save();
+        $this->storyBookGeneratorStepService->stopFinalGeneration($storyBook);
 
         return $this->illustrationGenerationResult($storyBook);
     }
@@ -254,12 +250,12 @@ class StoryBookGeneratorService
 
         $this->assertAiBrainOutputType($aiBrain, self::AI_BRAIN_OUTPUT_TYPE_TEXT);
 
-        $steps       = $this->storyBookGeneratorStepService->textSteps();
+        $stages      = $this->storyBookGeneratorStepService->textStages();
         $startNumber = $storyBook->completed_steps_count + 1;
 
         $this->storyBookGeneratorStepService->startTextGeneration($storyBook);
 
-        foreach ($steps as $index => $step) {
+        foreach ($stages as $index => $stage) {
             $number = $index + 1;
 
             if ($number < $startNumber) {
@@ -272,19 +268,19 @@ class StoryBookGeneratorService
                 return;
             }
 
-            $this->storyBookGeneratorStepService->startStep($storyBook, $number);
+            $this->storyBookGeneratorStepService->startStage($storyBook, $number);
 
             try {
-                $this->generateTextStep($number, $step, $storyBook, $aiBrain);
+                $this->generateTextStage($number, $stage, $storyBook, $aiBrain);
 
-                $this->storyBookGeneratorStepService->completeStep($storyBook, $number);
+                $this->storyBookGeneratorStepService->completeStage($storyBook, $number);
             } catch (Exception $exception) {
 
-                $this->storyBookGeneratorStepService->failStep($storyBook, $number, $exception->getMessage());
+                $this->storyBookGeneratorStepService->failStage($storyBook, $number, $exception->getMessage());
 
-                Log::error("Story book step {$number} failed.", [
+                Log::error("Story book stage {$number} failed.", [
                     'slug'      => $storyBook->slug,
-                    'step'      => $step->name,
+                    'stage'     => $stage->name,
                     'exception' => $exception->getMessage(),
                     'trace'     => $exception->getTraceAsString(),
                 ]);
@@ -308,15 +304,19 @@ class StoryBookGeneratorService
 
         $this->assertAiBrainOutputType($aiBrain, self::AI_BRAIN_OUTPUT_TYPE_IMAGE);
 
-        $storyBook->completed_illustration_pages = 0;
+        $pendingPages = $this->pendingIllustrationPages($storyBook);
+
+        $storyBook->completed_illustration_pages = max(
+            $storyBook->storyBookPages()->count() - $pendingPages->count(),
+            0
+        );
         $storyBook->current_illustration_page = null;
-        $storyBook->error_message = null;
-        $storyBook->stopped_at = null;
-        $storyBook->status = StoryBookHelper::STATUS_PROCESSING_ILLUSTRATION;
 
         $storyBook->save();
 
-        foreach ($this->pendingIllustrationPages($storyBook) as $storyBookPage) {
+        $this->storyBookGeneratorStepService->startFinalGeneration($storyBook);
+
+        foreach ($pendingPages as $storyBookPage) {
             $storyBook->refresh();
 
             if ($storyBook->stopped_at !== null || $storyBook->status === StoryBookHelper::STATUS_STOP_ILLUSTRATION) {
@@ -339,10 +339,7 @@ class StoryBookGeneratorService
                 $storyBook->save();
             } catch (Exception $exception) {
 
-                $storyBook->status        = StoryBookHelper::STATUS_STOP_ILLUSTRATION;
-                $storyBook->error_message = $exception->getMessage();
-
-                $storyBook->save();
+                $this->storyBookGeneratorStepService->failFinalGeneration($storyBook, $exception->getMessage());
 
                 Log::error("Story book page {$storyBookPage->no} illustration failed.", [
                     'slug'      => $storyBook->slug,
@@ -354,24 +351,20 @@ class StoryBookGeneratorService
             }
         }
 
-        $storyBook->status                              = StoryBookHelper::STATUS_COMPLETE;
-        $storyBook->current_illustration_page           = null;
-        $storyBook->illustration_generation_completed_at = now();
-
-        $storyBook->save();
+        $this->storyBookGeneratorStepService->completeFinalGeneration($storyBook);
     }
 
-    private function generateFoundation(StoryBookGenerate $request): object
+    private function generateFirstGeneration(StoryBookGenerate $request): object
     {
         $aiBrain = $this->aiBrainService->findById($request->input('ai_brain_text_id'));
 
         $this->assertAiBrainOutputType($aiBrain, self::AI_BRAIN_OUTPUT_TYPE_TEXT);
 
         $aiPrompt = $this->aiPromptService->findByCode(
-            Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1)
+            Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_FIRST_GENERATION)
         );
 
-        $inputs = $this->huggingFaceApiService->step1InputsFormatter([
+        $inputs = $this->huggingFaceApiService->firstGenerationInputsFormatter([
             'language_id'            => $request->input('language_id'),
             'audience_id'            => $request->input('audience_id'),
             'story_book_type_id'     => $request->input('story_book_type_id'),
@@ -385,7 +378,7 @@ class StoryBookGeneratorService
             $aiBrain->api_url,
             $aiBrain->api_key,
             $aiBrain->model,
-            AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP1,
+            AiPromptGeneratorHelper::AI_PROMPT_NAME_FIRST_GENERATION,
             $prompt,
             $aiBrain->max_output_tokens,
             $aiBrain->timeout_seconds
@@ -395,7 +388,7 @@ class StoryBookGeneratorService
             throw new Exception($response['message']);
         }
 
-        $foundation = (array) $response['data'];
+        $firstGeneration = (array) $response['data'];
 
         $requiredKeys = [
             'title'      => 'title',
@@ -404,73 +397,65 @@ class StoryBookGeneratorService
         ];
 
         foreach ($requiredKeys as $key => $label) {
-            if (blank($foundation[$key] ?? null)) {
+            if (blank($firstGeneration[$key] ?? null)) {
                 throw new Exception("Story foundation response is missing the {$label}. Please try again.");
             }
         }
 
-        return (object) [
-            'title'      => $foundation['title'],
-            'subtitle'   => $foundation['subtitle'],
-            'foundation' => $foundation['foundation'],
-        ];
+        return (object) $firstGeneration;
     }
 
-    private function generateTextStep(int $number, StoryBookGeneratorStep $step, StoryBook $storyBook, AiBrain $aiBrain): void
+    private function generateTextStage(int $number, StoryBookGeneratorStep $stage, StoryBook $storyBook, AiBrain $aiBrain): void
     {
-        $inputs = $this->textStepInputs($number, $storyBook);
-        $prompt = AiPromptGeneratorHelper::generateFullPrompt($this->stepAiPrompt($step), $inputs);
+        if ($number !== StoryBookHelper::SECOND_GENERATION_STAGE) {
+            throw new Exception("Story book stage {$number} cannot be generated for an existing story book.");
+        }
+
+        $aiPrompt = $this->stageAiPrompt($stage);
+
+        $inputs = $this->huggingFaceApiService->secondGenerationInputsFormatter($storyBook);
+
+        $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt, $inputs);
 
         $response = $this->huggingFaceApiService->sendPostRequest(
             $aiBrain->api_url,
             $aiBrain->api_key,
             $aiBrain->model,
-            $step->name,
+            $stage->name,
             $prompt,
             $aiBrain->max_output_tokens,
-            $aiBrain->timeout_seconds,
-            $this->textStepData($number, $storyBook)
+            $aiBrain->timeout_seconds
         );
 
         if (! $response['success']) {
             throw new Exception($response['message']);
         }
 
-        $this->persistTextStepResult($number, $storyBook, (array) $response['data']);
+        $this->persistSecondGeneration($storyBook, (array) $response['data']);
     }
 
-    private function persistTextStepResult(int $number, StoryBook $storyBook, array $data): void
+    private function persistSecondGeneration(StoryBook $storyBook, array $data): void
     {
-        DB::transaction(function () use ($number, $storyBook, $data) {
-            if (isset(self::TEXT_STEP_COLUMNS[$number])) {
-                $storyBook->{self::TEXT_STEP_COLUMNS[$number]} = $data;
+        DB::transaction(function () use ($storyBook, $data) {
+            $illustrationType = $storyBook->illustrationType;
 
-                $storyBook->save();
-
-                return;
+            if (! $illustrationType) {
+                throw new Exception('Story book illustration type is missing.');
             }
 
-            if ($number === 14) {
-                $this->storyBookPageService->syncStoryBookPages($storyBook, (array) ($data['pages'] ?? []));
+            $storyBook->story_structure          = $data['story_structure'] ?? null;
+            $storyBook->twists_and_foreshadowing = $data['twists_and_foreshadowing'] ?? null;
+            $storyBook->scene_plans              = $data['scene_plans'] ?? null;
+            $storyBook->dialogue_plans           = $data['dialogue_plans'] ?? null;
+            $storyBook->page_plan                = $data['page_plan'] ?? null;
 
-                $storyBook->save();
+            $storyBook->save();
 
-                return;
-            }
-
-            if ($number === 15) {
-                $illustrationType = $storyBook->illustrationType;
-
-                if (! $illustrationType) {
-                    throw new Exception('Story book illustration type is missing.');
-                }
-
-                $this->storyBookPageService->applyIllustrationPlanning(
-                    $storyBook,
-                    (array) ($data['pages'] ?? []),
-                    $illustrationType->prompt_instruction
-                );
-            }
+            $this->storyBookPageService->syncGeneratedPages(
+                $storyBook,
+                (array) ($data['pages'] ?? []),
+                $illustrationType->prompt_instruction
+            );
         });
     }
 
@@ -478,11 +463,12 @@ class StoryBookGeneratorService
     {
         $storyBook->loadMissing('storyBookPages');
 
-        $aiPrompt  = $this->aiPromptService->findByCode(
-            Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_STEP_16)
+        $aiPrompt = $this->aiPromptService->findByCode(
+            Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_FINAL_GENERATION)
         );
 
-        $inputs = $this->huggingFaceApiService->step16InputsFormatter($storyBook, $storyBookPage);
+        $inputs = $this->huggingFaceApiService->finalGenerationInputsFormatter($storyBook, $storyBookPage);
+
         $prompt = AiPromptGeneratorHelper::generateFullPrompt($aiPrompt->prompt, $inputs);
 
         return $this->huggingFaceApiService->sendImageRequest(
@@ -504,40 +490,12 @@ class StoryBookGeneratorService
             ->values();
     }
 
-    private function textStepInputs(int $number, StoryBook $storyBook): array
+    private function stageAiPrompt(StoryBookGeneratorStep $stage): string
     {
-        $method = 'step' . $number . 'InputsFormatter';
-
-        if (! method_exists($this->huggingFaceApiService, $method)) {
-            throw new Exception("Step {$number} inputs are not supported.");
-        }
-
-        return $this->huggingFaceApiService->{$method}($storyBook);
-    }
-
-    private function textStepData(int $number, StoryBook $storyBook): array
-    {
-        if ($number !== 15) {
-            return [];
-        }
-
-        $storyBook->loadMissing('storyBookPages');
-
-        return [
-            'existing_pages' => $storyBook->storyBookPages
-                ->map(fn(StoryBookPage $storyBookPage) => [
-                    'no'        => $storyBookPage->no,
-                    'narration' => $storyBookPage->narration,
-                ])->values()->all(),
-        ];
-    }
-
-    private function stepAiPrompt(StoryBookGeneratorStep $step): string
-    {
-        $aiPrompt = $step->aiPrompt;
+        $aiPrompt = $stage->aiPrompt;
 
         if (! $aiPrompt instanceof AiPrompt) {
-            throw new Exception("Step \"{$step->name}\" has no AI prompt configured.");
+            throw new Exception("Stage \"{$stage->name}\" has no AI prompt configured.");
         }
 
         return $aiPrompt->prompt;
@@ -556,7 +514,7 @@ class StoryBookGeneratorService
 
         $message = match (true) {
             $storyBook->isLocked()                                => 'Story book is complete.',
-            (bool) $storyBook->error_message                       => "Step {$storyBook->current_step} failed. {$storyBook->error_message}",
+            (bool) $storyBook->error_message                       => "Stage {$storyBook->current_step} failed. {$storyBook->error_message}",
             $storyBook->status === StoryBookHelper::STATUS_STOP_TEXT => 'Story book text generation stopped.',
             default                                                => 'Story Book is created successfully, You can review first then start Illustration page.',
         };
