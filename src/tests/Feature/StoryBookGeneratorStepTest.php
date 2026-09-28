@@ -155,9 +155,9 @@ class StoryBookGeneratorStepTest extends TestCase
         $stages = StoryBookGeneratorStep::orderBy('id')->get()->values();
 
         $this->assertSame([
-            'Story Foundation Generator',
-            'Story Detail Generator',
-            'Page Illustration Generator',
+            'Foundation',
+            'Story Detail',
+            'Page Illustration',
         ], $stages->pluck('name')->all());
 
         $this->assertNull($stages->first()->previousStep);
@@ -243,7 +243,7 @@ class StoryBookGeneratorStepTest extends TestCase
         $this->assertDatabaseCount('story_book_generator_steps', 3);
     }
 
-    public function test_seeder_creates_three_prompts_with_matching_codes(): void
+    public function test_seeder_creates_three_prompts_with_codes_derived_from_names(): void
     {
         $this->seed([
             AiPromptSeeder::class,
@@ -255,12 +255,17 @@ class StoryBookGeneratorStepTest extends TestCase
         $prompts = AiPrompt::orderBy('id')->get()->values();
 
         $this->assertSame([
-            'StoryFoundationGenerator',
-            'StoryDetailGenerator',
-            'PageIllustrationGenerator',
+            'Foundation',
+            'StoryDetail',
+            'PageIllustration',
         ], $prompts->pluck('code')->all());
 
         $this->assertSame([1, 2, 3], $prompts->pluck('step_number')->all());
+
+        foreach ($prompts as $prompt) {
+            $this->assertNotSame('', trim((string) $prompt->prompt));
+            $this->assertSame(Str::studly($prompt->name), $prompt->code);
+        }
 
         $stages = StoryBookGeneratorStep::orderBy('id')->get()->values();
 
@@ -281,9 +286,9 @@ class StoryBookGeneratorStepTest extends TestCase
             return array_values(array_unique($matches[1]));
         };
 
-        $first = $placeholders(AiPrompt::where('code', 'StoryFoundationGenerator')->value('prompt'));
-        $second = $placeholders(AiPrompt::where('code', 'StoryDetailGenerator')->value('prompt'));
-        $final = $placeholders(AiPrompt::where('code', 'PageIllustrationGenerator')->value('prompt'));
+        $first = $placeholders(AiPrompt::where('code', 'Foundation')->value('prompt'));
+        $second = $placeholders(AiPrompt::where('code', 'StoryDetail')->value('prompt'));
+        $final = $placeholders(AiPrompt::where('code', 'PageIllustration')->value('prompt'));
 
         $this->assertEqualsCanonicalizing([
             'language',

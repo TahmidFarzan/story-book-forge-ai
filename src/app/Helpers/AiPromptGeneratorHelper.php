@@ -75,7 +75,7 @@ class AiPromptGeneratorHelper
 
             Develop the foundation internally in this exact order, because every later layer depends on the previous one:
 
-                1. Story Book Title and Subtitle
+                1. Title and Sub Title
                 2. Story Book Foundation
                 3. Characters and Relationship Dynamics
                 4. World Bible
@@ -88,15 +88,15 @@ class AiPromptGeneratorHelper
             Keep every element consistent with everything established before it.
 
             ==================================================
-            STORY BOOK TITLE AND SUBTITLE
+            TITLE AND SUB TITLE
             ==================================================
 
             Generate:
 
-                - story_book_title: the primary title of the Story Book. It must be short, memorable, evocative, and appropriate for the genre and audience.
-                - story_book_subtitle: a supporting subtitle that hints at the central conflict or theme without spoiling the resolution.
+                - title: the primary title of the Story Book. It must be short, memorable, evocative, and appropriate for the genre and audience.
+                - sub_title: a supporting sub title that hints at the central conflict or theme without spoiling the resolution.
 
-            The title and subtitle must:
+            The title and sub_title must:
 
                 - Be specific to this story and not generic placeholders.
                 - Fit the established genre, audience, and Story Book type.
@@ -290,8 +290,8 @@ class AiPromptGeneratorHelper
                 - Use exactly the keys shown below. Do NOT add, rename, or remove any key.
 
             {
-                \"story_book_title\": \"\",
-                \"story_book_subtitle\": \"\",
+                \"title\": \"\",
+                \"sub_title\": \"\",
                 \"story_book_foundation\": {
                     \"premise\": \"\",
                     \"story_concept\": \"\",
@@ -829,7 +829,7 @@ class AiPromptGeneratorHelper
 
             Before returning the result, ensure:
 
-                - The title and subtitle are specific, evocative, and free of placeholders.
+                - The title and sub_title are specific, evocative, and free of placeholders.
                 - The foundation is complete, logically consistent, and strong enough to carry the whole story.
                 - The characters are distinct, purposeful, and free of duplicated roles.
                 - The World Bible is a working set of rules, not decoration.

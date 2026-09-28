@@ -500,7 +500,7 @@ class SeederHelper
 
             (object) [
                 'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_FIRST_GENERATION,
-                'code' => 'StoryFoundationGenerator',
+                'code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_FIRST_GENERATION),
                 'step_number' => StoryBookHelper::FIRST_GENERATION_STAGE,
                 'depend_on_prompt_ids' => null,
                 'prompt' => AiPromptGeneratorHelper::firstGenerationPrompt(),
@@ -508,7 +508,7 @@ class SeederHelper
 
             (object) [
                 'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_SECOND_GENERATION,
-                'code' => 'StoryDetailGenerator',
+                'code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_SECOND_GENERATION),
                 'step_number' => StoryBookHelper::SECOND_GENERATION_STAGE,
                 'depend_on_prompt_ids' => null,
                 'prompt' => AiPromptGeneratorHelper::secondGenerationPrompt(),
@@ -516,7 +516,7 @@ class SeederHelper
 
             (object) [
                 'name' => AiPromptGeneratorHelper::AI_PROMPT_NAME_FINAL_GENERATION,
-                'code' => 'PageIllustrationGenerator',
+                'code' => Str::studly(AiPromptGeneratorHelper::AI_PROMPT_NAME_FINAL_GENERATION),
                 'step_number' => StoryBookHelper::FINAL_GENERATION_STAGE,
                 'depend_on_prompt_ids' => null,
                 'prompt' => AiPromptGeneratorHelper::finalGenerationPrompt(),

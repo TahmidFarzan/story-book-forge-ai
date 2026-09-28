@@ -62,7 +62,7 @@ class StoryBookGeneratorService
             $storyBook = DB::transaction(function () use ($request, $firstGeneration) {
                 $storyBook                    = new StoryBook;
                 $storyBook->title             = $firstGeneration->title;
-                $storyBook->sub_title         = $firstGeneration->subtitle;
+                $storyBook->sub_title         = $firstGeneration->sub_title;
                 $storyBook->foundation        = $firstGeneration->foundation;
                 $storyBook->characters        = $firstGeneration->characters;
                 $storyBook->world_bible       = $firstGeneration->world_bible;
@@ -390,15 +390,11 @@ class StoryBookGeneratorService
 
         $firstGeneration = (array) $response['data'];
 
-        $requiredKeys = [
-            'title'      => 'title',
-            'subtitle'   => 'subtitle',
-            'foundation' => 'foundation',
-        ];
+        $requiredKeys = ['title', 'sub_title', 'foundation'];
 
-        foreach ($requiredKeys as $key => $label) {
+        foreach ($requiredKeys as $key) {
             if (blank($firstGeneration[$key] ?? null)) {
-                throw new Exception("Story foundation response is missing the {$label}. Please try again.");
+                throw new Exception("Story foundation response is missing the {$key}. Please try again.");
             }
         }
 

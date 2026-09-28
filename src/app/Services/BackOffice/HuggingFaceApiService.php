@@ -349,8 +349,8 @@ class HuggingFaceApiService
     private function apiFirstGenerationResponseFormat(array $response): object
     {
         return (object) [
-            'title'      => $response['story_book_title'] ?? null,
-            'subtitle'   => $response['story_book_subtitle'] ?? null,
+            'title'      => $response['title'] ?? null,
+            'sub_title'  => $response['sub_title'] ?? null,
             'foundation' => $response['story_book_foundation'] ?? null,
 
             'characters' => (object) [
